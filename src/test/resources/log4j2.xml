@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+	<Properties>
+		<Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1} - %m%n
+		</Property>
+	</Properties>
+
+	<Appenders>
+		<Console name="console" target="SYSTEM_OUT" follow="true">
+			<PatternLayout pattern="${LOG_PATTERN}" />
+		</Console>
+	</Appenders>
+
+	<Loggers>
+
+		<Logger
+			name="com.github.sp3wam.baseband.modem.core.blocks.WavFromFileSignalGeneratorBlock"
+			level="off" />
+		<Logger
+			name="com.github.sp3wam.baseband.modem.core.blocks.SamplerBlock"
+			level="off" />
+		<Logger
+			name="com.github.sp3wam.baseband.modem.core.blocks.FFTBlock"
+			level="off" />
+		<Logger
+			name="com.github.sp3wam.baseband.modem.core.blocks.ToneToBitConverterBlock"
+			level="off" />
+			
+		<Logger
+			name="com.github.sp3wam.baseband.modem.impl.morse.DitDurationCalculator"
+			level="off" />
+		<Logger
+			name="com.github.sp3wam.baseband.modem.impl.morse.MorseToneDetectorBlock"
+			level="off" />
+
+		<Root level="debug">
+			<AppenderRef ref="console" />
+		</Root>
+	</Loggers>
+</Configuration>
