@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
+import javax.sound.sampled.AudioFileFormat.Type;
+import javax.sound.sampled.AudioSystem;
+
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,18 +20,15 @@ import com.github.sp3wam.baseband.modem.core.blocks.WavFromFileSignalGeneratorBl
 import com.github.sp3wam.baseband.modem.core.signals.BitSignal;
 import com.github.sp3wam.baseband.modem.core.signals.FloatingPointSignal;
 import com.github.sp3wam.baseband.modem.core.signals.StringSignal;
-import com.github.sp3wam.baseband.modem.core.wav.WavFileException;
-import com.github.sp3wam.baseband.modem.impl.morse.BitStreamMorseDecoderBlock;
-import com.github.sp3wam.baseband.modem.impl.morse.MorseSymbolDecoderBlock;
-import com.github.sp3wam.baseband.modem.impl.morse.MorseToneDetectorBlock;
 
 public class MorseDecoderTest
 {
     private Logger LOGGER = LoggerFactory.getLogger( MorseDecoderTest.class );
 
     @Test
-    public void testLetterC() throws IOException, WavFileException
+    public void testLetterC() throws IOException
     {
+        Type[] list = AudioSystem.getAudioFileTypes();
 
         final int MAIN_CLOCK_FREQ = 44100; // meaning 44100 Hz
         final double SIGNAL_AMPLITUDE = 100.0;

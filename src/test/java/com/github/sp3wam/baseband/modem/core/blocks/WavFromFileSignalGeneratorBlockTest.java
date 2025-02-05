@@ -7,15 +7,13 @@ import java.io.IOException;
 import org.junit.Test;
 
 import com.github.sp3wam.baseband.modem.core.SystemClock;
-import com.github.sp3wam.baseband.modem.core.blocks.WavFromFileSignalGeneratorBlock;
-import com.github.sp3wam.baseband.modem.core.wav.WavFileException;
 
 public class WavFromFileSignalGeneratorBlockTest
 {
     private final double SIGNAL_AMPLITUDE = 100.0;
 
     @Test
-    public void test() throws IOException, WavFileException
+    public void test() throws IOException
     {
         WavFromFileSignalGeneratorBlock wavSignal = new WavFromFileSignalGeneratorBlock( SIGNAL_AMPLITUDE,
             "src/main/resources/morse/C_morse_code.wav" );

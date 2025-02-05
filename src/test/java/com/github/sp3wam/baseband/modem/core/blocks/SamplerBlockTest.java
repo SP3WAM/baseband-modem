@@ -7,10 +7,7 @@ import java.io.IOException;
 import org.junit.Test;
 
 import com.github.sp3wam.baseband.modem.core.SystemClock;
-import com.github.sp3wam.baseband.modem.core.blocks.SamplerBlock;
-import com.github.sp3wam.baseband.modem.core.blocks.WavFromFileSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.signals.FloatingPointSignal;
-import com.github.sp3wam.baseband.modem.core.wav.WavFileException;
 
 public class SamplerBlockTest
 {
@@ -18,7 +15,7 @@ public class SamplerBlockTest
     private final int FFT_SAMPLE_FREQ = 6400;
 
     @Test
-    public void test() throws IOException, WavFileException
+    public void test() throws IOException
     {
         WavFromFileSignalGeneratorBlock wavSignal = new WavFromFileSignalGeneratorBlock( SIGNAL_AMPLITUDE,
             "src/main/resources/morse/C_morse_code.wav" );
