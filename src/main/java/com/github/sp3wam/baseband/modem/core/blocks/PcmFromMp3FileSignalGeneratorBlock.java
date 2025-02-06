@@ -1,10 +1,12 @@
 package com.github.sp3wam.baseband.modem.core.blocks;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.AudioInputStream;
@@ -19,13 +21,16 @@ import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.signals.DummySignal;
 import com.github.sp3wam.baseband.modem.core.signals.FloatingPointSignal;
 
-public class WavFromFileSignalGeneratorBlock implements BlockIf< DummySignal, FloatingPointSignal >
+import javazoom.spi.mpeg.sampled.convert.DecodedMpegAudioInputStream;
+import javazoom.spi.mpeg.sampled.file.MpegAudioFileReader;
+import javazoom.spi.mpeg.sampled.file.MpegEncoding;
+
+public class PcmFromMp3FileSignalGeneratorBlock implements BlockIf< DummySignal, FloatingPointSignal >
 {
-    private Logger LOGGER = LoggerFactory.getLogger( WavFromFileSignalGeneratorBlock.class );
+    private Logger LOGGER = LoggerFactory.getLogger( PcmFromMp3FileSignalGeneratorBlock.class );
 
     private final static long SILENCE_AT_END_DURATION_MS = 1000;
 
-    // private WavFile wavFile;
     private boolean hasMoreSamples = false;
     private double amplitude;
     private BlockIf< FloatingPointSignal, ? > nextBlock;
@@ -33,18 +38,31 @@ public class WavFromFileSignalGeneratorBlock implements BlockIf< DummySignal, Fl
     private long silenceAtEndFrameCountdown = -1;
 
     private AudioInputStream audioStream = null;
+    private AudioFormat audioFormat = null;
 
-    public WavFromFileSignalGeneratorBlock( double amplitude, String wavFilePath ) throws IOException
+    public PcmFromMp3FileSignalGeneratorBlock( double amplitude, String mp3FilePath ) throws IOException
     {
         this.amplitude = amplitude;
 
-        InputStream inputStream = new FileInputStream( wavFilePath );
-        InputStream inputStream2 = new BufferedInputStream( inputStream );
-
         try
         {
-            audioStream = AudioSystem.getAudioInputStream( inputStream2 );
-            AudioFormat audioFormat = audioStream.getFormat();
+            MpegAudioFileReader mpegAudioFileReader = new MpegAudioFileReader();
+
+            AudioFileFormat audioFileFormat =
+                mpegAudioFileReader.getAudioFileFormat( new File( mp3FilePath ) );
+            AudioFormat originalAudioFormat = audioFileFormat.getFormat();
+
+            LOGGER.info(
+                String.format( "Original audio format of MP3 file is: %s", originalAudioFormat.toString() ) );
+
+            if( !(originalAudioFormat.getEncoding() instanceof MpegEncoding) )
+            {
+                throw new RuntimeException( String.format( "Files with %s encoding are not supported.",
+                    audioFormat.getEncoding().toString() ) );
+            }
+
+            audioFormat = new AudioFormat( originalAudioFormat.getSampleRate(), 16,
+                originalAudioFormat.getChannels(), true, false );
 
             if( audioFormat.getChannels() != 1 )
             {
@@ -56,13 +74,16 @@ public class WavFromFileSignalGeneratorBlock implements BlockIf< DummySignal, Fl
                 throw new RuntimeException( String.format(
                     "Files with %s bytes per sample are not supported.", audioFormat.getFrameSize() ) );
             }
-            if( !Encoding.PCM_SIGNED.equals( audioFormat.getEncoding() ) )
-            {
-                throw new RuntimeException( String.format( "Files with %s encoding are not supported.",
-                    audioFormat.getEncoding().toString() ) );
-            }
 
-            LOGGER.info( audioFormat.toString() );
+            // create stream which decodes MP3 into PCM
+            InputStream inputStream = new FileInputStream( mp3FilePath );
+            InputStream inputStream2 = new BufferedInputStream( inputStream );
+            AudioInputStream audioInputStream = mpegAudioFileReader.getAudioInputStream( inputStream2 );
+
+            audioStream = new DecodedMpegAudioInputStream( audioFormat, audioInputStream );
+
+            LOGGER.info(
+                String.format( "Original MP3 format will be converted into: %s", audioFormat.toString() ) );
         }
         catch( UnsupportedAudioFileException e )
         {
@@ -90,11 +111,9 @@ public class WavFromFileSignalGeneratorBlock implements BlockIf< DummySignal, Fl
         if( silenceAtEndFrameCountdown == -1 )
         {
             // need to generate samples from file
-
-            // Get the number of audio channels in the wav file
-            int numChannels = audioStream.getFormat().getChannels();
-            int bytesPerSample = audioStream.getFormat().getFrameSize();
-            int sampleSizeInBits = audioStream.getFormat().getSampleSizeInBits();
+            int numChannels = audioFormat.getChannels();
+            int bytesPerSample = audioFormat.getFrameSize();
+            int sampleSizeInBits = audioFormat.getSampleSizeInBits();
 
             // Create a buffer
             byte[] buffer = new byte[ 1 * numChannels * bytesPerSample ];
@@ -152,7 +171,8 @@ public class WavFromFileSignalGeneratorBlock implements BlockIf< DummySignal, Fl
 
     public long getSampleRate()
     {
-        return (long)audioStream.getFormat().getSampleRate();
+        return (long)audioFormat.getSampleRate();
+        // return (long)audioStream.getFormat().getSampleRate();
     }
 
     public boolean hasMoreSamples()

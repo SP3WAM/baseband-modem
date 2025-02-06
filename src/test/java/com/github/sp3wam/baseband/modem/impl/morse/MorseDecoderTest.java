@@ -14,10 +14,10 @@ import org.slf4j.LoggerFactory;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.blocks.AbstractConsumerBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.FFTBlock;
-import com.github.sp3wam.baseband.modem.core.blocks.Mp3FromFileSignalGeneratorBlock;
+import com.github.sp3wam.baseband.modem.core.blocks.PcmFromMp3FileSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.SamplerBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.ToneToBitConverterBlock;
-import com.github.sp3wam.baseband.modem.core.blocks.WavFromFileSignalGeneratorBlock;
+import com.github.sp3wam.baseband.modem.core.blocks.PcmFromWavFileSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.signals.BitSignal;
 import com.github.sp3wam.baseband.modem.core.signals.FloatingPointSignal;
 import com.github.sp3wam.baseband.modem.core.signals.StringSignal;
@@ -36,7 +36,7 @@ public class MorseDecoderTest
         final int FFT_WINDOW_SIZE = 16;
         final int BIT_SAMPLING_DIVIDER = 63; // meaning 6300 Hz / 63 = 100 Hz
 
-        WavFromFileSignalGeneratorBlock wavSignal = new WavFromFileSignalGeneratorBlock( SIGNAL_AMPLITUDE,
+        PcmFromWavFileSignalGeneratorBlock wavSignal = new PcmFromWavFileSignalGeneratorBlock( SIGNAL_AMPLITUDE,
             "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/C_morse_code.wav" );
         SamplerBlock< FloatingPointSignal, FloatingPointSignal > fftSampler =
             new SamplerBlock< FloatingPointSignal, FloatingPointSignal >( FFT_SAMPLING_DIVIDER );
@@ -83,7 +83,7 @@ public class MorseDecoderTest
         final int FFT_WINDOW_SIZE = 16;
         final int BIT_SAMPLING_DIVIDER = 63; // meaning 6300 Hz / 63 = 100 Hz
 
-        Mp3FromFileSignalGeneratorBlock wavSignal = new Mp3FromFileSignalGeneratorBlock( SIGNAL_AMPLITUDE,
+        PcmFromMp3FileSignalGeneratorBlock wavSignal = new PcmFromMp3FileSignalGeneratorBlock( SIGNAL_AMPLITUDE,
             "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/C_morse_code.mp3" );
         SamplerBlock< FloatingPointSignal, FloatingPointSignal > fftSampler =
             new SamplerBlock< FloatingPointSignal, FloatingPointSignal >( FFT_SAMPLING_DIVIDER );
@@ -130,7 +130,7 @@ public class MorseDecoderTest
         final int FFT_WINDOW_SIZE = 16;
         final int BIT_SAMPLING_DIVIDER = 80; // meaning 8000 Hz / 80 = 100 Hz
 
-        Mp3FromFileSignalGeneratorBlock wavSignal = new Mp3FromFileSignalGeneratorBlock( SIGNAL_AMPLITUDE,
+        PcmFromMp3FileSignalGeneratorBlock wavSignal = new PcmFromMp3FileSignalGeneratorBlock( SIGNAL_AMPLITUDE,
             "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/Wikipedia-Morse.mp3" );
         SamplerBlock< FloatingPointSignal, FloatingPointSignal > fftSampler =
             new SamplerBlock< FloatingPointSignal, FloatingPointSignal >( FFT_SAMPLING_DIVIDER );

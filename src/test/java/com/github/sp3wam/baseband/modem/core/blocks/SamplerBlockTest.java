@@ -17,7 +17,7 @@ public class SamplerBlockTest
     @Test
     public void test() throws IOException
     {
-        WavFromFileSignalGeneratorBlock wavSignal = new WavFromFileSignalGeneratorBlock( SIGNAL_AMPLITUDE,
+        PcmFromWavFileSignalGeneratorBlock wavSignal = new PcmFromWavFileSignalGeneratorBlock( SIGNAL_AMPLITUDE,
             "src/main/resources/morse/C_morse_code.wav" );
         SamplerBlock< FloatingPointSignal, FloatingPointSignal > fftSampler =
             new SamplerBlock< FloatingPointSignal, FloatingPointSignal >( FFT_SAMPLE_FREQ );
