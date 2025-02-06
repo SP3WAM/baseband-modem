@@ -12,13 +12,16 @@
 	</Appenders>
 
 	<Loggers>
-
+		
+		<Logger
+			name="com.github.sp3wam.baseband.modem.core.blocks.PcmFromFileSignalGeneratorBlock"
+			level="info" />
 		<Logger
 			name="com.github.sp3wam.baseband.modem.core.blocks.PcmFromWavFileSignalGeneratorBlock"
 			level="info" />
 		<Logger
 			name="com.github.sp3wam.baseband.modem.core.blocks.PcmFromMp3FileSignalGeneratorBlock"
-			level="info" />	
+			level="info" />
 		<Logger
 			name="com.github.sp3wam.baseband.modem.core.blocks.SamplerBlock"
 			level="off" />
@@ -28,7 +31,7 @@
 		<Logger
 			name="com.github.sp3wam.baseband.modem.core.blocks.ToneToBitConverterBlock"
 			level="off" />
-			
+
 		<Logger
 			name="com.github.sp3wam.baseband.modem.impl.morse.MorseToneDetectorBlock"
 			level="off" />
