@@ -8,12 +8,11 @@ import org.slf4j.LoggerFactory;
 
 import com.github.sp3wam.baseband.modem.core.BlockIf;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
-import com.github.sp3wam.baseband.modem.core.blocks.ToneToBitConverterBlock;
 import com.github.sp3wam.baseband.modem.core.signals.BitSignal;
 
 public class BitStreamMorseDecoderBlock implements BlockIf< BitSignal, MorseSymbolSignal >
 {
-    private Logger LOGGER = LoggerFactory.getLogger( ToneToBitConverterBlock.class );
+    private Logger LOGGER = LoggerFactory.getLogger( BitStreamMorseDecoderBlock.class );
 
     private MorseSymbolSignal currentValue;
     private BlockIf< MorseSymbolSignal, ? > nextBlock;
@@ -52,6 +51,8 @@ public class BitStreamMorseDecoderBlock implements BlockIf< BitSignal, MorseSymb
 
     protected boolean execute0( SystemClock systemClock, BitSignal inputSignalValue )
     {
+        LOGGER.debug( String.format( "Processing input value %s", inputSignalValue.toString() ) );
+
         if( segments.size() == 0 )
         {
             currentValue = null;

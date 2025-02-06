@@ -15,4 +15,11 @@ public class BitSignal implements SignalIf
     {
         return bitValue;
     }
+
+    @Override
+    public String toString()
+    {
+        return "BitSignal [bitValue=" + bitValue + "]";
+    }
+
 }

@@ -17,6 +17,9 @@
 			name="com.github.sp3wam.baseband.modem.core.blocks.WavFromFileSignalGeneratorBlock"
 			level="info" />
 		<Logger
+			name="com.github.sp3wam.baseband.modem.core.blocks.Mp3FromFileSignalGeneratorBlock"
+			level="info" />	
+		<Logger
 			name="com.github.sp3wam.baseband.modem.core.blocks.SamplerBlock"
 			level="off" />
 		<Logger
@@ -27,10 +30,13 @@
 			level="off" />
 			
 		<Logger
-			name="com.github.sp3wam.baseband.modem.impl.morse.DitDurationCalculator"
+			name="com.github.sp3wam.baseband.modem.impl.morse.MorseToneDetectorBlock"
 			level="off" />
 		<Logger
-			name="com.github.sp3wam.baseband.modem.impl.morse.MorseToneDetectorBlock"
+			name="com.github.sp3wam.baseband.modem.impl.morse.BitStreamMorseDecoderBlock"
+			level="off" />
+		<Logger
+			name="com.github.sp3wam.baseband.modem.impl.morse.DitDurationCalculator"
 			level="off" />
 
 		<Root level="debug">
