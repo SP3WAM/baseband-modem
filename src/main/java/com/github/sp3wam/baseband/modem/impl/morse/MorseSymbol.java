@@ -1,6 +1,6 @@
 package com.github.sp3wam.baseband.modem.impl.morse;
 
-public enum MorseSymbol
+enum MorseSymbol
 {
     /***
      * A short mark, dot or dit.

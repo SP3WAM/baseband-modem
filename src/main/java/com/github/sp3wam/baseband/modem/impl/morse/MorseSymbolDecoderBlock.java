@@ -7,7 +7,7 @@ import com.github.sp3wam.baseband.modem.core.BlockIf;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.signals.StringSignal;
 
-public class MorseSymbolDecoderBlock implements BlockIf< MorseSymbolSignal, StringSignal >
+class MorseSymbolDecoderBlock implements BlockIf< MorseSymbolSignal, StringSignal >
 {
     private Logger LOGGER = LoggerFactory.getLogger( MorseSymbolDecoderBlock.class );
 

@@ -10,7 +10,7 @@ import com.github.sp3wam.baseband.modem.core.BlockIf;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.signals.BitSignal;
 
-public class BitStreamMorseDecoderBlock implements BlockIf< BitSignal, MorseSymbolSignal >
+class BitStreamMorseDecoderBlock implements BlockIf< BitSignal, MorseSymbolSignal >
 {
     private Logger LOGGER = LoggerFactory.getLogger( BitStreamMorseDecoderBlock.class );
 

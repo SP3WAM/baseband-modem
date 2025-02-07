@@ -14,7 +14,7 @@ import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.signals.DummySignal;
 import com.github.sp3wam.baseband.modem.core.signals.FloatingPointSignal;
 
-abstract class PcmFromFileSignalGeneratorBlock implements BlockIf< DummySignal, FloatingPointSignal >
+public abstract class PcmFromFileSignalGeneratorBlock implements BlockIf< DummySignal, FloatingPointSignal >
 {
     private final static Logger LOGGER = LoggerFactory.getLogger( PcmFromFileSignalGeneratorBlock.class );
 
@@ -130,6 +130,7 @@ abstract class PcmFromFileSignalGeneratorBlock implements BlockIf< DummySignal, 
                 silenceAtEndFrameCountdown =
                     (long)(audioStream.getFormat().getSampleRate() * SILENCE_AT_END_DURATION_MS / 1000.0);
 
+//                silenceAtEndFrameCountdown = 1;
                 try
                 {
                     audioStream.close();

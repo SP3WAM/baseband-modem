@@ -8,7 +8,7 @@ import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.signals.FFTSignal;
 import com.github.sp3wam.baseband.modem.core.signals.MorseToneSignal;
 
-public class MorseToneDetectorBlock implements BlockIf< FFTSignal, MorseToneSignal >
+class MorseToneDetectorBlock implements BlockIf< FFTSignal, MorseToneSignal >
 {
     private Logger LOGGER = LoggerFactory.getLogger( MorseToneDetectorBlock.class );
 
