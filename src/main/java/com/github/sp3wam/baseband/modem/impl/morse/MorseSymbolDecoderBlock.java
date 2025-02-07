@@ -64,6 +64,11 @@ class MorseSymbolDecoderBlock implements BlockIf< MorseSymbolSignal, StringSigna
         {
             // end of letter (or word) detected
             String morseString = stringBuilder.toString();
+            if(morseString.isEmpty())
+            {
+                return false;
+            }
+            
             String decodedLetter = morseTable.decode( morseString );
             stringBuilder.setLength( 0 );
 
@@ -85,9 +90,7 @@ class MorseSymbolDecoderBlock implements BlockIf< MorseSymbolSignal, StringSigna
             if( inputSignal == MorseSymbol.MEDIUM_GAP )
             {
                 // end of word detected.
-                // TODO: need to send a space character as well
-                // But how? Maybe introduce some kind of StringSignal instead of CharSignal?
-                currentValue = new StringSignal( decodedLetter + " " );
+                currentValue = new StringSignal( decodedLetter + SPACE_CHAR );
 
                 return true;
             }

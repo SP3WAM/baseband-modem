@@ -3,6 +3,7 @@ package com.github.sp3wam.baseband.modem.impl.morse;
 import java.io.IOException;
 
 import com.github.sp3wam.baseband.modem.core.SystemClock;
+import com.github.sp3wam.baseband.modem.core.blocks.BitAveragerBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.FFTBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.PcmFromFileSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.PcmFromMp3FileSignalGeneratorBlock;
@@ -50,6 +51,7 @@ public class MorseDecoder
 
         SamplerBlock< BitSignal, BitSignal > bitSampler =
             new SamplerBlock< BitSignal, BitSignal >( bitSamplerDivider );
+        BitAveragerBlock bitAveragerBlock = new BitAveragerBlock(3);
         BitStreamMorseDecoderBlock morseDecoderBlock = new BitStreamMorseDecoderBlock();
         MorseSymbolDecoderBlock morseSymbolDecoderBlock = new MorseSymbolDecoderBlock();
 
@@ -61,7 +63,8 @@ public class MorseDecoder
         fftBlock.setNextBlock( morseToneDetectorBlock );
         morseToneDetectorBlock.setNextBlock( toneToBitConverterBlock );
         toneToBitConverterBlock.setNextBlock( bitSampler );
-        bitSampler.setNextBlock( morseDecoderBlock );
+        bitSampler.setNextBlock( bitAveragerBlock );
+        bitAveragerBlock.setNextBlock( morseDecoderBlock );
         morseDecoderBlock.setNextBlock( morseSymbolDecoderBlock );
         morseSymbolDecoderBlock.setNextBlock( consumer );
 
