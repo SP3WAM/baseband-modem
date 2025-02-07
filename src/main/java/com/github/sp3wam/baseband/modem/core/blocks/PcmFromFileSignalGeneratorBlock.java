@@ -118,6 +118,8 @@ public abstract class PcmFromFileSignalGeneratorBlock implements BlockIf< DummyS
                 double floatScale = 1 << (sampleSizeInBits - 1);
                 double value = amplitude * val / floatScale;
 
+                LOGGER.trace( String.format( "%s", value ) );
+
                 currentValue = new FloatingPointSignal( value );
             }
             catch( IOException e )
@@ -129,8 +131,7 @@ public abstract class PcmFromFileSignalGeneratorBlock implements BlockIf< DummyS
             {
                 silenceAtEndFrameCountdown =
                     (long)(audioStream.getFormat().getSampleRate() * SILENCE_AT_END_DURATION_MS / 1000.0);
-
-//                silenceAtEndFrameCountdown = 1;
+                
                 try
                 {
                     audioStream.close();

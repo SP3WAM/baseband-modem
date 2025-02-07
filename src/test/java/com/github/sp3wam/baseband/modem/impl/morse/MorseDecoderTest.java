@@ -4,6 +4,16 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.Line;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.Mixer;
+import javax.sound.sampled.Mixer.Info;
+import javax.sound.sampled.TargetDataLine;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -51,20 +61,22 @@ public class MorseDecoderTest
 
         assertEquals( "c ", consumer.getDecodedString() );
     }
-    
+
     @Test
     public void testNoisyLetterC_fromMp3() throws IOException
     {
-        String filePath = "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/C_noised_morse_code.mp3";
+        String filePath =
+            "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/C_noised_morse_code.mp3";
         subject.decodeFromMp3( filePath, consumer );
 
         assertEquals( "c ", consumer.getDecodedString() );
     }
-    
+
     @Test
     public void testRealTransmission_fromMp3() throws IOException
     {
-        String filePath = "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/real_transmission.mp3";
+        String filePath =
+            "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/real_transmission.mp3";
         subject.decodeFromMp3( filePath, consumer );
 
         assertEquals( "c ", consumer.getDecodedString() );
@@ -77,6 +89,13 @@ public class MorseDecoderTest
             "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/Wikipedia-Morse.mp3";
         subject.decodeFromMp3( filePath, consumer );
 
-        assertEquals( "welcome to wikipedia, the free encyclopedia that anyone can edit. ", consumer.getDecodedString() );
+        assertEquals( "welcome to wikipedia, the free encyclopedia that anyone can edit. ",
+            consumer.getDecodedString() );
+    }
+
+    @Test
+    public void testRealSound() throws IOException, LineUnavailableException
+    {
+        subject.decodeFromSystemAudio( consumer );
     }
 }

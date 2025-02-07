@@ -7,6 +7,7 @@ import com.github.sp3wam.baseband.modem.core.blocks.BitAveragerBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.FFTBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.PcmFromFileSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.PcmFromMp3FileSignalGeneratorBlock;
+import com.github.sp3wam.baseband.modem.core.blocks.PcmFromSystemAudioSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.PcmFromWavFileSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.SamplerBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.ToneToBitConverterBlock;
@@ -36,6 +37,14 @@ public class MorseDecoder
         decode( signalGenerator, consumer );
     }
 
+    public void decodeFromSystemAudio( MorseDecoderConsumer consumer ) throws IOException
+    {
+        PcmFromSystemAudioSignalGeneratorBlock signalGenerator =
+            new PcmFromSystemAudioSignalGeneratorBlock( 200.0 * SIGNAL_AMPLITUDE, null );
+
+        decode( signalGenerator, consumer );
+    }
+
     private void decode( PcmFromFileSignalGeneratorBlock signalGenerator, MorseDecoderConsumer consumer )
     {
         double sampleRate = signalGenerator.getSampleRate();
@@ -51,7 +60,7 @@ public class MorseDecoder
 
         SamplerBlock< BitSignal, BitSignal > bitSampler =
             new SamplerBlock< BitSignal, BitSignal >( bitSamplerDivider );
-        BitAveragerBlock bitAveragerBlock = new BitAveragerBlock(3);
+        BitAveragerBlock bitAveragerBlock = new BitAveragerBlock( 3 );
         BitStreamMorseDecoderBlock morseDecoderBlock = new BitStreamMorseDecoderBlock();
         MorseSymbolDecoderBlock morseSymbolDecoderBlock = new MorseSymbolDecoderBlock();
 
