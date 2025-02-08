@@ -9,6 +9,7 @@ import java.util.List;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 
+import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.sun.jna.Pointer;
 
 import xt.audio.Enums.XtDeviceCaps;
@@ -60,6 +61,23 @@ public class PcmFromXtAudioSignalGeneratorBlock extends PcmFromFileSignalGenerat
         {
             throw new RuntimeException( e );
         }
+    }
+
+    protected boolean execute0( SystemClock systemClock )
+    {
+        try
+        {
+            if( audioStream.available() == 0 )
+            {
+                return false;
+            }
+        }
+        catch( IOException e )
+        {
+            throw new RuntimeException( e );
+        }
+
+        return super.execute0( systemClock );
     }
 
     // audio streaming callback

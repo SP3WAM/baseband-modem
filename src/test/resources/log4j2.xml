@@ -15,7 +15,7 @@
 		
 		<Logger
 			name="com.github.sp3wam.baseband.modem.core.blocks.PcmFromFileSignalGeneratorBlock"
-			level="debug" />
+			level="info" />
 		<Logger
 			name="com.github.sp3wam.baseband.modem.core.blocks.PcmFromWavFileSignalGeneratorBlock"
 			level="info" />
