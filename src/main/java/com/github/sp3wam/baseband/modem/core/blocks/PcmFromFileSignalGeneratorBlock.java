@@ -100,7 +100,7 @@ public abstract class PcmFromFileSignalGeneratorBlock implements BlockIf< DummyS
     {
 
         samplesCount++;
-        LOGGER.debug( String.format( "Processing sample nr %s", samplesCount ) );
+//        LOGGER.debug( String.format( "Processing sample nr %s", samplesCount ) );
 
         if( silenceAtEndFrameCountdown == -1 )
         {
@@ -127,6 +127,8 @@ public abstract class PcmFromFileSignalGeneratorBlock implements BlockIf< DummyS
                 LOGGER.trace( String.format( "%s", value ) );
 
                 currentValue = new FloatingPointSignal( value );
+                
+                LOGGER.debug( String.format( "Processing sample nr %s with value %s", samplesCount, currentValue.getValue() ) );
             }
             catch( IOException e )
             {
