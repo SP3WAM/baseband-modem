@@ -12,7 +12,10 @@
 	</Appenders>
 
 	<Loggers>
-		
+
+		<Logger
+			name="com.github.sp3wam.baseband.modem.core.blocks.PcmSignalGeneratorBlock"
+			level="info" />
 		<Logger
 			name="com.github.sp3wam.baseband.modem.core.blocks.PcmFromFileSignalGeneratorBlock"
 			level="info" />
@@ -22,6 +25,13 @@
 		<Logger
 			name="com.github.sp3wam.baseband.modem.core.blocks.PcmFromMp3FileSignalGeneratorBlock"
 			level="info" />
+		<Logger
+			name="com.github.sp3wam.baseband.modem.core.blocks.PcmFromJavaxAudioSignalGeneratorBlock"
+			level="info" />
+		<Logger
+			name="com.github.sp3wam.baseband.modem.core.blocks.PcmFromXtAudioAudioSignalGeneratorBlock"
+			level="info" />
+			
 		<Logger
 			name="com.github.sp3wam.baseband.modem.core.blocks.SamplerBlock"
 			level="off" />

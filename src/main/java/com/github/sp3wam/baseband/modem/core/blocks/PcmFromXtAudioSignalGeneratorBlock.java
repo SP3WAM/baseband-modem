@@ -31,7 +31,7 @@ import xt.audio.XtSafeBuffer;
 import xt.audio.XtService;
 import xt.audio.XtStream;
 
-public class PcmFromXtAudioSignalGeneratorBlock extends PcmFromFileSignalGeneratorBlock
+public class PcmFromXtAudioSignalGeneratorBlock extends PcmSignalGeneratorBlock
 {
 
     // intermediate buffer
@@ -42,13 +42,13 @@ public class PcmFromXtAudioSignalGeneratorBlock extends PcmFromFileSignalGenerat
     private XtStream xtStream;
     private XtSafeBuffer safeBuffer;
 
-    public PcmFromXtAudioSignalGeneratorBlock( double amplitude, String filePath ) throws IOException
+    public PcmFromXtAudioSignalGeneratorBlock( double amplitude ) throws IOException
     {
-        super( amplitude, filePath );
+        super( amplitude );
     }
 
     @Override
-    protected AudioInputStream createAudioInputStream( String filePath ) throws IOException
+    protected AudioInputStream createAudioInputStream() throws IOException
     {
         try
         {

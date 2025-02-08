@@ -5,10 +5,10 @@ import java.io.IOException;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.blocks.BitAveragerBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.FFTBlock;
-import com.github.sp3wam.baseband.modem.core.blocks.PcmFromFileSignalGeneratorBlock;
-import com.github.sp3wam.baseband.modem.core.blocks.PcmFromMp3FileSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.PcmFromJavaxAudioSignalGeneratorBlock;
+import com.github.sp3wam.baseband.modem.core.blocks.PcmFromMp3FileSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.PcmFromWavFileSignalGeneratorBlock;
+import com.github.sp3wam.baseband.modem.core.blocks.PcmSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.SamplerBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.ToneToBitConverterBlock;
 import com.github.sp3wam.baseband.modem.core.signals.BitSignal;
@@ -25,6 +25,7 @@ public class MorseDecoder
     {
         PcmFromWavFileSignalGeneratorBlock signalGenerator =
             new PcmFromWavFileSignalGeneratorBlock( SIGNAL_AMPLITUDE, filePath );
+        signalGenerator.init();
 
         decode( signalGenerator, consumer );
     }
@@ -33,6 +34,7 @@ public class MorseDecoder
     {
         PcmFromMp3FileSignalGeneratorBlock signalGenerator =
             new PcmFromMp3FileSignalGeneratorBlock( SIGNAL_AMPLITUDE, filePath );
+        signalGenerator.init();
 
         decode( signalGenerator, consumer );
     }
@@ -40,7 +42,8 @@ public class MorseDecoder
     public void decodeFromJavaxAudio( MorseDecoderConsumer consumer ) throws IOException
     {
         PcmFromJavaxAudioSignalGeneratorBlock signalGenerator =
-            new PcmFromJavaxAudioSignalGeneratorBlock( SIGNAL_AMPLITUDE, null );
+            new PcmFromJavaxAudioSignalGeneratorBlock( SIGNAL_AMPLITUDE );
+        signalGenerator.init();
 
         decode( signalGenerator, consumer );
     }
@@ -48,12 +51,13 @@ public class MorseDecoder
     public void decodeFromXtAudio( MorseDecoderConsumer consumer ) throws IOException
     {
         PcmFromJavaxAudioSignalGeneratorBlock signalGenerator =
-            new PcmFromJavaxAudioSignalGeneratorBlock( SIGNAL_AMPLITUDE, null );
+            new PcmFromJavaxAudioSignalGeneratorBlock( SIGNAL_AMPLITUDE );
+        signalGenerator.init();
 
         decode( signalGenerator, consumer );
     }
 
-    private void decode( PcmFromFileSignalGeneratorBlock signalGenerator, MorseDecoderConsumer consumer )
+    private void decode( PcmSignalGeneratorBlock signalGenerator, MorseDecoderConsumer consumer )
     {
         double sampleRate = signalGenerator.getSampleRate();
         int fftSamplerDivider = (int)(sampleRate / FFT_DESIRED_SAMPLE_FREQ);

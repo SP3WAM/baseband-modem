@@ -11,22 +11,22 @@ import javax.sound.sampled.TargetDataLine;
 
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 
-public class PcmFromJavaxAudioSignalGeneratorBlock extends PcmFromFileSignalGeneratorBlock
+public class PcmFromJavaxAudioSignalGeneratorBlock extends PcmSignalGeneratorBlock
 {
 
-    public PcmFromJavaxAudioSignalGeneratorBlock( double amplitude, String filePath ) throws IOException
+    public PcmFromJavaxAudioSignalGeneratorBlock( double amplitude ) throws IOException
     {
-        super( amplitude, filePath );
+        super( amplitude );
     }
 
     @Override
-    protected AudioInputStream createAudioInputStream( String filePath ) throws IOException
+    protected AudioInputStream createAudioInputStream() throws IOException
     {
         Mixer mixer = null;
         for( Mixer.Info mixerInfo : AudioSystem.getMixerInfo() )
         {
             if( mixerInfo.getName().startsWith( "Stereomix (Realtek(R) Audio)" ) ) // it works, but is a bit
-                                                                                 // silent
+                                                                                   // silent
             {
                 mixer = AudioSystem.getMixer( mixerInfo );
                 break;
