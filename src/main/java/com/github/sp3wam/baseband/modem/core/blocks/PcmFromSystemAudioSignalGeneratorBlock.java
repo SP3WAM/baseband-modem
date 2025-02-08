@@ -5,10 +5,11 @@ import java.io.IOException;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Control;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.Mixer;
 import javax.sound.sampled.TargetDataLine;
+
+import com.github.sp3wam.baseband.modem.core.SystemClock;
 
 public class PcmFromSystemAudioSignalGeneratorBlock extends PcmFromFileSignalGeneratorBlock
 {
@@ -24,7 +25,7 @@ public class PcmFromSystemAudioSignalGeneratorBlock extends PcmFromFileSignalGen
         Mixer mixer = null;
         for( Mixer.Info mixerInfo : AudioSystem.getMixerInfo() )
         {
-            if( mixerInfo.getName().contains( "Stereomix (Realtek(R) Audio)" ) ) // it works, but is a bit
+            if( mixerInfo.getName().startsWith( "Stereomix (Realtek(R) Audio)" ) ) // it works, but is a bit
                                                                                  // silent
             {
                 mixer = AudioSystem.getMixer( mixerInfo );
@@ -44,6 +45,23 @@ public class PcmFromSystemAudioSignalGeneratorBlock extends PcmFromFileSignalGen
         {
             throw new RuntimeException( e );
         }
+    }
+
+    protected boolean execute0( SystemClock systemClock )
+    {
+        try
+        {
+            if( audioStream.available() == 0 )
+            {
+                return false;
+            }
+        }
+        catch( IOException e )
+        {
+            throw new RuntimeException( e );
+        }
+
+        return super.execute0( systemClock );
     }
 
 }

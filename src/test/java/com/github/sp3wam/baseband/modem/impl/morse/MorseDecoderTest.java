@@ -3,31 +3,21 @@ package com.github.sp3wam.baseband.modem.impl.morse;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.EnumSet;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.Line;
 import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.Mixer;
-import javax.sound.sampled.Mixer.Info;
-import javax.sound.sampled.TargetDataLine;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.sp3wam.baseband.modem.core.SystemClock;
-import com.github.sp3wam.baseband.modem.core.blocks.FFTBlock;
-import com.github.sp3wam.baseband.modem.core.blocks.PcmFromMp3FileSignalGeneratorBlock;
-import com.github.sp3wam.baseband.modem.core.blocks.PcmFromWavFileSignalGeneratorBlock;
-import com.github.sp3wam.baseband.modem.core.blocks.SamplerBlock;
-import com.github.sp3wam.baseband.modem.core.blocks.ToneToBitConverterBlock;
-import com.github.sp3wam.baseband.modem.core.signals.BitSignal;
-import com.github.sp3wam.baseband.modem.core.signals.FloatingPointSignal;
-import com.github.sp3wam.baseband.modem.core.signals.StringSignal;
+import xt.audio.Enums.XtEnumFlags;
+import xt.audio.Enums.XtSystem;
+import xt.audio.XtAudio;
+import xt.audio.XtDeviceList;
+import xt.audio.XtPlatform;
+import xt.audio.XtService;
 
 public class MorseDecoderTest
 {
@@ -93,9 +83,42 @@ public class MorseDecoderTest
             consumer.getDecodedString() );
     }
 
+    // This is more like an integration test
     @Test
-    public void testRealSound() throws IOException, LineUnavailableException
+    public void openJavaxSound() throws IOException, LineUnavailableException
     {
-        subject.decodeFromSystemAudio( consumer );
+        subject.decodeFromJavaxAudio( consumer );
+    }
+
+    // This is more like an integration test
+    @Test
+    public void testXtAudioPrintDevices() throws IOException, LineUnavailableException
+    {
+        try (XtPlatform platform = XtAudio.init( null, null ))
+        {
+            for( XtSystem system : platform.getSystems() )
+            {
+                XtService service = platform.getService( system );
+                try (XtDeviceList list = service.openDeviceList( EnumSet.of( XtEnumFlags.ALL ) ))
+                {
+                    for( int d = 0; d < list.getCount(); d++ )
+                    {
+                        String id = list.getId( d );
+                        System.out.println( system + ": " + list.getName( id ) );
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    public void openXtAudioLoopback() throws IOException, InterruptedException
+    {
+        subject.decodeFromXtAudio( consumer );
+
+        Thread.sleep( 100000 );
+        // stream.stop();
+
+        System.currentTimeMillis();
     }
 }

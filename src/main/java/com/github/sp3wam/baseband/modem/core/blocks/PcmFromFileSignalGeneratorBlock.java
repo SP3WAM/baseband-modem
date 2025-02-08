@@ -26,7 +26,8 @@ public abstract class PcmFromFileSignalGeneratorBlock implements BlockIf< DummyS
     protected FloatingPointSignal currentValue = null;
     protected long silenceAtEndFrameCountdown = -1;
 
-    private AudioInputStream audioStream = null;
+    protected AudioInputStream audioStream = null;
+    protected long samplesCount = 0;
 
     public PcmFromFileSignalGeneratorBlock( double amplitude, String filePath ) throws IOException
     {
@@ -60,7 +61,10 @@ public abstract class PcmFromFileSignalGeneratorBlock implements BlockIf< DummyS
     @Override
     public void execute( SystemClock systemClock, DummySignal inputSignalValue )
     {
-        execute0( systemClock );
+        if( !execute0( systemClock ) )
+        {
+            return;
+        }
 
         if( nextBlock != null )
         {
@@ -92,9 +96,11 @@ public abstract class PcmFromFileSignalGeneratorBlock implements BlockIf< DummyS
 
     protected abstract AudioInputStream createAudioInputStream( String filePath ) throws IOException;
 
-    protected void execute0( SystemClock systemClock )
+    protected boolean execute0( SystemClock systemClock )
     {
-        LOGGER.debug( String.format( "Processing sample nr %s", systemClock.getClockValue() ) );
+
+        samplesCount++;
+        LOGGER.debug( String.format( "Processing sample nr %s", samplesCount ) );
 
         if( silenceAtEndFrameCountdown == -1 )
         {
@@ -131,7 +137,7 @@ public abstract class PcmFromFileSignalGeneratorBlock implements BlockIf< DummyS
             {
                 silenceAtEndFrameCountdown =
                     (long)(audioStream.getFormat().getSampleRate() * SILENCE_AT_END_DURATION_MS / 1000.0);
-                
+
                 try
                 {
                     audioStream.close();
@@ -152,5 +158,7 @@ public abstract class PcmFromFileSignalGeneratorBlock implements BlockIf< DummyS
             }
             currentValue = new FloatingPointSignal( 0.0 );
         }
+
+        return true;
     }
 }
