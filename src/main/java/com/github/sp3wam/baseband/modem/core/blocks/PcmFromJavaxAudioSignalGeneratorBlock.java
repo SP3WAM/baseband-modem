@@ -11,10 +11,10 @@ import javax.sound.sampled.TargetDataLine;
 
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 
-public class PcmFromSystemAudioSignalGeneratorBlock extends PcmFromFileSignalGeneratorBlock
+public class PcmFromJavaxAudioSignalGeneratorBlock extends PcmFromFileSignalGeneratorBlock
 {
 
-    public PcmFromSystemAudioSignalGeneratorBlock( double amplitude, String filePath ) throws IOException
+    public PcmFromJavaxAudioSignalGeneratorBlock( double amplitude, String filePath ) throws IOException
     {
         super( amplitude, filePath );
     }

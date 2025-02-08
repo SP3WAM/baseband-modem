@@ -7,7 +7,7 @@ import com.github.sp3wam.baseband.modem.core.blocks.BitAveragerBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.FFTBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.PcmFromFileSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.PcmFromMp3FileSignalGeneratorBlock;
-import com.github.sp3wam.baseband.modem.core.blocks.PcmFromSystemAudioSignalGeneratorBlock;
+import com.github.sp3wam.baseband.modem.core.blocks.PcmFromJavaxAudioSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.PcmFromWavFileSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.SamplerBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.ToneToBitConverterBlock;
@@ -39,16 +39,16 @@ public class MorseDecoder
 
     public void decodeFromJavaxAudio( MorseDecoderConsumer consumer ) throws IOException
     {
-        PcmFromSystemAudioSignalGeneratorBlock signalGenerator =
-            new PcmFromSystemAudioSignalGeneratorBlock( SIGNAL_AMPLITUDE, null );
+        PcmFromJavaxAudioSignalGeneratorBlock signalGenerator =
+            new PcmFromJavaxAudioSignalGeneratorBlock( SIGNAL_AMPLITUDE, null );
 
         decode( signalGenerator, consumer );
     }
 
     public void decodeFromXtAudio( MorseDecoderConsumer consumer ) throws IOException
     {
-        PcmFromSystemAudioSignalGeneratorBlock signalGenerator =
-            new PcmFromSystemAudioSignalGeneratorBlock( SIGNAL_AMPLITUDE, null );
+        PcmFromJavaxAudioSignalGeneratorBlock signalGenerator =
+            new PcmFromJavaxAudioSignalGeneratorBlock( SIGNAL_AMPLITUDE, null );
 
         decode( signalGenerator, consumer );
     }
