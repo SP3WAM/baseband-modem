@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.blocks.BitAveragerBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.FFTBlock;
+import com.github.sp3wam.baseband.modem.core.blocks.FloatingPointAvgMagnitudeCalculatorBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.PcmFromJavaxAudioSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.PcmFromMp3FileSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.PcmFromWavFileSignalGeneratorBlock;
@@ -66,6 +67,8 @@ public class MorseDecoder
 
         SamplerBlock< FloatingPointSignal, FloatingPointSignal > fftSampler =
             new SamplerBlock< FloatingPointSignal, FloatingPointSignal >( fftSamplerDivider );
+        FloatingPointAvgMagnitudeCalculatorBlock avgMagnitude =
+            new FloatingPointAvgMagnitudeCalculatorBlock( 44100 );
         FFTBlock fftBlock = new FFTBlock( fftSampleFreq, FFT_WINDOW_SIZE );
         MorseToneDetectorBlock morseToneDetectorBlock = new MorseToneDetectorBlock();
         ToneToBitConverterBlock toneToBitConverterBlock = new ToneToBitConverterBlock();
@@ -79,7 +82,8 @@ public class MorseDecoder
         SystemClock systemClock = new SystemClock( signalGenerator.getSampleRate() );
 
         // connect the blocks
-        signalGenerator.setNextBlock( fftSampler );
+        signalGenerator.setNextBlock( avgMagnitude );
+        avgMagnitude.setNextBlock( fftSampler );
         fftSampler.setNextBlock( fftBlock );
         fftBlock.setNextBlock( morseToneDetectorBlock );
         morseToneDetectorBlock.setNextBlock( toneToBitConverterBlock );

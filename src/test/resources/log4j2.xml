@@ -33,6 +33,10 @@
 			level="info" />
 			
 		<Logger
+			name="com.github.sp3wam.baseband.modem.core.blocks.FloatingPointAvgMagnitudeCalculatorBlock"
+			level="info" />
+			
+		<Logger
 			name="com.github.sp3wam.baseband.modem.core.blocks.SamplerBlock"
 			level="off" />
 		<Logger
