@@ -18,7 +18,7 @@ import com.github.sp3wam.baseband.modem.core.signals.FloatingPointSignal;
 public class FFTBlock implements BlockIf< FloatingPointSignal, FFTSignal >
 {
     private Logger LOGGER = LoggerFactory.getLogger( FFTBlock.class );
-    
+
     private List< Complex > fftWindow = new ArrayList< Complex >();
     private int fftWindowSize;
     private int samplingFreq;
@@ -85,7 +85,21 @@ public class FFTBlock implements BlockIf< FloatingPointSignal, FFTSignal >
         Complex[] outputArray = fastFourierTransformer.transform( inputArray, TransformType.FORWARD );
 
         curentValue = new FFTSignal( outputArray, samplingFreq );
+
+        LOGGER.debug( String.format( "Calculating FFT from \n %s \n into %s", sourcesSamplesToString(),
+            curentValue.toString() ) );
+    }
+
+    private String sourcesSamplesToString()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append( "\n    Samples:" );
         
-        LOGGER.debug( String.format( "Calculating FFT \n %s", curentValue.toString() ) );
+        for(int q = 0 ; q < fftWindow.size() ; q ++)
+        {
+            sb.append( String.format( "\n    %s", fftWindow.get( q ).abs() ) );
+        }
+        
+        return sb.toString();
     }
 }

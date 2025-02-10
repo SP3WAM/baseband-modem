@@ -9,9 +9,7 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.Mixer;
 import javax.sound.sampled.TargetDataLine;
 
-import com.github.sp3wam.baseband.modem.core.SystemClock;
-
-public class PcmFromJavaxAudioSignalGeneratorBlock extends PcmSignalGeneratorBlock
+public class PcmFromJavaxAudioSignalGeneratorBlock extends PcmFromLifeAudioSignalGeneratorBlock
 {
 
     public PcmFromJavaxAudioSignalGeneratorBlock( double amplitude ) throws IOException
@@ -46,22 +44,4 @@ public class PcmFromJavaxAudioSignalGeneratorBlock extends PcmSignalGeneratorBlo
             throw new RuntimeException( e );
         }
     }
-
-    protected boolean execute0( SystemClock systemClock )
-    {
-        try
-        {
-            if( audioStream.available() == 0 )
-            {
-                return false;
-            }
-        }
-        catch( IOException e )
-        {
-            throw new RuntimeException( e );
-        }
-
-        return super.execute0( systemClock );
-    }
-
 }

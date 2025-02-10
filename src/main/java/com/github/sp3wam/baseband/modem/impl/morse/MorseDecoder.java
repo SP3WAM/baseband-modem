@@ -13,6 +13,7 @@ import com.github.sp3wam.baseband.modem.core.blocks.PcmSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.SamplerBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.ToneToBitConverterBlock;
 import com.github.sp3wam.baseband.modem.core.signals.BitSignal;
+import com.github.sp3wam.baseband.modem.core.signals.FFTSignal;
 import com.github.sp3wam.baseband.modem.core.signals.FloatingPointSignal;
 
 public class MorseDecoder
@@ -65,17 +66,16 @@ public class MorseDecoder
         int fftSampleFreq = (int)(sampleRate / fftSamplerDivider);
         int bitSamplerDivider = (int)(fftSampleFreq / BIT_DESIRED_SAMPLE_FREQ);
 
-        SamplerBlock< FloatingPointSignal, FloatingPointSignal > fftSampler =
+        SamplerBlock< FloatingPointSignal, FloatingPointSignal > fftFasterSampler =
             new SamplerBlock< FloatingPointSignal, FloatingPointSignal >( fftSamplerDivider );
         FloatingPointAvgMagnitudeCalculatorBlock avgMagnitude =
             new FloatingPointAvgMagnitudeCalculatorBlock( 44100 );
         FFTBlock fftBlock = new FFTBlock( fftSampleFreq, FFT_WINDOW_SIZE );
+        SamplerBlock< FFTSignal, FFTSignal > fftSlowerSampler =
+            new SamplerBlock< FFTSignal, FFTSignal >( bitSamplerDivider );
         MorseToneDetectorBlock morseToneDetectorBlock = new MorseToneDetectorBlock();
         ToneToBitConverterBlock toneToBitConverterBlock = new ToneToBitConverterBlock();
-
-        SamplerBlock< BitSignal, BitSignal > bitSampler =
-            new SamplerBlock< BitSignal, BitSignal >( bitSamplerDivider );
-        BitAveragerBlock bitAveragerBlock = new BitAveragerBlock( 3 );
+        BitAveragerBlock bitAveragerBlock = new BitAveragerBlock( 5 );
         BitStreamMorseDecoderBlock morseDecoderBlock = new BitStreamMorseDecoderBlock();
         MorseSymbolDecoderBlock morseSymbolDecoderBlock = new MorseSymbolDecoderBlock();
 
@@ -83,12 +83,12 @@ public class MorseDecoder
 
         // connect the blocks
         signalGenerator.setNextBlock( avgMagnitude );
-        avgMagnitude.setNextBlock( fftSampler );
-        fftSampler.setNextBlock( fftBlock );
-        fftBlock.setNextBlock( morseToneDetectorBlock );
+        avgMagnitude.setNextBlock( fftFasterSampler );
+        fftFasterSampler.setNextBlock( fftBlock );
+        fftBlock.setNextBlock( fftSlowerSampler );
+        fftSlowerSampler.setNextBlock( morseToneDetectorBlock );
         morseToneDetectorBlock.setNextBlock( toneToBitConverterBlock );
-        toneToBitConverterBlock.setNextBlock( bitSampler );
-        bitSampler.setNextBlock( bitAveragerBlock );
+        toneToBitConverterBlock.setNextBlock( bitAveragerBlock );
         bitAveragerBlock.setNextBlock( morseDecoderBlock );
         morseDecoderBlock.setNextBlock( morseSymbolDecoderBlock );
         morseSymbolDecoderBlock.setNextBlock( consumer );

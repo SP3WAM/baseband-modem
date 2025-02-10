@@ -31,11 +31,11 @@
 		<Logger
 			name="com.github.sp3wam.baseband.modem.core.blocks.PcmFromXtAudioAudioSignalGeneratorBlock"
 			level="info" />
-			
+
 		<Logger
 			name="com.github.sp3wam.baseband.modem.core.blocks.FloatingPointAvgMagnitudeCalculatorBlock"
-			level="info" />
-			
+			level="off" />
+
 		<Logger
 			name="com.github.sp3wam.baseband.modem.core.blocks.SamplerBlock"
 			level="off" />
@@ -43,12 +43,15 @@
 			name="com.github.sp3wam.baseband.modem.core.blocks.FFTBlock"
 			level="off" />
 		<Logger
-			name="com.github.sp3wam.baseband.modem.core.blocks.ToneToBitConverterBlock"
-			level="off" />
-
-		<Logger
 			name="com.github.sp3wam.baseband.modem.impl.morse.MorseToneDetectorBlock"
 			level="off" />
+		<Logger
+			name="com.github.sp3wam.baseband.modem.core.blocks.ToneToBitConverterBlock"
+			level="off" />
+		<Logger
+			name="com.github.sp3wam.baseband.modem.core.blocks.BitAveragerBlock"
+			level="off" />
+
 		<Logger
 			name="com.github.sp3wam.baseband.modem.impl.morse.BitStreamMorseDecoderBlock"
 			level="off" />

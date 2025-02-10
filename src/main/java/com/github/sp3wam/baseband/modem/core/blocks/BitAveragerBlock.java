@@ -3,12 +3,17 @@ package com.github.sp3wam.baseband.modem.core.blocks;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.sp3wam.baseband.modem.core.BlockIf;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.signals.BitSignal;
 
 public class BitAveragerBlock implements BlockIf< BitSignal, BitSignal >
 {
+    private Logger LOGGER = LoggerFactory.getLogger( BitAveragerBlock.class );
+
     private BitSignal currentValue;
     private BlockIf< BitSignal, ? > nextBlock;
 
@@ -70,5 +75,7 @@ public class BitAveragerBlock implements BlockIf< BitSignal, BitSignal >
         {
             currentValue = new BitSignal( false );
         }
+
+        LOGGER.debug( String.format( "Average bit value is %s", currentValue.getBitValue() ) );
     }
 }
