@@ -72,6 +72,27 @@ public class MorseDecoderTest
         assertEquals( "c ", consumer.getDecodedString() );
     }
 
+    
+    @Test
+    public void testRealLoudNoise_fromMp3() throws IOException
+    {
+        String filePath =
+            "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/real_loud_noise.mp3";
+        subject.decodeFromMp3( filePath, consumer );
+
+        assertEquals( "c ", consumer.getDecodedString() );
+    }
+    
+    @Test
+    public void testRealLoudNoise_fromWav() throws IOException
+    {
+        String filePath =
+            "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/real_loud_noise.wav";
+        subject.decodeFromWav( filePath, consumer );
+
+        assertEquals( "c ", consumer.getDecodedString() );
+    }
+    
     @Test
     public void testWikipedia_fromMp3() throws IOException
     {

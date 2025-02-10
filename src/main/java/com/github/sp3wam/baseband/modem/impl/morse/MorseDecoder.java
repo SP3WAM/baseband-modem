@@ -19,9 +19,6 @@ import com.github.sp3wam.baseband.modem.core.signals.FloatingPointSignal;
 public class MorseDecoder
 {
     private final double SIGNAL_AMPLITUDE = 100.0;
-    private final int FFT_WINDOW_SIZE = 16;
-    private final static double FFT_DESIRED_SAMPLE_FREQ = 6000.0;
-    private final static double BIT_DESIRED_SAMPLE_FREQ = 100.0;
 
     public void decodeFromWav( String filePath, MorseDecoderConsumer consumer ) throws IOException
     {
@@ -61,35 +58,16 @@ public class MorseDecoder
 
     private void decode( PcmSignalGeneratorBlock signalGenerator, MorseDecoderConsumer consumer )
     {
-        double sampleRate = signalGenerator.getSampleRate();
-        int fftSamplerDivider = (int)(sampleRate / FFT_DESIRED_SAMPLE_FREQ);
-        int fftSampleFreq = (int)(sampleRate / fftSamplerDivider);
-        int bitSamplerDivider = (int)(fftSampleFreq / BIT_DESIRED_SAMPLE_FREQ);
-
-        SamplerBlock< FloatingPointSignal, FloatingPointSignal > fftFasterSampler =
-            new SamplerBlock< FloatingPointSignal, FloatingPointSignal >( fftSamplerDivider );
-        FloatingPointAvgMagnitudeCalculatorBlock avgMagnitude =
-            new FloatingPointAvgMagnitudeCalculatorBlock( 44100 );
-        FFTBlock fftBlock = new FFTBlock( fftSampleFreq, FFT_WINDOW_SIZE );
-        SamplerBlock< FFTSignal, FFTSignal > fftSlowerSampler =
-            new SamplerBlock< FFTSignal, FFTSignal >( bitSamplerDivider );
-        MorseToneDetectorBlock morseToneDetectorBlock = new MorseToneDetectorBlock();
-        ToneToBitConverterBlock toneToBitConverterBlock = new ToneToBitConverterBlock();
-        BitAveragerBlock bitAveragerBlock = new BitAveragerBlock( 5 );
+        MorseSignalDetectorBlock morseSignalDetectorBlock =
+            new MorseSignalDetectorBlock( signalGenerator.getSampleRate() );
         BitStreamMorseDecoderBlock morseDecoderBlock = new BitStreamMorseDecoderBlock();
         MorseSymbolDecoderBlock morseSymbolDecoderBlock = new MorseSymbolDecoderBlock();
 
         SystemClock systemClock = new SystemClock( signalGenerator.getSampleRate() );
 
         // connect the blocks
-        signalGenerator.setNextBlock( avgMagnitude );
-        avgMagnitude.setNextBlock( fftFasterSampler );
-        fftFasterSampler.setNextBlock( fftBlock );
-        fftBlock.setNextBlock( fftSlowerSampler );
-        fftSlowerSampler.setNextBlock( morseToneDetectorBlock );
-        morseToneDetectorBlock.setNextBlock( toneToBitConverterBlock );
-        toneToBitConverterBlock.setNextBlock( bitAveragerBlock );
-        bitAveragerBlock.setNextBlock( morseDecoderBlock );
+        signalGenerator.setNextBlock( morseSignalDetectorBlock );
+        morseSignalDetectorBlock.setNextBlock( morseDecoderBlock );
         morseDecoderBlock.setNextBlock( morseSymbolDecoderBlock );
         morseSymbolDecoderBlock.setNextBlock( consumer );
 
