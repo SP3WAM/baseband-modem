@@ -2,155 +2,23 @@ package com.github.sp3wam.baseband.modem.core.blocks;
 
 import java.io.IOException;
 
-import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioFormat.Encoding;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.github.sp3wam.baseband.modem.core.BlockIf;
-import com.github.sp3wam.baseband.modem.core.SystemClock;
-import com.github.sp3wam.baseband.modem.core.signals.DummySignal;
-import com.github.sp3wam.baseband.modem.core.signals.FloatingPointSignal;
-
-public abstract class PcmFromFileSignalGeneratorBlock implements BlockIf< DummySignal, FloatingPointSignal >
+public abstract class PcmFromFileSignalGeneratorBlock extends PcmSignalGeneratorBlock
 {
-    private final static Logger LOGGER = LoggerFactory.getLogger( PcmFromFileSignalGeneratorBlock.class );
-
-    protected final static long SILENCE_AT_END_DURATION_MS = 1000;
-
-    protected boolean hasMoreSamples = false;
-    protected double amplitude;
-    protected BlockIf< FloatingPointSignal, ? > nextBlock;
-    protected FloatingPointSignal currentValue = null;
-    protected long silenceAtEndFrameCountdown = -1;
-
-    private AudioInputStream audioStream = null;
+    private String filePath;
 
     public PcmFromFileSignalGeneratorBlock( double amplitude, String filePath ) throws IOException
     {
-        this.amplitude = amplitude;
+        super( amplitude );
 
-        audioStream = createAudioInputStream( filePath );
-
-        AudioFormat audioFormat = audioStream.getFormat();
-
-        LOGGER.info( audioFormat.toString() );
-
-        if( audioFormat.getChannels() != 1 )
-        {
-            throw new RuntimeException( String.format( "Files with number of channels %s are not supported.",
-                audioFormat.getChannels() ) );
-        }
-        if( audioFormat.getFrameSize() != 2 )
-        {
-            throw new RuntimeException( String.format( "Files with %s bytes per sample are not supported.",
-                audioFormat.getFrameSize() ) );
-        }
-        if( !Encoding.PCM_SIGNED.equals( audioFormat.getEncoding() ) )
-        {
-            throw new RuntimeException( String.format( "Files with %s encoding are not supported.",
-                audioFormat.getEncoding().toString() ) );
-        }
-
-        hasMoreSamples = true;
+        this.filePath = filePath;
     }
 
-    @Override
-    public void execute( SystemClock systemClock, DummySignal inputSignalValue )
+    protected AudioInputStream createAudioInputStream() throws IOException
     {
-        execute0( systemClock );
-
-        if( nextBlock != null )
-        {
-            nextBlock.execute( systemClock, currentValue );
-        }
-    }
-
-    @Override
-    public void setNextBlock( BlockIf< FloatingPointSignal, ? > nextBlock )
-    {
-        this.nextBlock = nextBlock;
-    }
-
-    public long getSampleRate()
-    {
-        return (long)audioStream.getFormat().getSampleRate();
-    }
-
-    public boolean hasMoreSamples()
-    {
-        return hasMoreSamples;
-    }
-
-    @Override
-    public FloatingPointSignal getCurrentValue()
-    {
-        return currentValue;
+        return createAudioInputStream( filePath );
     }
 
     protected abstract AudioInputStream createAudioInputStream( String filePath ) throws IOException;
-
-    protected void execute0( SystemClock systemClock )
-    {
-        LOGGER.debug( String.format( "Processing sample nr %s", systemClock.getClockValue() ) );
-
-        if( silenceAtEndFrameCountdown == -1 )
-        {
-            // need to generate samples from file
-
-            int numChannels = audioStream.getFormat().getChannels();
-            int bytesPerSample = audioStream.getFormat().getFrameSize();
-            int sampleSizeInBits = audioStream.getFormat().getSampleSizeInBits();
-
-            // Create a buffer
-            byte[] buffer = new byte[ 1 * numChannels * bytesPerSample ];
-            int bytesRead = 0;
-
-            try
-            {
-                // framesRead = wavFile.readFrames( buffer, 1 );
-                bytesRead = audioStream.read( buffer );
-
-                // assuming we have 2 bytes per sample and PCM_SIGNED encoding
-                int val = (buffer[ 0 ] & 0xFF) + (buffer[ 1 ] << 8);
-                double floatScale = 1 << (sampleSizeInBits - 1);
-                double value = amplitude * val / floatScale;
-
-                LOGGER.trace( String.format( "%s", value ) );
-
-                currentValue = new FloatingPointSignal( value );
-            }
-            catch( IOException e )
-            {
-                throw new RuntimeException( e );
-            }
-
-            if( bytesRead != (numChannels * bytesPerSample) )
-            {
-                silenceAtEndFrameCountdown =
-                    (long)(audioStream.getFormat().getSampleRate() * SILENCE_AT_END_DURATION_MS / 1000.0);
-                
-                try
-                {
-                    audioStream.close();
-                }
-                catch( IOException e )
-                {
-                    LOGGER.error( e.getMessage(), e );
-                }
-            }
-        }
-        else
-        {
-            // need to generate silence at end of the sequence
-            silenceAtEndFrameCountdown--;
-            if( silenceAtEndFrameCountdown == 0 )
-            {
-                hasMoreSamples = false;
-            }
-            currentValue = new FloatingPointSignal( 0.0 );
-        }
-    }
 }

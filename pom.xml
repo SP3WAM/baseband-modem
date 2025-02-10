@@ -29,6 +29,11 @@
 			<artifactId>mp3spi</artifactId>
 			<version>1.9.7</version>
 		</dependency>
+		<dependency>
+			<groupId>com.github.sjoerdvankreel</groupId>
+			<artifactId>xt.audio</artifactId>
+			<version>2.2</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>

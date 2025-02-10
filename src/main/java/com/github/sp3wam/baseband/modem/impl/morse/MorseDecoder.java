@@ -5,13 +5,15 @@ import java.io.IOException;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.blocks.BitAveragerBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.FFTBlock;
-import com.github.sp3wam.baseband.modem.core.blocks.PcmFromFileSignalGeneratorBlock;
+import com.github.sp3wam.baseband.modem.core.blocks.FloatingPointAvgMagnitudeCalculatorBlock;
+import com.github.sp3wam.baseband.modem.core.blocks.PcmFromJavaxAudioSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.PcmFromMp3FileSignalGeneratorBlock;
-import com.github.sp3wam.baseband.modem.core.blocks.PcmFromSystemAudioSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.PcmFromWavFileSignalGeneratorBlock;
+import com.github.sp3wam.baseband.modem.core.blocks.PcmSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.SamplerBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.ToneToBitConverterBlock;
 import com.github.sp3wam.baseband.modem.core.signals.BitSignal;
+import com.github.sp3wam.baseband.modem.core.signals.FFTSignal;
 import com.github.sp3wam.baseband.modem.core.signals.FloatingPointSignal;
 
 public class MorseDecoder
@@ -25,6 +27,7 @@ public class MorseDecoder
     {
         PcmFromWavFileSignalGeneratorBlock signalGenerator =
             new PcmFromWavFileSignalGeneratorBlock( SIGNAL_AMPLITUDE, filePath );
+        signalGenerator.init();
 
         decode( signalGenerator, consumer );
     }
@@ -33,46 +36,59 @@ public class MorseDecoder
     {
         PcmFromMp3FileSignalGeneratorBlock signalGenerator =
             new PcmFromMp3FileSignalGeneratorBlock( SIGNAL_AMPLITUDE, filePath );
+        signalGenerator.init();
 
         decode( signalGenerator, consumer );
     }
 
-    public void decodeFromSystemAudio( MorseDecoderConsumer consumer ) throws IOException
+    public void decodeFromJavaxAudio( MorseDecoderConsumer consumer ) throws IOException
     {
-        PcmFromSystemAudioSignalGeneratorBlock signalGenerator =
-            new PcmFromSystemAudioSignalGeneratorBlock( 200.0 * SIGNAL_AMPLITUDE, null );
+        PcmFromJavaxAudioSignalGeneratorBlock signalGenerator =
+            new PcmFromJavaxAudioSignalGeneratorBlock( SIGNAL_AMPLITUDE );
+        signalGenerator.init();
 
         decode( signalGenerator, consumer );
     }
 
-    private void decode( PcmFromFileSignalGeneratorBlock signalGenerator, MorseDecoderConsumer consumer )
+    public void decodeFromXtAudio( MorseDecoderConsumer consumer ) throws IOException
+    {
+        PcmFromJavaxAudioSignalGeneratorBlock signalGenerator =
+            new PcmFromJavaxAudioSignalGeneratorBlock( SIGNAL_AMPLITUDE );
+        signalGenerator.init();
+
+        decode( signalGenerator, consumer );
+    }
+
+    private void decode( PcmSignalGeneratorBlock signalGenerator, MorseDecoderConsumer consumer )
     {
         double sampleRate = signalGenerator.getSampleRate();
         int fftSamplerDivider = (int)(sampleRate / FFT_DESIRED_SAMPLE_FREQ);
         int fftSampleFreq = (int)(sampleRate / fftSamplerDivider);
         int bitSamplerDivider = (int)(fftSampleFreq / BIT_DESIRED_SAMPLE_FREQ);
 
-        SamplerBlock< FloatingPointSignal, FloatingPointSignal > fftSampler =
+        SamplerBlock< FloatingPointSignal, FloatingPointSignal > fftFasterSampler =
             new SamplerBlock< FloatingPointSignal, FloatingPointSignal >( fftSamplerDivider );
+        FloatingPointAvgMagnitudeCalculatorBlock avgMagnitude =
+            new FloatingPointAvgMagnitudeCalculatorBlock( 44100 );
         FFTBlock fftBlock = new FFTBlock( fftSampleFreq, FFT_WINDOW_SIZE );
+        SamplerBlock< FFTSignal, FFTSignal > fftSlowerSampler =
+            new SamplerBlock< FFTSignal, FFTSignal >( bitSamplerDivider );
         MorseToneDetectorBlock morseToneDetectorBlock = new MorseToneDetectorBlock();
         ToneToBitConverterBlock toneToBitConverterBlock = new ToneToBitConverterBlock();
-
-        SamplerBlock< BitSignal, BitSignal > bitSampler =
-            new SamplerBlock< BitSignal, BitSignal >( bitSamplerDivider );
-        BitAveragerBlock bitAveragerBlock = new BitAveragerBlock( 3 );
+        BitAveragerBlock bitAveragerBlock = new BitAveragerBlock( 5 );
         BitStreamMorseDecoderBlock morseDecoderBlock = new BitStreamMorseDecoderBlock();
         MorseSymbolDecoderBlock morseSymbolDecoderBlock = new MorseSymbolDecoderBlock();
 
         SystemClock systemClock = new SystemClock( signalGenerator.getSampleRate() );
 
         // connect the blocks
-        signalGenerator.setNextBlock( fftSampler );
-        fftSampler.setNextBlock( fftBlock );
-        fftBlock.setNextBlock( morseToneDetectorBlock );
+        signalGenerator.setNextBlock( avgMagnitude );
+        avgMagnitude.setNextBlock( fftFasterSampler );
+        fftFasterSampler.setNextBlock( fftBlock );
+        fftBlock.setNextBlock( fftSlowerSampler );
+        fftSlowerSampler.setNextBlock( morseToneDetectorBlock );
         morseToneDetectorBlock.setNextBlock( toneToBitConverterBlock );
-        toneToBitConverterBlock.setNextBlock( bitSampler );
-        bitSampler.setNextBlock( bitAveragerBlock );
+        toneToBitConverterBlock.setNextBlock( bitAveragerBlock );
         bitAveragerBlock.setNextBlock( morseDecoderBlock );
         morseDecoderBlock.setNextBlock( morseSymbolDecoderBlock );
         morseSymbolDecoderBlock.setNextBlock( consumer );
