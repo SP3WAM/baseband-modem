@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.sp3wam.baseband.modem.core.BlockIf;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
+import com.github.sp3wam.baseband.modem.core.signals.FFTPeaks;
 import com.github.sp3wam.baseband.modem.core.signals.FFTSignal;
 import com.github.sp3wam.baseband.modem.core.signals.MorseToneSignal;
 
@@ -42,15 +43,18 @@ class MorseToneDetectorBlock implements BlockIf< FFTSignal, MorseToneSignal >
 
     protected void execute0( SystemClock systemClock, FFTSignal inputSignalValue )
     {
-        if( inputSignalValue.getPeakFrequencies( 100.0 ).size() == 1 )
+        FFTPeaks fftPeaks = new FFTPeaks( inputSignalValue, 100.0 );
+
+        if( fftPeaks.getPeakFrequencies().size() == 1 )
         {
-            currentTone = new MorseToneSignal( inputSignalValue.getPeakFrequencies( 100.0 ).get( 0 ) );
+            currentTone = new MorseToneSignal( fftPeaks.getPeakFrequencies().get( 0 ) );
         }
         else
         {
             currentTone = new MorseToneSignal( 0.0 );
         }
 
-        LOGGER.debug( String.format( "Detected tone %s Hz", currentTone.getToneFrequency() ) );
+        LOGGER.debug( String.format( "Detected tone %s Hz from peaks %s", currentTone.getToneFrequency(),
+            fftPeaks.toString() ) );
     }
 }

@@ -97,7 +97,7 @@ public class FFTBlock implements BlockIf< FloatingPointSignal, FFTSignal >
         
         for(int q = 0 ; q < fftWindow.size() ; q ++)
         {
-            sb.append( String.format( "\n    %s", fftWindow.get( q ).abs() ) );
+            sb.append( String.format( "\n    %s", fftWindow.get( q ).getReal() ) );
         }
         
         return sb.toString();
