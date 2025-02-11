@@ -7,6 +7,7 @@ import com.github.sp3wam.baseband.modem.core.BlockIf;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.blocks.BitAveragerBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.FFTBlock;
+import com.github.sp3wam.baseband.modem.core.blocks.FloatingPointAveragerBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.FloatingPointAvgMagnitudeCalculatorBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.SamplerBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.ToneToBitConverterBlock;
@@ -25,6 +26,7 @@ public class MorseSignalDetectorBlock implements BlockIf< FloatingPointSignal, B
     private BitSignal currentValue;
     private BlockIf< BitSignal, ? > nextBlock;
 
+    private FloatingPointAveragerBlock floatingPointAveragerBlock;
     private SamplerBlock< FloatingPointSignal, FloatingPointSignal > fftFasterSampler;
     private FloatingPointAvgMagnitudeCalculatorBlock avgMagnitude;
     private FFTBlock fftBlock;
@@ -39,8 +41,9 @@ public class MorseSignalDetectorBlock implements BlockIf< FloatingPointSignal, B
         int fftSampleFreq = (int)(inputSignalSampleRate / fftSamplerDivider);
         int bitSamplerDivider = (int)(fftSampleFreq / BIT_DESIRED_SAMPLE_FREQ);
 
-        fftFasterSampler = new SamplerBlock< FloatingPointSignal, FloatingPointSignal >( fftSamplerDivider );
+        floatingPointAveragerBlock = new FloatingPointAveragerBlock(1);
         avgMagnitude = new FloatingPointAvgMagnitudeCalculatorBlock( 44100 );
+        fftFasterSampler = new SamplerBlock< FloatingPointSignal, FloatingPointSignal >( fftSamplerDivider );
         fftBlock = new FFTBlock( fftSampleFreq, FFT_WINDOW_SIZE );
         fftSlowerSampler = new SamplerBlock< FFTSignal, FFTSignal >( bitSamplerDivider );
         morseToneDetectorBlock = new MorseToneDetectorBlock();
@@ -48,6 +51,7 @@ public class MorseSignalDetectorBlock implements BlockIf< FloatingPointSignal, B
         bitAveragerBlock = new BitAveragerBlock( 3 );
 
         // connect the blocks
+        floatingPointAveragerBlock.setNextBlock( avgMagnitude );
         avgMagnitude.setNextBlock( fftFasterSampler );
         fftFasterSampler.setNextBlock( fftBlock );
         fftBlock.setNextBlock( fftSlowerSampler );
@@ -83,7 +87,7 @@ public class MorseSignalDetectorBlock implements BlockIf< FloatingPointSignal, B
 
     protected void execute0( SystemClock systemClock, FloatingPointSignal inputSignalValue )
     {
-        fftFasterSampler.execute( systemClock, inputSignalValue );
+        floatingPointAveragerBlock.execute( systemClock, inputSignalValue );
         
         currentValue = bitAveragerBlock.getCurrentValue();
     }

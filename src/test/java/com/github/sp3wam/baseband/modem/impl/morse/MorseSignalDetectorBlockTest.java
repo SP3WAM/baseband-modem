@@ -53,8 +53,11 @@ public class MorseSignalDetectorBlockTest
     @Test
     public void testRealLoudNoise_fromMp3() throws IOException
     {
-        String filePath =
-            "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/real_loud_noise.mp3";
+         String filePath =
+         "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/real_loud_noise.mp3";
+
+//        String filePath =
+//            "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/White-noise-sound-20sec-mono-44100Hz.mp3";
 
         PcmFromMp3FileSignalGeneratorBlock signalGenerator =
             new PcmFromMp3FileSignalGeneratorBlock( SIGNAL_AMPLITUDE, filePath );
