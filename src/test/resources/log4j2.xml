@@ -33,11 +33,11 @@
 			level="info" />
 
 		<Logger
-			name="com.github.sp3wam.baseband.modem.core.blocks.FloatingPointAvgMagnitudeCalculatorBlock"
+			name="com.github.sp3wam.baseband.modem.core.basic.blocks.FloatingPointAvgMagnitudeCalculatorBlock"
 			level="debug" />
 
 		<Logger
-			name="com.github.sp3wam.baseband.modem.core.blocks.SamplerBlock"
+			name="com.github.sp3wam.baseband.modem.core.basic.blocks.SamplerBlock"
 			level="off" />
 		<Logger
 			name="com.github.sp3wam.baseband.modem.core.fft.FFTBlock"
@@ -46,10 +46,10 @@
 			name="com.github.sp3wam.baseband.modem.impl.morse.MorseToneDetectorBlock"
 			level="off" />
 		<Logger
-			name="com.github.sp3wam.baseband.modem.core.blocks.ToneToBitConverterBlock"
+			name="com.github.sp3wam.baseband.modem.core.basic.blocks.ToneToBitConverterBlock"
 			level="off" />
 		<Logger
-			name="com.github.sp3wam.baseband.modem.core.blocks.BitAveragerBlock"
+			name="com.github.sp3wam.baseband.modem.core.basic.blocks.BitAveragerBlock"
 			level="off" />
 
 		<Logger

@@ -5,15 +5,15 @@ import org.slf4j.LoggerFactory;
 
 import com.github.sp3wam.baseband.modem.core.BlockIf;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
-import com.github.sp3wam.baseband.modem.core.blocks.BitAveragerBlock;
-import com.github.sp3wam.baseband.modem.core.blocks.FloatingPointAveragerBlock;
-import com.github.sp3wam.baseband.modem.core.blocks.FloatingPointAvgMagnitudeCalculatorBlock;
-import com.github.sp3wam.baseband.modem.core.blocks.SamplerBlock;
-import com.github.sp3wam.baseband.modem.core.blocks.ToneToBitConverterBlock;
+import com.github.sp3wam.baseband.modem.core.basic.blocks.BitAveragerBlock;
+import com.github.sp3wam.baseband.modem.core.basic.blocks.BitSignal;
+import com.github.sp3wam.baseband.modem.core.basic.blocks.FloatingPointAveragerBlock;
+import com.github.sp3wam.baseband.modem.core.basic.blocks.FloatingPointAvgMagnitudeCalculatorBlock;
+import com.github.sp3wam.baseband.modem.core.basic.blocks.SamplerBlock;
+import com.github.sp3wam.baseband.modem.core.basic.blocks.ToneToBitConverterBlock;
+import com.github.sp3wam.baseband.modem.core.basic.signals.FloatingPointSignal;
 import com.github.sp3wam.baseband.modem.core.fft.FFTBlock;
 import com.github.sp3wam.baseband.modem.core.fft.FFTSignal;
-import com.github.sp3wam.baseband.modem.core.signals.BitSignal;
-import com.github.sp3wam.baseband.modem.core.signals.FloatingPointSignal;
 
 public class MorseSignalDetectorBlock implements BlockIf< FloatingPointSignal, BitSignal >
 {

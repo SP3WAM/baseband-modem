@@ -1,4 +1,4 @@
-package com.github.sp3wam.baseband.modem.core.blocks;
+package com.github.sp3wam.baseband.modem.core.basic.blocks;
 
 import com.github.sp3wam.baseband.modem.core.BlockIf;
 import com.github.sp3wam.baseband.modem.core.SignalIf;

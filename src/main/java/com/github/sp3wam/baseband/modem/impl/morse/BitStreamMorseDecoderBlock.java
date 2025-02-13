@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.sp3wam.baseband.modem.core.BlockIf;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
-import com.github.sp3wam.baseband.modem.core.signals.BitSignal;
+import com.github.sp3wam.baseband.modem.core.basic.blocks.BitSignal;
 
 class BitStreamMorseDecoderBlock implements BlockIf< BitSignal, MorseSymbolSignal >
 {

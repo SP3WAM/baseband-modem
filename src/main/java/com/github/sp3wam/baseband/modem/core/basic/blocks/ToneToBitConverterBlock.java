@@ -1,12 +1,11 @@
-package com.github.sp3wam.baseband.modem.core.blocks;
+package com.github.sp3wam.baseband.modem.core.basic.blocks;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.sp3wam.baseband.modem.core.BlockIf;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
-import com.github.sp3wam.baseband.modem.core.signals.BitSignal;
-import com.github.sp3wam.baseband.modem.core.signals.MorseToneSignal;
+import com.github.sp3wam.baseband.modem.core.basic.signals.MorseToneSignal;
 
 public class ToneToBitConverterBlock implements BlockIf< MorseToneSignal, BitSignal >
 {

@@ -1,4 +1,4 @@
-package com.github.sp3wam.baseband.modem.core.blocks;
+package com.github.sp3wam.baseband.modem.core.basic.blocks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import com.github.sp3wam.baseband.modem.core.BlockIf;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
-import com.github.sp3wam.baseband.modem.core.signals.BitSignal;
 
 public class BitAveragerBlock implements BlockIf< BitSignal, BitSignal >
 {

@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.sp3wam.baseband.modem.core.SystemClock;
-import com.github.sp3wam.baseband.modem.core.blocks.AbstractConsumerBlock;
-import com.github.sp3wam.baseband.modem.core.signals.StringSignal;
+import com.github.sp3wam.baseband.modem.core.basic.blocks.AbstractConsumerBlock;
+import com.github.sp3wam.baseband.modem.core.basic.signals.StringSignal;
 
 public class MorseDecoderConsumer extends AbstractConsumerBlock< StringSignal, StringSignal >
 {

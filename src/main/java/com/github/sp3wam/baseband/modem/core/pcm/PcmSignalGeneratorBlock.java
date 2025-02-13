@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import com.github.sp3wam.baseband.modem.core.BlockIf;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
-import com.github.sp3wam.baseband.modem.core.signals.DummySignal;
-import com.github.sp3wam.baseband.modem.core.signals.FloatingPointSignal;
+import com.github.sp3wam.baseband.modem.core.basic.signals.DummySignal;
+import com.github.sp3wam.baseband.modem.core.basic.signals.FloatingPointSignal;
 
 public abstract class PcmSignalGeneratorBlock implements BlockIf< DummySignal, FloatingPointSignal >
 {

@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.sp3wam.baseband.modem.core.BlockIf;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
-import com.github.sp3wam.baseband.modem.core.signals.FloatingPointSignal;
+import com.github.sp3wam.baseband.modem.core.basic.signals.FloatingPointSignal;
 
 public class FFTBlock implements BlockIf< FloatingPointSignal, FFTSignal >
 {
