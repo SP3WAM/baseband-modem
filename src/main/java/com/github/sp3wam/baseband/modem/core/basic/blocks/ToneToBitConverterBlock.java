@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.sp3wam.baseband.modem.core.BlockIf;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
-import com.github.sp3wam.baseband.modem.core.basic.signals.MorseToneSignal;
+import com.github.sp3wam.baseband.modem.impl.morse.MorseToneSignal;
 
 public class ToneToBitConverterBlock implements BlockIf< MorseToneSignal, BitSignal >
 {

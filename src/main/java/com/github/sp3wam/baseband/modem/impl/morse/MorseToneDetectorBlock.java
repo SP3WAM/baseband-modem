@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import com.github.sp3wam.baseband.modem.core.BlockIf;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
-import com.github.sp3wam.baseband.modem.core.basic.signals.MorseToneSignal;
 import com.github.sp3wam.baseband.modem.core.fft.FFTPeaks;
 import com.github.sp3wam.baseband.modem.core.fft.FFTSignal;
 
