@@ -1,4 +1,4 @@
-package com.github.sp3wam.baseband.modem.core.signals;
+package com.github.sp3wam.baseband.modem.core.fft;
 
 import java.util.ArrayList;
 import java.util.Collections;

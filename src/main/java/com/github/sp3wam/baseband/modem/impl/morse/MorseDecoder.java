@@ -4,16 +4,16 @@ import java.io.IOException;
 
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.blocks.BitAveragerBlock;
-import com.github.sp3wam.baseband.modem.core.blocks.FFTBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.FloatingPointAvgMagnitudeCalculatorBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.SamplerBlock;
 import com.github.sp3wam.baseband.modem.core.blocks.ToneToBitConverterBlock;
+import com.github.sp3wam.baseband.modem.core.fft.FFTBlock;
+import com.github.sp3wam.baseband.modem.core.fft.FFTSignal;
 import com.github.sp3wam.baseband.modem.core.pcm.PcmFromJavaxAudioSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.pcm.PcmFromMp3FileSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.pcm.PcmFromWavFileSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.pcm.PcmSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.signals.BitSignal;
-import com.github.sp3wam.baseband.modem.core.signals.FFTSignal;
 import com.github.sp3wam.baseband.modem.core.signals.FloatingPointSignal;
 
 public class MorseDecoder

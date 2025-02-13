@@ -40,7 +40,7 @@
 			name="com.github.sp3wam.baseband.modem.core.blocks.SamplerBlock"
 			level="off" />
 		<Logger
-			name="com.github.sp3wam.baseband.modem.core.blocks.FFTBlock"
+			name="com.github.sp3wam.baseband.modem.core.fft.FFTBlock"
 			level="off" />
 		<Logger
 			name="com.github.sp3wam.baseband.modem.impl.morse.MorseToneDetectorBlock"
