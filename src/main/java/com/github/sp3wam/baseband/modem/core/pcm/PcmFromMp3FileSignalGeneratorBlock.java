@@ -1,4 +1,4 @@
-package com.github.sp3wam.baseband.modem.core.blocks;
+package com.github.sp3wam.baseband.modem.core.pcm;
 
 import java.io.BufferedInputStream;
 import java.io.File;

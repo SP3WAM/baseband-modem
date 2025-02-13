@@ -14,22 +14,22 @@
 	<Loggers>
 
 		<Logger
-			name="com.github.sp3wam.baseband.modem.core.blocks.PcmSignalGeneratorBlock"
+			name="com.github.sp3wam.baseband.modem.core.pcm.PcmSignalGeneratorBlock"
 			level="info" />
 		<Logger
-			name="com.github.sp3wam.baseband.modem.core.blocks.PcmFromFileSignalGeneratorBlock"
+			name="com.github.sp3wam.baseband.modem.core.pcm.PcmFromFileSignalGeneratorBlock"
 			level="info" />
 		<Logger
-			name="com.github.sp3wam.baseband.modem.core.blocks.PcmFromWavFileSignalGeneratorBlock"
+			name="com.github.sp3wam.baseband.modem.core.pcm.PcmFromWavFileSignalGeneratorBlock"
 			level="info" />
 		<Logger
-			name="com.github.sp3wam.baseband.modem.core.blocks.PcmFromMp3FileSignalGeneratorBlock"
+			name="com.github.sp3wam.baseband.modem.core.pcm.PcmFromMp3FileSignalGeneratorBlock"
 			level="info" />
 		<Logger
-			name="com.github.sp3wam.baseband.modem.core.blocks.PcmFromJavaxAudioSignalGeneratorBlock"
+			name="com.github.sp3wam.baseband.modem.core.pcm.PcmFromJavaxAudioSignalGeneratorBlock"
 			level="info" />
 		<Logger
-			name="com.github.sp3wam.baseband.modem.core.blocks.PcmFromXtAudioAudioSignalGeneratorBlock"
+			name="com.github.sp3wam.baseband.modem.core.pcm.pcmFromXtAudioAudioSignalGeneratorBlock"
 			level="info" />
 
 		<Logger

@@ -7,6 +7,7 @@ import java.io.IOException;
 import org.junit.Test;
 
 import com.github.sp3wam.baseband.modem.core.SystemClock;
+import com.github.sp3wam.baseband.modem.core.pcm.PcmFromWavFileSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.signals.FloatingPointSignal;
 
 public class SamplerBlockTest

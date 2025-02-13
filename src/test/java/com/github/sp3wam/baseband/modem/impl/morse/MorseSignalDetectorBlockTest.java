@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.blocks.AbstractConsumerBlock;
-import com.github.sp3wam.baseband.modem.core.blocks.PcmFromMp3FileSignalGeneratorBlock;
-import com.github.sp3wam.baseband.modem.core.blocks.PcmFromWavFileSignalGeneratorBlock;
+import com.github.sp3wam.baseband.modem.core.pcm.PcmFromMp3FileSignalGeneratorBlock;
+import com.github.sp3wam.baseband.modem.core.pcm.PcmFromWavFileSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.signals.BitSignal;
 
 public class MorseSignalDetectorBlockTest
