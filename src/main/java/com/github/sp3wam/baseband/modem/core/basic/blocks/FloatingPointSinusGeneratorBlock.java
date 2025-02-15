@@ -10,7 +10,7 @@ public class FloatingPointSinusGeneratorBlock implements BlockIf< DummySignal, F
     private BlockIf< FloatingPointSignal, ? > nextBlock;
     private double amplitude;
     private double frequencyHz;
-    private FloatingPointSignal currentValue = null;
+    protected FloatingPointSignal currentValue = null;
 
     public FloatingPointSinusGeneratorBlock( double amplitude, double frequencyHz )
     {
