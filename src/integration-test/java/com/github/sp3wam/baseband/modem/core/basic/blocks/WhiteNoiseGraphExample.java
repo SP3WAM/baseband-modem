@@ -8,6 +8,7 @@ import org.jfree.ui.RefineryUtilities;
 import com.github.sp3wam.baseband.modem.core.AbstractGraphExample;
 import com.github.sp3wam.baseband.modem.core.GraphData;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
+import com.github.sp3wam.baseband.modem.core.correlation.AutocorrelationBlock;
 import com.github.sp3wam.baseband.modem.core.fft.FFTBlock;
 
 public class WhiteNoiseGraphExample extends AbstractGraphExample
@@ -38,6 +39,13 @@ public class WhiteNoiseGraphExample extends AbstractGraphExample
         FFTBlock fft64Block = new FFTBlock( samplingFreq, 8 * fftWindow );
         FFTBlock fft128Block = new FFTBlock( samplingFreq, 16 * fftWindow );
         FFTBlock fft256Block = new FFTBlock( samplingFreq, 32 * fftWindow );
+        AutocorrelationBlock acor8Block = new AutocorrelationBlock( fftWindow );
+        AutocorrelationBlock acor16Block = new AutocorrelationBlock( 2 * fftWindow );
+        AutocorrelationBlock acor32Block = new AutocorrelationBlock( 4 * fftWindow );
+        AutocorrelationBlock acor64Block = new AutocorrelationBlock( 8 * fftWindow );
+        AutocorrelationBlock acor128Block = new AutocorrelationBlock( 16 * fftWindow );
+        AutocorrelationBlock acor256Block = new AutocorrelationBlock( 32 * fftWindow );
+        AutocorrelationBlock acor512Block = new AutocorrelationBlock( 64 * fftWindow );
 
         double[] noiseValues = new double[ samplesCount ];
         double[] noiseAvgValues = new double[ samplesCount ];
@@ -51,6 +59,13 @@ public class WhiteNoiseGraphExample extends AbstractGraphExample
             fft64Block.execute( clock, noiseGenerator.getCurrentValue() );
             fft128Block.execute( clock, noiseGenerator.getCurrentValue() );
             fft256Block.execute( clock, noiseGenerator.getCurrentValue() );
+            acor8Block.execute( clock, noiseGenerator.getCurrentValue() );
+            acor16Block.execute( clock, noiseGenerator.getCurrentValue() );
+            acor32Block.execute( clock, noiseGenerator.getCurrentValue() );
+            acor64Block.execute( clock, noiseGenerator.getCurrentValue() );
+            acor128Block.execute( clock, noiseGenerator.getCurrentValue() );
+            acor256Block.execute( clock, noiseGenerator.getCurrentValue() );
+            acor512Block.execute( clock, noiseGenerator.getCurrentValue() );
 
             noiseValues[ q ] = noiseGenerator.getCurrentValue().getValue();
             noiseAvgValues[ q ] = avgBlock.getCurrentValue().getValue();
@@ -116,9 +131,25 @@ public class WhiteNoiseGraphExample extends AbstractGraphExample
         }
         GraphData fft256GraphData = new GraphData( "FFT 256", "FFT 256", fft256Values );
 
+        GraphData acor8GraphData = new GraphData( "Autocorrelation of 8 samples",
+            "Autocorrelation of 8 samples", acor8Block.getCurrentValue().getResult() );
+        GraphData acor16GraphData = new GraphData( "Autocorrelation of 16 samples",
+            "Autocorrelation of 16 samples", acor16Block.getCurrentValue().getResult() );
+        GraphData acor32GraphData = new GraphData( "Autocorrelation of 32 samples",
+            "Autocorrelation of 32 samples", acor32Block.getCurrentValue().getResult() );
+        GraphData acor64GraphData = new GraphData( "Autocorrelation of 64 samples",
+            "Autocorrelation of 64 samples", acor64Block.getCurrentValue().getResult() );
+        GraphData acor128GraphData = new GraphData( "Autocorrelation of 128 samples",
+            "Autocorrelation of 128 samples", acor128Block.getCurrentValue().getResult() );
+        GraphData acor256GraphData = new GraphData( "Autocorrelation of 256 samples",
+            "Autocorrelation of 256 samples", acor256Block.getCurrentValue().getResult() );
+        GraphData acor512GraphData = new GraphData( "Autocorrelation of 512 samples",
+            "Autocorrelation of 512 samples", acor512Block.getCurrentValue().getResult() );
+
         return new GraphData[]
         { noiseGraphData, avgGraphData, fft8GraphData, fft16GraphData, fft32GraphData, fft64GraphData,
-            fft128GraphData, fft256GraphData };
+            fft128GraphData, fft256GraphData, acor8GraphData, acor16GraphData, acor32GraphData,
+            acor64GraphData, acor128GraphData, acor256GraphData, acor512GraphData };
     }
 
     public static void main( final String[] args )
