@@ -26,25 +26,26 @@ public class WhiteNoiseGraphExample extends AbstractGraphExample
     {
         int samplingFreq = 44100;
         int fftWindow = 8;
-
-        int samplesCount = 256;
+        int samplesCount = 512;
 
         SystemClock clock = new SystemClock( samplingFreq );
 
         WhiteNoiseGeneratorBlock noiseGenerator = new WhiteNoiseGeneratorBlock( 100.0 );
-        FFTBlock fftBlock = new FFTBlock( samplingFreq, fftWindow );
+        FloatingPointAveragerBlock avgBlock = new FloatingPointAveragerBlock( samplesCount );
+        FFTBlock fft8Block = new FFTBlock( samplingFreq, fftWindow );
         FFTBlock fft16Block = new FFTBlock( samplingFreq, 2 * fftWindow );
         FFTBlock fft32Block = new FFTBlock( samplingFreq, 4 * fftWindow );
         FFTBlock fft64Block = new FFTBlock( samplingFreq, 8 * fftWindow );
         FFTBlock fft128Block = new FFTBlock( samplingFreq, 16 * fftWindow );
         FFTBlock fft256Block = new FFTBlock( samplingFreq, 32 * fftWindow );
 
-        noiseGenerator.setNextBlock( fftBlock );
-
         double[] noiseValues = new double[ samplesCount ];
+        double[] noiseAvgValues = new double[ samplesCount ];
         for( int q = 0; q < samplesCount; q++ )
         {
             noiseGenerator.execute( clock, null );
+            avgBlock.execute( clock, noiseGenerator.getCurrentValue() );
+            fft8Block.execute( clock, noiseGenerator.getCurrentValue() );
             fft16Block.execute( clock, noiseGenerator.getCurrentValue() );
             fft32Block.execute( clock, noiseGenerator.getCurrentValue() );
             fft64Block.execute( clock, noiseGenerator.getCurrentValue() );
@@ -52,12 +53,17 @@ public class WhiteNoiseGraphExample extends AbstractGraphExample
             fft256Block.execute( clock, noiseGenerator.getCurrentValue() );
 
             noiseValues[ q ] = noiseGenerator.getCurrentValue().getValue();
+            noiseAvgValues[ q ] = avgBlock.getCurrentValue().getValue();
         }
 
         GraphData noiseGraphData = new GraphData( "White noise", "White noise", noiseValues );
 
+        // Noise average data
+        GraphData avgGraphData =
+            new GraphData( "Noise average of N samples", "Noise average of N samples", noiseAvgValues );
+
         // FFT 8 data
-        Complex[] fft8Result = fftBlock.getCurrentValue().getResult();
+        Complex[] fft8Result = fft8Block.getCurrentValue().getResult();
         double[] fft8Values = new double[ fft8Result.length ];
         for( int i = 0; i < fft8Result.length; i++ )
         {
@@ -111,8 +117,8 @@ public class WhiteNoiseGraphExample extends AbstractGraphExample
         GraphData fft256GraphData = new GraphData( "FFT 256", "FFT 256", fft256Values );
 
         return new GraphData[]
-        { noiseGraphData, fft8GraphData, fft16GraphData, fft32GraphData, fft64GraphData, fft128GraphData,
-            fft256GraphData };
+        { noiseGraphData, avgGraphData, fft8GraphData, fft16GraphData, fft32GraphData, fft64GraphData,
+            fft128GraphData, fft256GraphData };
     }
 
     public static void main( final String[] args )

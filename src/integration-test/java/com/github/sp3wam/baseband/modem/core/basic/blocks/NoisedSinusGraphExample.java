@@ -27,13 +27,14 @@ public class NoisedSinusGraphExample extends AbstractGraphExample
         int frequency = 800;
         int samplingFreq = 8 * frequency;
         int fftWindow = 8;
-        int samplesCount = 256;
+        int samplesCount = 512;
 
         SystemClock clock = new SystemClock( samplingFreq );
 
-        NoisedSinusGeneratorBlock generator = new NoisedSinusGeneratorBlock( 100.0, frequency );
-        generator.setNoiseAmplitude( 20.0 );
-        
+        NoisedSinusGeneratorBlock generator = new NoisedSinusGeneratorBlock( 50.0, frequency );
+        generator.setNoiseAmplitude( 50.0 );
+
+        FloatingPointAveragerBlock avgBlock = new FloatingPointAveragerBlock( samplesCount );
         FFTBlock fftBlock = new FFTBlock( samplingFreq, fftWindow );
         FFTBlock fft16Block = new FFTBlock( samplingFreq, 2 * fftWindow );
         FFTBlock fft32Block = new FFTBlock( samplingFreq, 4 * fftWindow );
@@ -44,9 +45,11 @@ public class NoisedSinusGraphExample extends AbstractGraphExample
         generator.setNextBlock( fftBlock );
 
         double[] noiseValues = new double[ samplesCount ];
+        double[] avgValues = new double[ samplesCount ];
         for( int q = 0; q < samplesCount; q++ )
         {
             generator.execute( clock, null );
+            avgBlock.execute( clock, generator.getCurrentValue() );
             fft16Block.execute( clock, generator.getCurrentValue() );
             fft32Block.execute( clock, generator.getCurrentValue() );
             fft64Block.execute( clock, generator.getCurrentValue() );
@@ -54,12 +57,17 @@ public class NoisedSinusGraphExample extends AbstractGraphExample
             fft256Block.execute( clock, generator.getCurrentValue() );
 
             noiseValues[ q ] = generator.getCurrentValue().getValue();
+            avgValues[ q ] = avgBlock.getCurrentValue().getValue();
 
             clock.step();
         }
 
         String text = String.format( "Sinus %s Hz", frequency );
         GraphData noiseGraphData = new GraphData( text, text, noiseValues );
+
+        // Noised sinus average data
+        GraphData avgGraphData = new GraphData( "Noised sinus average of N samples",
+            "Noised sinus average of N samples", avgValues );
 
         // FFT 8 data
         Complex[] fft8Result = fftBlock.getCurrentValue().getResult();
@@ -116,8 +124,8 @@ public class NoisedSinusGraphExample extends AbstractGraphExample
         GraphData fft256GraphData = new GraphData( "FFT 256", "FFT 256", fft256Values );
 
         return new GraphData[]
-        { noiseGraphData, fft8GraphData, fft16GraphData, fft32GraphData, fft64GraphData, fft128GraphData,
-            fft256GraphData };
+        { noiseGraphData, avgGraphData, fft8GraphData, fft16GraphData, fft32GraphData, fft64GraphData,
+            fft128GraphData, fft256GraphData };
     }
 
     public static void main( final String[] args )
