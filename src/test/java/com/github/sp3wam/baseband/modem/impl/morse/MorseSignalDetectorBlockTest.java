@@ -53,11 +53,11 @@ public class MorseSignalDetectorBlockTest
     @Test
     public void testRealLoudNoise_fromMp3() throws IOException
     {
-         String filePath =
-         "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/real_loud_noise.mp3";
+        String filePath =
+            "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/real_loud_noise.mp3";
 
-//        String filePath =
-//            "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/White-noise-sound-20sec-mono-44100Hz.mp3";
+        // String filePath =
+        // "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/White-noise-sound-20sec-mono-44100Hz.mp3";
 
         PcmFromMp3FileSignalGeneratorBlock signalGenerator =
             new PcmFromMp3FileSignalGeneratorBlock( SIGNAL_AMPLITUDE, filePath );
@@ -89,7 +89,7 @@ public class MorseSignalDetectorBlockTest
         private long countOfOnes = 0;
 
         @Override
-        public void execute( SystemClock systemClock, BitSignal inputSignalValue )
+        public boolean execute0( SystemClock systemClock, BitSignal inputSignalValue )
         {
             if( inputSignalValue.getBitValue() )
             {
@@ -99,6 +99,8 @@ public class MorseSignalDetectorBlockTest
             {
                 countOfZeros++;
             }
+
+            return false;
         }
 
         public long getCountOfZeros()

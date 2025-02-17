@@ -6,18 +6,16 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.sp3wam.baseband.modem.core.BlockIf;
+import com.github.sp3wam.baseband.modem.core.AbstractBlock;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.basic.signals.FloatingPointSignal;
 
-public class AutocorrelationBlock implements BlockIf< FloatingPointSignal, CorrelationSignal >
+public class AutocorrelationBlock extends AbstractBlock< FloatingPointSignal, CorrelationSignal >
 {
     private Logger LOGGER = LoggerFactory.getLogger( AutocorrelationBlock.class );
 
     private List< Double > samples = new ArrayList< Double >();
     private int windowSize;
-    private CorrelationSignal curentValue = null;
-    private BlockIf< CorrelationSignal, ? > nextBlock;
 
     public AutocorrelationBlock( int windowSize )
     {
@@ -30,31 +28,7 @@ public class AutocorrelationBlock implements BlockIf< FloatingPointSignal, Corre
     }
 
     @Override
-    public void execute( SystemClock systemClock, FloatingPointSignal inputSignalValue )
-    {
-        execute0( inputSignalValue );
-
-        if( nextBlock == null )
-        {
-            return;
-        }
-
-        nextBlock.execute( systemClock, curentValue );
-    }
-
-    @Override
-    public void setNextBlock( BlockIf< CorrelationSignal, ? > nextBlock )
-    {
-        this.nextBlock = nextBlock;
-    }
-
-    @Override
-    public CorrelationSignal getCurrentValue()
-    {
-        return curentValue;
-    }
-
-    protected void execute0( FloatingPointSignal inputSignalValue )
+    protected boolean execute0( SystemClock systemClock, FloatingPointSignal inputSignalValue )
     {
         samples.add( 0, inputSignalValue.getValue() );
         samples.remove( samples.size() - 1 );
@@ -75,6 +49,9 @@ public class AutocorrelationBlock implements BlockIf< FloatingPointSignal, Corre
             values[ r ] = sum / (N - r);
         }
 
-        curentValue = new CorrelationSignal( values );
+        currentValue = new CorrelationSignal( values );
+
+        return true;
     }
+
 }

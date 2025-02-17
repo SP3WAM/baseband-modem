@@ -3,18 +3,18 @@ package com.github.sp3wam.baseband.modem.core.pcm;
 import java.io.IOException;
 
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioFormat.Encoding;
+import javax.sound.sampled.AudioInputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.sp3wam.baseband.modem.core.BlockIf;
+import com.github.sp3wam.baseband.modem.core.AbstractBlock;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.basic.signals.DummySignal;
 import com.github.sp3wam.baseband.modem.core.basic.signals.FloatingPointSignal;
 
-public abstract class PcmSignalGeneratorBlock implements BlockIf< DummySignal, FloatingPointSignal >
+public abstract class PcmSignalGeneratorBlock extends AbstractBlock< DummySignal, FloatingPointSignal >
 {
     private final static Logger LOGGER = LoggerFactory.getLogger( PcmSignalGeneratorBlock.class );
 
@@ -22,8 +22,6 @@ public abstract class PcmSignalGeneratorBlock implements BlockIf< DummySignal, F
 
     protected boolean hasMoreSamples = false;
     protected double amplitude;
-    protected BlockIf< FloatingPointSignal, ? > nextBlock;
-    protected FloatingPointSignal currentValue = null;
     protected long silenceAtEndFrameCountdown = -1;
 
     protected AudioInputStream audioStream = null;
@@ -61,26 +59,6 @@ public abstract class PcmSignalGeneratorBlock implements BlockIf< DummySignal, F
         hasMoreSamples = true;
     }
 
-    @Override
-    public void execute( SystemClock systemClock, DummySignal inputSignalValue )
-    {
-        if( !execute0( systemClock ) )
-        {
-            return;
-        }
-
-        if( nextBlock != null )
-        {
-            nextBlock.execute( systemClock, currentValue );
-        }
-    }
-
-    @Override
-    public void setNextBlock( BlockIf< FloatingPointSignal, ? > nextBlock )
-    {
-        this.nextBlock = nextBlock;
-    }
-
     public long getSampleRate()
     {
         return (long)audioStream.getFormat().getSampleRate();
@@ -91,17 +69,11 @@ public abstract class PcmSignalGeneratorBlock implements BlockIf< DummySignal, F
         return hasMoreSamples;
     }
 
-    @Override
-    public FloatingPointSignal getCurrentValue()
-    {
-        return currentValue;
-    }
-
     protected abstract AudioInputStream createAudioInputStream() throws IOException;
 
-    protected boolean execute0( SystemClock systemClock )
+    @Override
+    protected boolean execute0( SystemClock systemClock, DummySignal inputSignalValue )
     {
-
         samplesCount++;
         // LOGGER.debug( String.format( "Processing sample nr %s", samplesCount ) );
 

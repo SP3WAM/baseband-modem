@@ -1,6 +1,7 @@
 package com.github.sp3wam.baseband.modem.core.basic.blocks;
 
 import com.github.sp3wam.baseband.modem.core.SystemClock;
+import com.github.sp3wam.baseband.modem.core.basic.signals.DummySignal;
 import com.github.sp3wam.baseband.modem.core.basic.signals.FloatingPointSignal;
 
 public class NoisedSinusGeneratorBlock extends FloatingPointSinusGeneratorBlock
@@ -17,9 +18,10 @@ public class NoisedSinusGeneratorBlock extends FloatingPointSinusGeneratorBlock
         noiseGenerator = new WhiteNoiseGeneratorBlock( amplitude );
     }
 
-    protected void execute0( SystemClock systemClock )
+    @Override
+    protected boolean execute0( SystemClock systemClock, DummySignal inputSignalValue )
     {
-        super.execute0( systemClock );
+        super.execute0( systemClock, inputSignalValue );
 
         if( noiseGenerator != null )
         {
@@ -28,6 +30,8 @@ public class NoisedSinusGeneratorBlock extends FloatingPointSinusGeneratorBlock
             double value = this.getCurrentValue().getValue() + noiseGenerator.getCurrentValue().getValue();
             currentValue = new FloatingPointSignal( value );
         }
+
+        return true;
     }
 
 }

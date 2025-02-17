@@ -1,16 +1,14 @@
 package com.github.sp3wam.baseband.modem.core.basic.blocks;
 
-import com.github.sp3wam.baseband.modem.core.BlockIf;
+import com.github.sp3wam.baseband.modem.core.AbstractBlock;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.basic.signals.DummySignal;
 import com.github.sp3wam.baseband.modem.core.basic.signals.FloatingPointSignal;
 
-public class FloatingPointSinusGeneratorBlock implements BlockIf< DummySignal, FloatingPointSignal >
+public class FloatingPointSinusGeneratorBlock extends AbstractBlock< DummySignal, FloatingPointSignal >
 {
-    private BlockIf< FloatingPointSignal, ? > nextBlock;
     private double amplitude;
     private double frequencyHz;
-    protected FloatingPointSignal currentValue = null;
 
     public FloatingPointSinusGeneratorBlock( double amplitude, double frequencyHz )
     {
@@ -19,34 +17,14 @@ public class FloatingPointSinusGeneratorBlock implements BlockIf< DummySignal, F
     }
 
     @Override
-    public void execute( SystemClock systemClock, DummySignal inputSignalValue )
-    {
-        execute0(systemClock);
-        
-        if(nextBlock != null)
-        {
-            nextBlock.execute( systemClock, currentValue );
-        }
-    }
-
-    protected void execute0( SystemClock systemClock )
+    protected boolean execute0( SystemClock systemClock, DummySignal inputSignalValue )
     {
         double value =
             amplitude * Math.sin( 2 * Math.PI * frequencyHz * systemClock.getClockValueInSeconds() );
 
         currentValue = new FloatingPointSignal( value );
-    }
 
-    @Override
-    public void setNextBlock( BlockIf< FloatingPointSignal, ? > nextBlock )
-    {
-        this.nextBlock = nextBlock;
-    }
-
-    @Override
-    public FloatingPointSignal getCurrentValue()
-    {
-        return currentValue;
+        return true;
     }
 
 }

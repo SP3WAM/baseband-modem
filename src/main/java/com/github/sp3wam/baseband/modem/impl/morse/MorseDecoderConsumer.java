@@ -13,8 +13,13 @@ public class MorseDecoderConsumer extends AbstractConsumerBlock< StringSignal, S
 
     private StringBuilder stringBuilder = new StringBuilder();
 
+    public String getDecodedString()
+    {
+        return stringBuilder.toString();
+    }
+
     @Override
-    public void execute( SystemClock systemClock, StringSignal inputSignalValue )
+    protected boolean execute0( SystemClock systemClock, StringSignal inputSignalValue )
     {
         for( int index = 0; index < inputSignalValue.getValue().length(); index++ )
         {
@@ -23,10 +28,8 @@ public class MorseDecoderConsumer extends AbstractConsumerBlock< StringSignal, S
 
             stringBuilder.append( charAtIndex );
         }
+
+        return false;
     }
 
-    public String getDecodedString()
-    {
-        return stringBuilder.toString();
-    }
 }

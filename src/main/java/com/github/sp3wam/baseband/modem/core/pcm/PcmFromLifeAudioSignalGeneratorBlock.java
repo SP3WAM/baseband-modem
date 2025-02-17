@@ -3,6 +3,7 @@ package com.github.sp3wam.baseband.modem.core.pcm;
 import java.io.IOException;
 
 import com.github.sp3wam.baseband.modem.core.SystemClock;
+import com.github.sp3wam.baseband.modem.core.basic.signals.DummySignal;
 
 public abstract class PcmFromLifeAudioSignalGeneratorBlock extends PcmSignalGeneratorBlock
 {
@@ -12,7 +13,8 @@ public abstract class PcmFromLifeAudioSignalGeneratorBlock extends PcmSignalGene
         super( amplitude );
     }
 
-    protected boolean execute0( SystemClock systemClock )
+    @Override
+    protected boolean execute0( SystemClock systemClock, DummySignal inputSignalValue )
     {
         try
         {
@@ -26,6 +28,6 @@ public abstract class PcmFromLifeAudioSignalGeneratorBlock extends PcmSignalGene
             throw new RuntimeException( e );
         }
 
-        return super.execute0( systemClock );
+        return super.execute0( systemClock, inputSignalValue );
     }
 }

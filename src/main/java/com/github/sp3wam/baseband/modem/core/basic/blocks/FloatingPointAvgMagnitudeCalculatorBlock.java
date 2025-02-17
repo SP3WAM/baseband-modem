@@ -6,18 +6,15 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.sp3wam.baseband.modem.core.BlockIf;
+import com.github.sp3wam.baseband.modem.core.AbstractBlock;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.basic.signals.FloatingPointSignal;
 
 public class FloatingPointAvgMagnitudeCalculatorBlock
-    implements BlockIf< FloatingPointSignal, FloatingPointSignal >
+    extends AbstractBlock< FloatingPointSignal, FloatingPointSignal >
 {
     private final static Logger LOGGER =
         LoggerFactory.getLogger( FloatingPointAvgMagnitudeCalculatorBlock.class );
-
-    private BlockIf< FloatingPointSignal, ? > nextBlock;
-    private FloatingPointSignal currentValue = null;
 
     private List< FloatingPointSignal > samples = new ArrayList< FloatingPointSignal >();
     private int sampleWindow;
@@ -33,29 +30,7 @@ public class FloatingPointAvgMagnitudeCalculatorBlock
     }
 
     @Override
-    public void execute( SystemClock systemClock, FloatingPointSignal inputSignalValue )
-    {
-        execute0( systemClock, inputSignalValue );
-
-        if( nextBlock != null )
-        {
-            nextBlock.execute( systemClock, currentValue );
-        }
-    }
-
-    @Override
-    public void setNextBlock( BlockIf< FloatingPointSignal, ? > nextBlock )
-    {
-        this.nextBlock = nextBlock;
-    }
-
-    @Override
-    public FloatingPointSignal getCurrentValue()
-    {
-        return currentValue;
-    }
-
-    protected void execute0( SystemClock systemClock, FloatingPointSignal inputSignalValue )
+    protected boolean execute0( SystemClock systemClock, FloatingPointSignal inputSignalValue )
     {
         currentValue = inputSignalValue;
 
@@ -84,5 +59,7 @@ public class FloatingPointAvgMagnitudeCalculatorBlock
             LOGGER.info(
                 String.format( "Average magnitude of last %s samples is %s", samples.size(), avgMagnitude ) );
         }
+        
+        return true;
     }
 }
