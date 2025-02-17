@@ -1,9 +1,5 @@
 package com.github.sp3wam.baseband.modem.core.fft;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.commons.math3.complex.Complex;
 
 import com.github.sp3wam.baseband.modem.core.SignalIf;
@@ -19,6 +15,16 @@ public class FFTSignal implements SignalIf
         this.samplingFreq = samplingFreq;
     }
 
+    /***
+     * Returns the FFT calculations result as an array of {@linkplain Complex} values. Keep in mind that:
+     * <ul>
+     * <li>the length of the array is the same as the size of the FFT</li>
+     * <li>the value under index 0 holds the power distribution information of the 0 Hz frequency, which is
+     * related to the <b>DC offset</b> of the examined signal</li>
+     * </ul>
+     * 
+     * @return
+     */
     public Complex[] getResult()
     {
         return result;
