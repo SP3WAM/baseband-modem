@@ -74,6 +74,7 @@ public class UnderstandingFFTSignalForDCOffset extends AbstractGraphExample
             fft32Values[ i ] = fft32Result[ i ].abs();
         }
         GraphData fft32GraphData = new GraphData( "... and its FFT 32", "FFT 32", fft32Values );
+        fft32GraphData.setxAxisLabel( "Index of FFT result array" );
 
         // Sinus with offset data
         String textOffset = String.format( "Sinus %s Hz with DC offset...", frequency );
@@ -88,6 +89,7 @@ public class UnderstandingFFTSignalForDCOffset extends AbstractGraphExample
         }
         GraphData fft32DCOffsetGraphData = new GraphData(
             "... and its FFT 32. DC offset is under sample index 0.", "FFT 32", fft32DCOffsetValues );
+        fft32DCOffsetGraphData.setxAxisLabel( "Index of FFT result array" );
 
         return new GraphData[]
         { sinusGraphData, fft32GraphData, sinusDCOffsetGraphData, fft32DCOffsetGraphData };

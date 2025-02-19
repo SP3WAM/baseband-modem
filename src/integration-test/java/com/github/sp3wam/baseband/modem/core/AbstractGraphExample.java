@@ -59,14 +59,15 @@ public abstract class AbstractGraphExample extends ApplicationFrame
             }
             dataset.addSeries( graphInfo.getSeriesName(), xyValues );
 
-            JFreeChart chart = createChart( dataset, graphInfo.getTitle() );
+            JFreeChart chart = createChart( dataset, graphInfo.getTitle(), graphInfo.getxAxisLabel() );
             getGraphsPanel().add( new ChartPanel( chart ) );
         }
     }
 
-    private JFreeChart createChart( final XYDataset dataset, String title )
+    private JFreeChart createChart( final XYDataset dataset, String title, String xAxisLabel )
     {
-        JFreeChart result = ChartFactory.createXYLineChart( title, "Samples", "Value", dataset );
+        String _xAxisLabel = (xAxisLabel == null ? "Samples" : xAxisLabel);
+        JFreeChart result = ChartFactory.createXYLineChart( title, _xAxisLabel, "Value", dataset );
         final XYPlot plot = result.getXYPlot();
         ValueAxis domain = plot.getDomainAxis();
         domain.setAutoRange( true );

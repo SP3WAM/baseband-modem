@@ -90,6 +90,7 @@ public class SinusGraphExample extends AbstractGraphExample
             fft8Values[ i ] = fft8Result[ i ].abs();
         }
         GraphData fft8GraphData = new GraphData( "FFT 8", "FFT 8", fft8Values );
+        fft8GraphData.setxAxisLabel( "Index of FFT result array" );
 
         // FFT 16 data
         Complex[] fft16Result = fft16Block.getCurrentValue().getResult();
@@ -99,6 +100,7 @@ public class SinusGraphExample extends AbstractGraphExample
             fft16Values[ i ] = fft16Result[ i ].abs();
         }
         GraphData fft16GraphData = new GraphData( "FFT 16", "FFT 16", fft16Values );
+        fft16GraphData.setxAxisLabel( "Index of FFT result array" );
 
         // FFT 32 data
         Complex[] fft32Result = fft32Block.getCurrentValue().getResult();
@@ -108,6 +110,7 @@ public class SinusGraphExample extends AbstractGraphExample
             fft32Values[ i ] = fft32Result[ i ].abs();
         }
         GraphData fft32GraphData = new GraphData( "FFT 32", "FFT 32", fft32Values );
+        fft32GraphData.setxAxisLabel( "Index of FFT result array" );
 
         // FFT 64 data
         Complex[] fft64Result = fft64Block.getCurrentValue().getResult();
@@ -117,6 +120,7 @@ public class SinusGraphExample extends AbstractGraphExample
             fft64Values[ i ] = fft64Result[ i ].abs();
         }
         GraphData fft64GraphData = new GraphData( "FFT 64", "FFT 64", fft64Values );
+        fft64GraphData.setxAxisLabel( "Index of FFT result array" );
 
         // FFT 128 data
         Complex[] fft128Result = fft128Block.getCurrentValue().getResult();
@@ -126,6 +130,7 @@ public class SinusGraphExample extends AbstractGraphExample
             fft128Values[ i ] = fft128Result[ i ].abs();
         }
         GraphData fft128GraphData = new GraphData( "FFT 128", "FFT 128", fft128Values );
+        fft128GraphData.setxAxisLabel( "Index of FFT result array" );
 
         // FFT 256 data
         Complex[] fft256Result = fft256Block.getCurrentValue().getResult();
@@ -135,6 +140,7 @@ public class SinusGraphExample extends AbstractGraphExample
             fft256Values[ i ] = fft256Result[ i ].abs();
         }
         GraphData fft256GraphData = new GraphData( "FFT 256", "FFT 256", fft256Values );
+        fft256GraphData.setxAxisLabel( "Index of FFT result array" );
 
         GraphData acor8GraphData = new GraphData( "Autocorrelation of 8 samples",
             "Autocorrelation of 8 samples", acor8Block.getCurrentValue().getResult() );
