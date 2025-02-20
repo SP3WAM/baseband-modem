@@ -6,13 +6,20 @@ public class GraphData
     private String title = null;
     private String seriesName = null;
     private String xAxisLabel = null;
-    private double[] values;
+    private double[] yValues;
+    private double[] xValues = null;
 
-    public GraphData( String title, String seriesName, double[] values )
+    public GraphData( String title, String seriesName, double[] yValues )
     {
         this.title = title;
         this.seriesName = seriesName;
-        this.values = values;
+        this.yValues = yValues;
+    }
+
+    public GraphData( String title, String seriesName, double[] yValues, double[] xValues )
+    {
+        this( title, seriesName, yValues );
+        this.xValues = xValues;
     }
 
     public String getTitle()
@@ -35,8 +42,13 @@ public class GraphData
         this.xAxisLabel = xAxisLabel;
     }
 
-    public double[] getValues()
+    public double[] getYValues()
     {
-        return values;
+        return yValues;
+    }
+
+    public double[] getxValues()
+    {
+        return xValues;
     }
 }

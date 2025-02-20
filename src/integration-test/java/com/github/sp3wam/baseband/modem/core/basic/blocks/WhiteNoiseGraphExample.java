@@ -86,8 +86,9 @@ public class WhiteNoiseGraphExample extends AbstractGraphExample
         {
             fft8Values[ i ] = fft8Result[ i ].abs();
         }
-        GraphData fft8GraphData = new GraphData( "FFT 8 spectrum", "FFT 8", fft8Values );
-        fft8GraphData.setxAxisLabel( "Frequency index" );
+        GraphData fft8GraphData =
+            new GraphData( "FFT 8 spectrum", "FFT 8", fft8Values, fft8FreqSpectrum.getFreqencies() );
+        fft8GraphData.setxAxisLabel( "Frequency [Hz]" );
 
         // FFT 16 data
         FFTSpectrum fft16FreqSpectrum = new FFTSpectrum( fft16Block.getCurrentValue() );
@@ -97,8 +98,9 @@ public class WhiteNoiseGraphExample extends AbstractGraphExample
         {
             fft16Values[ i ] = fft16Result[ i ].abs();
         }
-        GraphData fft16GraphData = new GraphData( "FFT 16 spectrum", "FFT 16", fft16Values );
-        fft16GraphData.setxAxisLabel( "Frequency index" );
+        GraphData fft16GraphData =
+            new GraphData( "FFT 16 spectrum", "FFT 16", fft16Values, fft16FreqSpectrum.getFreqencies() );
+        fft16GraphData.setxAxisLabel( "Frequency [Hz]" );
 
         // FFT 32 data
         FFTSpectrum fft32FreqSpectrum = new FFTSpectrum( fft32Block.getCurrentValue() );
@@ -108,8 +110,9 @@ public class WhiteNoiseGraphExample extends AbstractGraphExample
         {
             fft32Values[ i ] = fft32Result[ i ].abs();
         }
-        GraphData fft32GraphData = new GraphData( "FFT 32 spectrum", "FFT 32", fft32Values );
-        fft32GraphData.setxAxisLabel( "Frequency index" );
+        GraphData fft32GraphData =
+            new GraphData( "FFT 32 spectrum", "FFT 32", fft32Values, fft32FreqSpectrum.getFreqencies() );
+        fft32GraphData.setxAxisLabel( "Frequency [Hz]" );
 
         // FFT 64 data
         FFTSpectrum fft64FreqSpectrum = new FFTSpectrum( fft64Block.getCurrentValue() );
@@ -119,8 +122,9 @@ public class WhiteNoiseGraphExample extends AbstractGraphExample
         {
             fft64Values[ i ] = fft64Result[ i ].abs();
         }
-        GraphData fft64GraphData = new GraphData( "FFT 64 spectrum", "FFT 64", fft64Values );
-        fft64GraphData.setxAxisLabel( "Frequency index" );
+        GraphData fft64GraphData =
+            new GraphData( "FFT 64 spectrum", "FFT 64", fft64Values, fft64FreqSpectrum.getFreqencies() );
+        fft64GraphData.setxAxisLabel( "Frequency [Hz]" );
 
         // FFT 128 data
         FFTSpectrum fft128FreqSpectrum = new FFTSpectrum( fft128Block.getCurrentValue() );
@@ -130,8 +134,9 @@ public class WhiteNoiseGraphExample extends AbstractGraphExample
         {
             fft128Values[ i ] = fft128Result[ i ].abs();
         }
-        GraphData fft128GraphData = new GraphData( "FFT 128 spectrum", "FFT 128", fft128Values );
-        fft128GraphData.setxAxisLabel( "Frequency index" );
+        GraphData fft128GraphData =
+            new GraphData( "FFT 128 spectrum", "FFT 128", fft128Values, fft128FreqSpectrum.getFreqencies() );
+        fft128GraphData.setxAxisLabel( "Frequency [Hz]" );
 
         // FFT 256 data
         FFTSpectrum fft256FreqSpectrum = new FFTSpectrum( fft256Block.getCurrentValue() );
@@ -141,8 +146,9 @@ public class WhiteNoiseGraphExample extends AbstractGraphExample
         {
             fft256Values[ i ] = fft256Result[ i ].abs();
         }
-        GraphData fft256GraphData = new GraphData( "FFT 256 spectrum", "FFT 256", fft256Values );
-        fft256GraphData.setxAxisLabel( "Frequency index" );
+        GraphData fft256GraphData =
+            new GraphData( "FFT 256 spectrum", "FFT 256", fft256Values, fft256FreqSpectrum.getFreqencies() );
+        fft256GraphData.setxAxisLabel( "Frequency [Hz]" );
 
         GraphData acor8GraphData = new GraphData( "Autocorrelation of 8 samples",
             "Autocorrelation of 8 samples", acor8Block.getCurrentValue().getResult() );

@@ -76,7 +76,7 @@ public class UnderstandingFFTSignalForDCOffset extends AbstractGraphExample
         GraphData fft32GraphData = new GraphData( "... and its FFT 32 result", "FFT 32", fft32Values );
         fft32GraphData.setxAxisLabel( "Index of FFT result array" );
 
-        // FFT 32 frequency data
+        // FFT 32 spectrum data
         FFTSpectrum fft32Spectrum = new FFTSpectrum( fft32Block.getCurrentValue() );
         Complex[] fft32FreqResult = fft32Spectrum.getFftValue();
         double[] fft32FreqValues = new double[ fft32FreqResult.length ];
@@ -84,9 +84,9 @@ public class UnderstandingFFTSignalForDCOffset extends AbstractGraphExample
         {
             fft32FreqValues[ i ] = fft32FreqResult[ i ].abs();
         }
-        GraphData fft32FreqGraphData =
-            new GraphData( "... and its FFT 32 spectrum", "FFT 32", fft32FreqValues );
-        fft32FreqGraphData.setxAxisLabel( "Frequency index" );
+        GraphData fft32FreqGraphData = new GraphData( "... and its FFT 32 spectrum", "FFT 32",
+            fft32FreqValues, fft32Spectrum.getFreqencies() );
+        fft32FreqGraphData.setxAxisLabel( "Frequency [Hz]" );
 
         // Sinus with offset data
         String textOffset = String.format( "Sinus %s Hz with DC offset...", frequency );
@@ -103,7 +103,7 @@ public class UnderstandingFFTSignalForDCOffset extends AbstractGraphExample
             "... and its FFT 32 result. DC offset is under sample index 0.", "FFT 32", fft32DCOffsetValues );
         fft32DCOffsetGraphData.setxAxisLabel( "Index of FFT result array" );
 
-        // FFT 32 frequency data
+        // FFT 32 spectrum data
         FFTSpectrum fft32FreqDCOffsetSpectrum = new FFTSpectrum( fftDCOffset32Block.getCurrentValue() );
         Complex[] fft32FreqDCOffsetResult = fft32FreqDCOffsetSpectrum.getFftValue();
         double[] fft32FreqDCOffsetValues = new double[ fft32FreqDCOffsetResult.length ];
@@ -111,9 +111,9 @@ public class UnderstandingFFTSignalForDCOffset extends AbstractGraphExample
         {
             fft32FreqDCOffsetValues[ i ] = fft32FreqDCOffsetResult[ i ].abs();
         }
-        GraphData fft32FreqDCOffsetGraphData =
-            new GraphData( "... and its FFT 32 spectrum", "FFT 32", fft32FreqDCOffsetValues );
-        fft32FreqDCOffsetGraphData.setxAxisLabel( "Frequency index" );
+        GraphData fft32FreqDCOffsetGraphData = new GraphData( "... and its FFT 32 spectrum", "FFT 32",
+            fft32FreqDCOffsetValues, fft32FreqDCOffsetSpectrum.getFreqencies() );
+        fft32FreqDCOffsetGraphData.setxAxisLabel( "Frequency [Hz]" );
 
         return new GraphData[]
         { sinusGraphData, fft32GraphData, fft32FreqGraphData, sinusDCOffsetGraphData, fft32DCOffsetGraphData,

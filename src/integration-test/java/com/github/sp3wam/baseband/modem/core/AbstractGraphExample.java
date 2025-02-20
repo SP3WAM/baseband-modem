@@ -49,13 +49,18 @@ public abstract class AbstractGraphExample extends ApplicationFrame
             DefaultXYDataset dataset = new DefaultXYDataset();
             datasets.add( dataset );
 
-            graphInfo.getValues();
-
-            double[][] xyValues = new double[ 2 ][ graphInfo.getValues().length ];
-            for( int index = 0; index < graphInfo.getValues().length; index++ )
+            double[][] xyValues = new double[ 2 ][ graphInfo.getYValues().length ];
+            for( int index = 0; index < graphInfo.getYValues().length; index++ )
             {
-                xyValues[ 0 ][ index ] = index;
-                xyValues[ 1 ][ index ] = graphInfo.getValues()[ index ];
+                if( graphInfo.getxValues() != null )
+                {
+                    xyValues[ 0 ][ index ] = graphInfo.getxValues()[ index ];
+                }
+                else
+                {
+                    xyValues[ 0 ][ index ] = index;
+                }
+                xyValues[ 1 ][ index ] = graphInfo.getYValues()[ index ];
             }
             dataset.addSeries( graphInfo.getSeriesName(), xyValues );
 
