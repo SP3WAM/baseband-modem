@@ -3,11 +3,12 @@ package com.github.sp3wam.baseband.modem.impl.morse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.sp3wam.baseband.modem.core.AbstractBlock;
 import com.github.sp3wam.baseband.modem.core.BlockIf;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.basic.signals.StringSignal;
 
-class MorseSymbolDecoderBlock implements BlockIf< MorseSymbolSignal, StringSignal >
+class MorseSymbolDecoderBlock extends AbstractBlock< MorseSymbolSignal, StringSignal >
 {
     private Logger LOGGER = LoggerFactory.getLogger( MorseSymbolDecoderBlock.class );
 
@@ -15,45 +16,12 @@ class MorseSymbolDecoderBlock implements BlockIf< MorseSymbolSignal, StringSigna
     private final static char DAH_CHAR = '-';
     private final static char SPACE_CHAR = ' ';
 
-    private StringSignal currentValue;
-    private BlockIf< StringSignal, ? > nextBlock;
-
     private MorseTable morseTable = null;
     private StringBuilder stringBuilder = new StringBuilder();
 
     public MorseSymbolDecoderBlock()
     {
         morseTable = MorseTable.readFromResources();
-    }
-
-    @Override
-    public void execute( SystemClock systemClock, MorseSymbolSignal inputSignalValue )
-    {
-        boolean result = execute0( systemClock, inputSignalValue );
-
-        if( nextBlock == null )
-        {
-            return;
-        }
-
-        if( result == false )
-        {
-            return;
-        }
-
-        nextBlock.execute( systemClock, currentValue );
-    }
-
-    @Override
-    public void setNextBlock( BlockIf< StringSignal, ? > nextBlock )
-    {
-        this.nextBlock = nextBlock;
-    }
-
-    @Override
-    public StringSignal getCurrentValue()
-    {
-        return currentValue;
     }
 
     protected boolean execute0( SystemClock systemClock, MorseSymbolSignal inputSignalValue )
@@ -64,11 +32,11 @@ class MorseSymbolDecoderBlock implements BlockIf< MorseSymbolSignal, StringSigna
         {
             // end of letter (or word) detected
             String morseString = stringBuilder.toString();
-            if(morseString.isEmpty())
+            if( morseString.isEmpty() )
             {
                 return false;
             }
-            
+
             String decodedLetter = morseTable.decode( morseString );
             stringBuilder.setLength( 0 );
 

@@ -6,48 +6,16 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.sp3wam.baseband.modem.core.BlockIf;
+import com.github.sp3wam.baseband.modem.core.AbstractBlock;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.basic.blocks.BitSignal;
 
-class BitStreamMorseDecoderBlock implements BlockIf< BitSignal, MorseSymbolSignal >
+class BitStreamMorseDecoderBlock extends AbstractBlock< BitSignal, MorseSymbolSignal >
 {
     private Logger LOGGER = LoggerFactory.getLogger( BitStreamMorseDecoderBlock.class );
 
-    private MorseSymbolSignal currentValue;
-    private BlockIf< MorseSymbolSignal, ? > nextBlock;
     private List< MorseSegment > segments = new ArrayList< MorseSegment >();
     private DitDurationCalculator ditDurationCalculator = new DitDurationCalculator();
-
-    @Override
-    public void execute( SystemClock systemClock, BitSignal inputSignalValue )
-    {
-        boolean result = execute0( systemClock, inputSignalValue );
-
-        if( nextBlock == null )
-        {
-            return;
-        }
-
-        if( result == false )
-        {
-            return;
-        }
-
-        nextBlock.execute( systemClock, currentValue );
-    }
-
-    @Override
-    public void setNextBlock( BlockIf< MorseSymbolSignal, ? > nextBlock )
-    {
-        this.nextBlock = nextBlock;
-    }
-
-    @Override
-    public MorseSymbolSignal getCurrentValue()
-    {
-        return currentValue;
-    }
 
     protected boolean execute0( SystemClock systemClock, BitSignal inputSignalValue )
     {
