@@ -119,7 +119,7 @@ public class MorseSignalDetectorBlockTest
         // For noised signal there should be no silence detected
         // or at least signal ratio should be very high
         // TODO: 14.0% is a way too low. Make it somehow bigger.
-        assertTrue( consumer.getOnesPercentageRatio() > 14.0 );
+        assertTrue( consumer.getOnesPercentageRatio() > 17.0 );
     }
 
     private class MorseSignalDetectorConsumer extends AbstractConsumerBlock< BitSignal, BitSignal >
