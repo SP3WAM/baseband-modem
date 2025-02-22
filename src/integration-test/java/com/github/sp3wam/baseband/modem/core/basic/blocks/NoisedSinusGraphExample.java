@@ -87,7 +87,7 @@ public class NoisedSinusGraphExample extends AbstractGraphExample
 
         // FFT 8 data
         FFTSpectrum fft8FreqSpectrum = new FFTSpectrum( fftBlock.getCurrentValue() );
-        Complex[] fft8Result = fft8FreqSpectrum.getFftValue();
+        Complex[] fft8Result = fft8FreqSpectrum.getComplexValues();
         double[] fft8Values = new double[ fft8Result.length ];
         for( int i = 0; i < fft8Result.length; i++ )
         {
@@ -99,7 +99,7 @@ public class NoisedSinusGraphExample extends AbstractGraphExample
 
         // FFT 16 data
         FFTSpectrum fft16FreqSpectrum = new FFTSpectrum( fft16Block.getCurrentValue() );
-        Complex[] fft16Result = fft16FreqSpectrum.getFftValue();
+        Complex[] fft16Result = fft16FreqSpectrum.getComplexValues();
         double[] fft16Values = new double[ fft16Result.length ];
         for( int i = 0; i < fft16Result.length; i++ )
         {
@@ -111,7 +111,7 @@ public class NoisedSinusGraphExample extends AbstractGraphExample
 
         // FFT 32 data
         FFTSpectrum fft32FreqSpectrum = new FFTSpectrum( fft32Block.getCurrentValue() );
-        Complex[] fft32Result = fft32FreqSpectrum.getFftValue();
+        Complex[] fft32Result = fft32FreqSpectrum.getComplexValues();
         double[] fft32Values = new double[ fft32Result.length ];
         for( int i = 0; i < fft32Result.length; i++ )
         {
@@ -123,7 +123,7 @@ public class NoisedSinusGraphExample extends AbstractGraphExample
 
         // FFT 64 data
         FFTSpectrum fft64FreqSpectrum = new FFTSpectrum( fft64Block.getCurrentValue() );
-        Complex[] fft64Result = fft64FreqSpectrum.getFftValue();
+        Complex[] fft64Result = fft64FreqSpectrum.getComplexValues();
         double[] fft64Values = new double[ fft64Result.length ];
         for( int i = 0; i < fft64Result.length; i++ )
         {
@@ -135,7 +135,7 @@ public class NoisedSinusGraphExample extends AbstractGraphExample
 
         // FFT 128 data
         FFTSpectrum fft128FreqSpectrum = new FFTSpectrum( fft128Block.getCurrentValue() );
-        Complex[] fft128Result = fft128FreqSpectrum.getFftValue();
+        Complex[] fft128Result = fft128FreqSpectrum.getComplexValues();
         double[] fft128Values = new double[ fft128Result.length ];
         for( int i = 0; i < fft128Result.length; i++ )
         {
@@ -147,7 +147,7 @@ public class NoisedSinusGraphExample extends AbstractGraphExample
 
         // FFT 256 data
         FFTSpectrum fft256FreqSpectrum = new FFTSpectrum( fft256Block.getCurrentValue() );
-        Complex[] fft256Result = fft256FreqSpectrum.getFftValue();
+        Complex[] fft256Result = fft256FreqSpectrum.getComplexValues();
         double[] fft256Values = new double[ fft256Result.length ];
         for( int i = 0; i < fft256Result.length; i++ )
         {

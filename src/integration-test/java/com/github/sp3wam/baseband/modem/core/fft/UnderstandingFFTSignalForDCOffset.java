@@ -78,7 +78,7 @@ public class UnderstandingFFTSignalForDCOffset extends AbstractGraphExample
 
         // FFT 32 spectrum data
         FFTSpectrum fft32Spectrum = new FFTSpectrum( fft32Block.getCurrentValue() );
-        Complex[] fft32FreqResult = fft32Spectrum.getFftValue();
+        Complex[] fft32FreqResult = fft32Spectrum.getComplexValues();
         double[] fft32FreqValues = new double[ fft32FreqResult.length ];
         for( int i = 0; i < fft32FreqResult.length; i++ )
         {
@@ -105,7 +105,7 @@ public class UnderstandingFFTSignalForDCOffset extends AbstractGraphExample
 
         // FFT 32 spectrum data
         FFTSpectrum fft32FreqDCOffsetSpectrum = new FFTSpectrum( fftDCOffset32Block.getCurrentValue() );
-        Complex[] fft32FreqDCOffsetResult = fft32FreqDCOffsetSpectrum.getFftValue();
+        Complex[] fft32FreqDCOffsetResult = fft32FreqDCOffsetSpectrum.getComplexValues();
         double[] fft32FreqDCOffsetValues = new double[ fft32FreqDCOffsetResult.length ];
         for( int i = 0; i < fft32FreqDCOffsetResult.length; i++ )
         {

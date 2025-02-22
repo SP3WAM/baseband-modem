@@ -8,7 +8,6 @@ public class FFTSpectrum implements SignalIf
 {
     private Complex[] fftValue;
     private double[] frequencies;
-    private long samplingFreq;
 
     public FFTSpectrum( FFTSignal fftSignal )
     {
@@ -33,7 +32,7 @@ public class FFTSpectrum implements SignalIf
         }
     }
 
-    public Complex[] getFftValue()
+    public Complex[] getComplexValues()
     {
         return fftValue;
     }
