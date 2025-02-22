@@ -7,6 +7,7 @@ import com.github.sp3wam.baseband.modem.core.BlockIf;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.fft.FFTPeaks;
 import com.github.sp3wam.baseband.modem.core.fft.FFTSignal;
+import com.github.sp3wam.baseband.modem.core.fft.FFTSpectrum;
 
 class MorseToneDetectorBlock implements BlockIf< FFTSignal, MorseToneSignal >
 {
@@ -42,7 +43,8 @@ class MorseToneDetectorBlock implements BlockIf< FFTSignal, MorseToneSignal >
 
     protected void execute0( SystemClock systemClock, FFTSignal inputSignalValue )
     {
-        FFTPeaks fftPeaks = new FFTPeaks( inputSignalValue, 100.0 );
+        FFTSpectrum fftSpectrum = new FFTSpectrum( inputSignalValue );
+        FFTPeaks fftPeaks = new FFTPeaks( fftSpectrum, 100.0 );
 
         if( fftPeaks.getPeakFrequencies().size() == 1 )
         {

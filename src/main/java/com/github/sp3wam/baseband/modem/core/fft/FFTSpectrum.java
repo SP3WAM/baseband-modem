@@ -8,10 +8,12 @@ public class FFTSpectrum implements SignalIf
 {
     private Complex[] fftValue;
     private double[] frequencies;
+    private double frequencyResolution;
 
     public FFTSpectrum( FFTSignal fftSignal )
     {
         int n = fftSignal.getResult().length;
+        frequencyResolution = fftSignal.getSamplingFreq() / n;
 
         fftValue = new Complex[ n + 1 ];
         frequencies = new double[ n + 1 ];
@@ -42,6 +44,11 @@ public class FFTSpectrum implements SignalIf
         return frequencies;
     }
 
+    public double getFrequencyResolution()
+    {
+        return frequencyResolution;
+    }
+
     public double[] getMagnitudeValues()
     {
         double[] result = new double[ fftValue.length ];
@@ -53,4 +60,17 @@ public class FFTSpectrum implements SignalIf
         return result;
     }
 
+    public double[] getUpperSideMagnitudesValues()
+    {
+        double[] magnitudes = getMagnitudeValues();
+        int startIndex = magnitudes.length / 2;
+
+        double[] result = new double[ magnitudes.length / 2 + 1 ];
+        for( int i = startIndex; i < magnitudes.length; i++ )
+        {
+            result[ i - startIndex ] = magnitudes[ i ];
+        }
+
+        return result;
+    }
 }

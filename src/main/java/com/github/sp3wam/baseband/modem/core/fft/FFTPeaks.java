@@ -8,16 +8,13 @@ import org.apache.commons.math3.complex.Complex;
 
 import com.github.sp3wam.baseband.modem.core.SignalIf;
 
-/*
- * TODO: move all FFT related stuff to its own package
- */
 public class FFTPeaks implements SignalIf
 {
     private List< Double > peakFrequencies;
 
-    public FFTPeaks( FFTSignal fftSignal, double minPeakValue )
+    public FFTPeaks( FFTSpectrum fftSpectrum, double minPeakValue )
     {
-        this.peakFrequencies = calculatePeakFrequencies( fftSignal, minPeakValue );
+        this.peakFrequencies = calculatePeakFrequencies( fftSpectrum, minPeakValue );
     }
 
     public List< Double > getPeakFrequencies()
@@ -25,20 +22,20 @@ public class FFTPeaks implements SignalIf
         return peakFrequencies;
     }
 
-    private List< Double > calculatePeakFrequencies( FFTSignal fftSignal, double minPeakValue )
+    private List< Double > calculatePeakFrequencies( FFTSpectrum fftSpectrum, double minPeakValue )
     {
-        Complex[] result = fftSignal.getResult();
+        double[] upperSideSpectrumMag = fftSpectrum.getUpperSideMagnitudesValues();
 
         // find the peak candidates
         List< Integer > peakIndexes = new ArrayList<>();
         // find the summ of all items
         double summ = 0;
         double summCount = 0;
-        for( int q = 0; q < result.length / 2 + 1; q++ )
+        for( int q = 0; q < upperSideSpectrumMag.length ; q++ )
         {
             if( q == 0 )
             {
-                summ += result[ q ].abs();
+                summ += upperSideSpectrumMag[ q ];
                 summCount++;
                 // don't check the first element (0 Hz)
                 // as it seems to be a DC offset only
@@ -48,49 +45,50 @@ public class FFTPeaks implements SignalIf
             if( q == 1 )
             {
                 // first element of the result
-                if( result[ q ].abs() > result[ q + 1 ].abs() )
+                if( upperSideSpectrumMag[ q ] > upperSideSpectrumMag[ q + 1 ] )
                 {
-                    if( result[ q ].abs() > minPeakValue )
+                    if( upperSideSpectrumMag[ q ] > minPeakValue )
                     {
                         peakIndexes.add( q );
                     }
                 }
                 else
                 {
-                    summ += result[ q ].abs();
+                    summ += upperSideSpectrumMag[ q ];
                     summCount++;
                 }
 
                 continue;
             }
 
-            if( q == result.length - 1 )
+            if( q == upperSideSpectrumMag.length - 1 )
             {
                 // last element of the result
-                if( result[ q ].abs() > result[ q - 1 ].abs() )
+                if( upperSideSpectrumMag[ q ] > upperSideSpectrumMag[ q - 1 ] )
                 {
-                    if( result[ q ].abs() > minPeakValue )
+                    if( upperSideSpectrumMag[ q ] > minPeakValue )
                     {
                         peakIndexes.add( q );
                     }
                 }
 
-                summ += result[ q ].abs();
+                summ += upperSideSpectrumMag[ q ];
                 summCount++;
 
                 continue;
             }
 
-            if( result[ q ].abs() > result[ q - 1 ].abs() && result[ q ].abs() > result[ q + 1 ].abs() )
+            if( upperSideSpectrumMag[ q ] > upperSideSpectrumMag[ q - 1 ]
+                && upperSideSpectrumMag[ q ] > upperSideSpectrumMag[ q + 1 ] )
             {
-                if( result[ q ].abs() > minPeakValue )
+                if( upperSideSpectrumMag[ q ] > minPeakValue )
                 {
                     peakIndexes.add( q );
                 }
             }
             else
             {
-                summ += result[ q ].abs();
+                summ += upperSideSpectrumMag[ q ];
                 summCount++;
             }
         }
@@ -104,9 +102,9 @@ public class FFTPeaks implements SignalIf
         double maxPeakValue = 0;
         for( int peakIndex : peakIndexes )
         {
-            if( result[ peakIndex ].abs() > maxPeakValue )
+            if( upperSideSpectrumMag[ peakIndex ] > maxPeakValue )
             {
-                maxPeakValue = result[ peakIndex ].abs();
+                maxPeakValue = upperSideSpectrumMag[ peakIndex ];
             }
         }
 
@@ -123,9 +121,9 @@ public class FFTPeaks implements SignalIf
             // }
 
             // if(result[peakIndex].abs() / 2.0 > avg)
-            if( result[ peakIndex ].abs() / 2.0 > avg )
+            if( upperSideSpectrumMag[ peakIndex ] / 2.0 > avg )
             {
-                double frequency = peakIndex * fftSignal.getSamplingFreq() / result.length;
+                double frequency = peakIndex * fftSpectrum.getFrequencyResolution();
                 list.add( frequency );
             }
         }
