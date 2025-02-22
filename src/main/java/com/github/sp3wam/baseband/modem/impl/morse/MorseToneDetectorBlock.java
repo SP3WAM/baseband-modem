@@ -18,9 +18,10 @@ class MorseToneDetectorBlock extends AbstractBlock< FFTSignal, MorseToneSignal >
         FFTSpectrum fftSpectrum = new FFTSpectrum( inputSignalValue );
         FFTPeaks fftPeaks = new FFTPeaks( fftSpectrum, 100.0 );
 
-        if( fftPeaks.getPeakFrequencies().size() == 1 )
+        if( fftPeaks.getPeaks().size() == 1 )
         {
-            currentValue = new MorseToneSignal( fftPeaks.getPeakFrequencies().get( 0 ) );
+            currentValue = new MorseToneSignal( fftPeaks.getPeaks().get( 0 ).getFrequency() );
+
         }
         else
         {

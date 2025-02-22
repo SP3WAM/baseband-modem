@@ -8,20 +8,20 @@ import com.github.sp3wam.baseband.modem.core.SignalIf;
 
 public class FFTPeaks implements SignalIf
 {
-    private List< Double > peakFrequencies;
+    private List< FFTPeak > peaks;
     private double avgNoiseLevel = 0.0;
 
     public FFTPeaks( FFTSpectrum fftSpectrum, double minPeakValue )
     {
-        this.peakFrequencies = calculatePeakFrequencies( fftSpectrum, minPeakValue );
+        this.peaks = calculatePeakFrequencies( fftSpectrum, minPeakValue );
     }
 
-    public List< Double > getPeakFrequencies()
+    public List< FFTPeak > getPeaks()
     {
-        return peakFrequencies;
+        return peaks;
     }
 
-    private List< Double > calculatePeakFrequencies( FFTSpectrum fftSpectrum, double minPeakValue )
+    private List< FFTPeak > calculatePeakFrequencies( FFTSpectrum fftSpectrum, double minPeakValue )
     {
         double[] upperSideSpectrumMag = fftSpectrum.getUpperSideMagnitudesValues();
 
@@ -113,13 +113,14 @@ public class FFTPeaks implements SignalIf
         double avgNoiseLevel = summ / summCount;
         this.avgNoiseLevel = avgNoiseLevel;
 
-        List< Double > list = new ArrayList<>();
+        List< FFTPeak > list = new ArrayList<>();
         for( int peakIndex : peakIndexes )
         {
             if( upperSideSpectrumMag[ peakIndex ] > 2.0 * avgNoiseLevel )
             {
                 double frequency = peakIndex * fftSpectrum.getFrequencyResolution();
-                list.add( frequency );
+                FFTPeak peak = new FFTPeak( frequency, upperSideSpectrumMag[ peakIndex ] );
+                list.add( peak );
             }
         }
 
@@ -132,10 +133,11 @@ public class FFTPeaks implements SignalIf
         StringBuilder sb = new StringBuilder();
 
         sb.append( "\n    Peak frequencies:\n" );
-        List< Double > peaks = getPeakFrequencies();
-        for( Double peak : peaks )
+        List< FFTPeak > peaks = getPeaks();
+        for( FFTPeak peak : peaks )
         {
-            sb.append( String.format( "        %s Hz avg noise level %s \n", peak, avgNoiseLevel ) );
+            sb.append(
+                String.format( "        %s Hz avg noise level %s \n", peak.getFrequency(), avgNoiseLevel ) );
         }
 
         return sb.toString();
