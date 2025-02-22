@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.sp3wam.baseband.modem.core.AbstractBlock;
-import com.github.sp3wam.baseband.modem.core.BlockIf;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.basic.blocks.BitAveragerBlock;
 import com.github.sp3wam.baseband.modem.core.basic.blocks.BitSignal;
@@ -38,7 +37,7 @@ public class MorseSignalDetectorBlock extends AbstractBlock< FloatingPointSignal
     public MorseSignalDetectorBlock( double inputSignalSampleRate )
     {
         this.inputSignalSampleRate = inputSignalSampleRate;
-        
+
         init();
     }
 

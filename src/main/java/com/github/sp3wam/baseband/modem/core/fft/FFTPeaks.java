@@ -4,13 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.math3.complex.Complex;
-
 import com.github.sp3wam.baseband.modem.core.SignalIf;
 
 public class FFTPeaks implements SignalIf
 {
     private List< Double > peakFrequencies;
+    private double avgNoiseLevel = 0.0;
 
     public FFTPeaks( FFTSpectrum fftSpectrum, double minPeakValue )
     {
@@ -28,15 +27,16 @@ public class FFTPeaks implements SignalIf
 
         // find the peak candidates
         List< Integer > peakIndexes = new ArrayList<>();
-        // find the summ of all items
+
+        // find the average noise level but don't take peak condidates into account
         double summ = 0;
         double summCount = 0;
-        for( int q = 0; q < upperSideSpectrumMag.length ; q++ )
+        for( int q = 0; q < upperSideSpectrumMag.length; q++ )
         {
             if( q == 0 )
             {
-                summ += upperSideSpectrumMag[ q ];
-                summCount++;
+                // summ += upperSideSpectrumMag[ q ];
+                // summCount++;
                 // don't check the first element (0 Hz)
                 // as it seems to be a DC offset only
                 continue;
@@ -71,9 +71,11 @@ public class FFTPeaks implements SignalIf
                         peakIndexes.add( q );
                     }
                 }
-
-                summ += upperSideSpectrumMag[ q ];
-                summCount++;
+                else
+                {
+                    summ += upperSideSpectrumMag[ q ];
+                    summCount++;
+                }
 
                 continue;
             }
@@ -108,20 +110,13 @@ public class FFTPeaks implements SignalIf
             }
         }
 
-        double avg = summ / summCount;
+        double avgNoiseLevel = summ / summCount;
+        this.avgNoiseLevel = avgNoiseLevel;
 
         List< Double > list = new ArrayList<>();
-        double halfOfMaxPeakValue = 0.5 * maxPeakValue;
         for( int peakIndex : peakIndexes )
         {
-            // if( result[ peakIndex ].abs() >= halfOfMaxPeakValue )
-            // {
-            // double frequency = peakIndex * samplingFreq / result.length;
-            // list.add( frequency );
-            // }
-
-            // if(result[peakIndex].abs() / 2.0 > avg)
-            if( upperSideSpectrumMag[ peakIndex ] / 2.0 > avg )
+            if( upperSideSpectrumMag[ peakIndex ] > 2.0 * avgNoiseLevel )
             {
                 double frequency = peakIndex * fftSpectrum.getFrequencyResolution();
                 list.add( frequency );
@@ -140,7 +135,7 @@ public class FFTPeaks implements SignalIf
         List< Double > peaks = getPeakFrequencies();
         for( Double peak : peaks )
         {
-            sb.append( String.format( "        %s Hz \n", peak ) );
+            sb.append( String.format( "        %s Hz avg noise level %s \n", peak, avgNoiseLevel ) );
         }
 
         return sb.toString();
