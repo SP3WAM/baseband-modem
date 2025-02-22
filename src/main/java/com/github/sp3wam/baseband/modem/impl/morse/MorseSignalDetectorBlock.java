@@ -20,8 +20,6 @@ public class MorseSignalDetectorBlock extends AbstractBlock< FloatingPointSignal
 {
     private Logger LOGGER = LoggerFactory.getLogger( MorseSignalDetectorBlock.class );
 
-    private final int FFT_WINDOW_SIZE = 16;
-    private final static double FFT_DESIRED_SAMPLE_FREQ = 6000.0;
     private final static double BIT_DESIRED_SAMPLE_FREQ = 100.0;
 
     private FloatingPointAveragerBlock floatingPointAveragerBlock;
@@ -33,16 +31,44 @@ public class MorseSignalDetectorBlock extends AbstractBlock< FloatingPointSignal
     private ToneToBitConverterBlock toneToBitConverterBlock;
     private BitAveragerBlock bitAveragerBlock;
 
+    private double inputSignalSampleRate;
+    private int fftWindowSize = 16;
+    private double fftDesiredSampleFreq = 6000.0;
+
     public MorseSignalDetectorBlock( double inputSignalSampleRate )
     {
-        int fftSamplerDivider = (int)(inputSignalSampleRate / FFT_DESIRED_SAMPLE_FREQ);
+        this.inputSignalSampleRate = inputSignalSampleRate;
+        
+        init();
+    }
+
+    public void setFftParams( int fftWindowSize, double fftDesiredSampleFreq )
+    {
+        this.fftWindowSize = fftWindowSize;
+        this.fftDesiredSampleFreq = fftDesiredSampleFreq;
+
+        init();
+    }
+
+    protected boolean execute0( SystemClock systemClock, FloatingPointSignal inputSignalValue )
+    {
+        floatingPointAveragerBlock.execute( systemClock, inputSignalValue );
+
+        currentValue = bitAveragerBlock.getCurrentValue();
+
+        return true;
+    }
+
+    private void init()
+    {
+        int fftSamplerDivider = (int)(inputSignalSampleRate / fftDesiredSampleFreq);
         int fftSampleFreq = (int)(inputSignalSampleRate / fftSamplerDivider);
         int bitSamplerDivider = (int)(fftSampleFreq / BIT_DESIRED_SAMPLE_FREQ);
 
         floatingPointAveragerBlock = new FloatingPointAveragerBlock( 1 );
         avgMagnitude = new FloatingPointAvgMagnitudeCalculatorBlock( (int)inputSignalSampleRate );
         fftFasterSampler = new SamplerBlock< FloatingPointSignal, FloatingPointSignal >( fftSamplerDivider );
-        fftBlock = new FFTBlock( fftSampleFreq, FFT_WINDOW_SIZE );
+        fftBlock = new FFTBlock( fftSampleFreq, fftWindowSize );
         fftSlowerSampler = new SamplerBlock< FFTSignal, FFTSignal >( bitSamplerDivider );
         morseToneDetectorBlock = new MorseToneDetectorBlock();
         toneToBitConverterBlock = new ToneToBitConverterBlock();
@@ -56,14 +82,5 @@ public class MorseSignalDetectorBlock extends AbstractBlock< FloatingPointSignal
         fftSlowerSampler.setNextBlock( morseToneDetectorBlock );
         morseToneDetectorBlock.setNextBlock( toneToBitConverterBlock );
         toneToBitConverterBlock.setNextBlock( bitAveragerBlock );
-    }
-
-    protected boolean execute0( SystemClock systemClock, FloatingPointSignal inputSignalValue )
-    {
-        floatingPointAveragerBlock.execute( systemClock, inputSignalValue );
-
-        currentValue = bitAveragerBlock.getCurrentValue();
-
-        return true;
     }
 }
