@@ -85,74 +85,38 @@ public class SinusGraphExample extends AbstractGraphExample
 
         // FFT 8 data
         FFTSpectrum fft8FreqSpectrum = new FFTSpectrum( fftBlock.getCurrentValue() );
-        Complex[] fft8Result = fft8FreqSpectrum.getComplexValues();
-        double[] fft8Values = new double[ fft8Result.length ];
-        for( int i = 0; i < fft8Result.length; i++ )
-        {
-            fft8Values[ i ] = fft8Result[ i ].abs();
-        }
-        GraphData fft8GraphData =
-            new GraphData( "FFT 8 spectrum", "FFT 8", fft8Values, fft8FreqSpectrum.getFreqencies() );
+        GraphData fft8GraphData = new GraphData( "FFT 8 spectrum", "FFT 8",
+            fft8FreqSpectrum.getMagnitudeValues(), fft8FreqSpectrum.getFreqencies() );
         fft8GraphData.setxAxisLabel( "Frequency [Hz]" );
 
         // FFT 16 data
         FFTSpectrum fft16FreqSpectrum = new FFTSpectrum( fft16Block.getCurrentValue() );
-        Complex[] fft16Result = fft16FreqSpectrum.getComplexValues();
-        double[] fft16Values = new double[ fft16Result.length ];
-        for( int i = 0; i < fft16Result.length; i++ )
-        {
-            fft16Values[ i ] = fft16Result[ i ].abs();
-        }
-        GraphData fft16GraphData =
-            new GraphData( "FFT 16 spectrum", "FFT 16", fft16Values, fft16FreqSpectrum.getFreqencies() );
+        GraphData fft16GraphData = new GraphData( "FFT 16 spectrum", "FFT 16",
+            fft16FreqSpectrum.getMagnitudeValues(), fft16FreqSpectrum.getFreqencies() );
         fft16GraphData.setxAxisLabel( "Frequency [Hz]" );
 
         // FFT 32 data
         FFTSpectrum fft32FreqSpectrum = new FFTSpectrum( fft32Block.getCurrentValue() );
-        Complex[] fft32Result = fft32FreqSpectrum.getComplexValues();
-        double[] fft32Values = new double[ fft32Result.length ];
-        for( int i = 0; i < fft32Result.length; i++ )
-        {
-            fft32Values[ i ] = fft32Result[ i ].abs();
-        }
-        GraphData fft32GraphData =
-            new GraphData( "FFT 32 spectrum", "FFT 32", fft32Values, fft32FreqSpectrum.getFreqencies() );
+        GraphData fft32GraphData = new GraphData( "FFT 32 spectrum", "FFT 32",
+            fft32FreqSpectrum.getMagnitudeValues(), fft32FreqSpectrum.getFreqencies() );
         fft32GraphData.setxAxisLabel( "Frequency [Hz]" );
 
         // FFT 64 data
         FFTSpectrum fft64FreqSpectrum = new FFTSpectrum( fft64Block.getCurrentValue() );
-        Complex[] fft64Result = fft64FreqSpectrum.getComplexValues();
-        double[] fft64Values = new double[ fft64Result.length ];
-        for( int i = 0; i < fft64Result.length; i++ )
-        {
-            fft64Values[ i ] = fft64Result[ i ].abs();
-        }
-        GraphData fft64GraphData =
-            new GraphData( "FFT 64 spectrum", "FFT 64", fft64Values, fft64FreqSpectrum.getFreqencies() );
+        GraphData fft64GraphData = new GraphData( "FFT 64 spectrum", "FFT 64",
+            fft64FreqSpectrum.getMagnitudeValues(), fft64FreqSpectrum.getFreqencies() );
         fft64GraphData.setxAxisLabel( "Frequency [Hz]" );
 
         // FFT 128 data
         FFTSpectrum fft128FreqSpectrum = new FFTSpectrum( fft128Block.getCurrentValue() );
-        Complex[] fft128Result = fft128FreqSpectrum.getComplexValues();
-        double[] fft128Values = new double[ fft128Result.length ];
-        for( int i = 0; i < fft128Result.length; i++ )
-        {
-            fft128Values[ i ] = fft128Result[ i ].abs();
-        }
-        GraphData fft128GraphData =
-            new GraphData( "FFT 128 spectrum", "FFT 128", fft128Values, fft128FreqSpectrum.getFreqencies() );
+        GraphData fft128GraphData = new GraphData( "FFT 128 spectrum", "FFT 128",
+            fft128FreqSpectrum.getMagnitudeValues(), fft128FreqSpectrum.getFreqencies() );
         fft128GraphData.setxAxisLabel( "Frequency [Hz]" );
 
         // FFT 256 data
         FFTSpectrum fft256FreqSpectrum = new FFTSpectrum( fft256Block.getCurrentValue() );
-        Complex[] fft256Result = fft256FreqSpectrum.getComplexValues();
-        double[] fft256Values = new double[ fft256Result.length ];
-        for( int i = 0; i < fft256Result.length; i++ )
-        {
-            fft256Values[ i ] = fft256Result[ i ].abs();
-        }
-        GraphData fft256GraphData =
-            new GraphData( "FFT 256 spectrum", "FFT 256", fft256Values, fft256FreqSpectrum.getFreqencies() );
+        GraphData fft256GraphData = new GraphData( "FFT 256 spectrum", "FFT 256",
+            fft256FreqSpectrum.getMagnitudeValues(), fft256FreqSpectrum.getFreqencies() );
         fft256GraphData.setxAxisLabel( "Frequency [Hz]" );
 
         GraphData acor8GraphData = new GraphData( "Autocorrelation of 8 samples",

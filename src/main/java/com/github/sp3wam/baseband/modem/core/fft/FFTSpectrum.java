@@ -42,4 +42,15 @@ public class FFTSpectrum implements SignalIf
         return frequencies;
     }
 
+    public double[] getMagnitudeValues()
+    {
+        double[] result = new double[ fftValue.length ];
+        for( int i = 0; i < fftValue.length; i++ )
+        {
+            result[ i ] = fftValue[ i ].abs();
+        }
+
+        return result;
+    }
+
 }
