@@ -73,4 +73,22 @@ public class FFTSpectrum implements SignalIf
 
         return result;
     }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append( "\n    Spectrum upper side magnitudes:\n" );
+
+        double[] upperSideMagnitudes = getUpperSideMagnitudesValues();
+
+        for( int q = 0; q < upperSideMagnitudes.length; q++ )
+        {
+            double frequency = q * getFrequencyResolution();
+
+            sb.append( String.format( "        %s Hz is %s\n", frequency, upperSideMagnitudes[ q ] ) );
+        }
+
+        return sb.toString();
+    }
 }

@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.sp3wam.baseband.modem.core.AbstractBlock;
-import com.github.sp3wam.baseband.modem.core.BlockIf;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.fft.FFTPeaks;
 import com.github.sp3wam.baseband.modem.core.fft.FFTSignal;
@@ -28,8 +27,8 @@ class MorseToneDetectorBlock extends AbstractBlock< FFTSignal, MorseToneSignal >
             currentValue = new MorseToneSignal( 0.0 );
         }
 
-        LOGGER.debug( String.format( "Detected tone %s Hz from peaks %s", currentValue.getToneFrequency(),
-            fftPeaks.toString() ) );
+        LOGGER.debug( String.format( "Detected tone %s Hz from spectrum %s and peaks %s",
+            currentValue.getToneFrequency(), fftSpectrum.toString(), fftPeaks.toString() ) );
 
         return true;
     }

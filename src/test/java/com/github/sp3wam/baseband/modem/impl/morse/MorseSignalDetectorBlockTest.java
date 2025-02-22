@@ -68,6 +68,7 @@ public class MorseSignalDetectorBlockTest
         signalGenerator.init();
 
         MorseSignalDetectorBlock subject = new MorseSignalDetectorBlock( signalGenerator.getSampleRate() );
+        subject.setFftParams( 16, 6000.0 );
         MorseSignalDetectorConsumer consumer = new MorseSignalDetectorConsumer();
 
         signalGenerator.setNextBlock( subject );
@@ -101,6 +102,7 @@ public class MorseSignalDetectorBlockTest
         signalGenerator.init();
 
         MorseSignalDetectorBlock subject = new MorseSignalDetectorBlock( signalGenerator.getSampleRate() );
+        subject.setFftParams( 16, 6000.0 );
         MorseSignalDetectorConsumer consumer = new MorseSignalDetectorConsumer();
 
         signalGenerator.setNextBlock( subject );
