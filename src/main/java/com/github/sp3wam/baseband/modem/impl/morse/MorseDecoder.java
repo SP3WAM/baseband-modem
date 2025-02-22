@@ -24,6 +24,7 @@ public class MorseDecoder
     {
         PcmFromWavFileSignalGeneratorBlock signalGenerator =
             new PcmFromWavFileSignalGeneratorBlock( SIGNAL_AMPLITUDE, filePath );
+        signalGenerator.setGenerateSilenceAtEnd( 1000 );
         signalGenerator.init();
 
         decode( signalGenerator, consumer );
@@ -33,6 +34,7 @@ public class MorseDecoder
     {
         PcmFromMp3FileSignalGeneratorBlock signalGenerator =
             new PcmFromMp3FileSignalGeneratorBlock( SIGNAL_AMPLITUDE, filePath );
+        signalGenerator.setGenerateSilenceAtEnd( 1000 );
         signalGenerator.init();
 
         decode( signalGenerator, consumer );

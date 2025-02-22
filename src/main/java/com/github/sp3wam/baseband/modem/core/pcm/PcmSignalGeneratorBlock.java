@@ -18,11 +18,10 @@ public abstract class PcmSignalGeneratorBlock extends AbstractBlock< DummySignal
 {
     private final static Logger LOGGER = LoggerFactory.getLogger( PcmSignalGeneratorBlock.class );
 
-    protected final static long SILENCE_AT_END_DURATION_MS = 1000;
-
     protected boolean hasMoreSamples = false;
     protected double amplitude;
     protected long silenceAtEndFrameCountdown = -1;
+    protected long silenceAtEndDurationMillis = 0;
 
     protected AudioInputStream audioStream = null;
     protected long samplesCount = 0;
@@ -69,6 +68,11 @@ public abstract class PcmSignalGeneratorBlock extends AbstractBlock< DummySignal
         return hasMoreSamples;
     }
 
+    public void setGenerateSilenceAtEnd( long silenceDurationMillis )
+    {
+        this.silenceAtEndDurationMillis = silenceDurationMillis;
+    }
+
     protected abstract AudioInputStream createAudioInputStream() throws IOException;
 
     @Override
@@ -76,6 +80,11 @@ public abstract class PcmSignalGeneratorBlock extends AbstractBlock< DummySignal
     {
         samplesCount++;
         // LOGGER.debug( String.format( "Processing sample nr %s", samplesCount ) );
+
+        if( !hasMoreSamples )
+        {
+            return false;
+        }
 
         if( silenceAtEndFrameCountdown == -1 )
         {
@@ -113,8 +122,15 @@ public abstract class PcmSignalGeneratorBlock extends AbstractBlock< DummySignal
 
             if( bytesRead != (numChannels * bytesPerSample) )
             {
-                silenceAtEndFrameCountdown =
-                    (long)(audioStream.getFormat().getSampleRate() * SILENCE_AT_END_DURATION_MS / 1000.0);
+                if( silenceAtEndDurationMillis > 0 )
+                {
+                    silenceAtEndFrameCountdown =
+                        (long)(audioStream.getFormat().getSampleRate() * silenceAtEndDurationMillis / 1000.0);
+                }
+                else
+                {
+                    hasMoreSamples = false;
+                }
 
                 try
                 {
