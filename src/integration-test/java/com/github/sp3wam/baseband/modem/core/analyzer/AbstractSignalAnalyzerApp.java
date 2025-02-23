@@ -51,6 +51,11 @@ abstract class AbstractSignalAnalyzerApp extends ApplicationFrame
 
     private Double[] signalData;
 
+    private XYSeriesCollection inputSignalDataset;
+    private XYSeries inputSignalSeries;
+    private JFreeChart inputSignalChart;
+    private ChartPanel inputSignalChartPanel;
+
     public AbstractSignalAnalyzerApp( String appTitle )
     {
         super( appTitle );
@@ -114,39 +119,11 @@ abstract class AbstractSignalAnalyzerApp extends ApplicationFrame
         signalData = data.toArray( new Double[]
         {} );
 
-        XYSeriesCollection dataset = new XYSeriesCollection();
-        XYSeries series = new XYSeries( "SignalData" );
+        inputSignalSeries.clear();
         for( int index = 0; index < signalData.length; index++ )
         {
-            series.add( index, signalData[ index ] );
+            inputSignalSeries.add( index, signalData[ index ] );
         }
-        dataset.addSeries( series );
-
-        JFreeChart chart = createChart( dataset, "Input signal", "Samples" );
-        ChartPanel chartPanel = new ChartPanel( chart );
-        chartPanel.addMouseListener( new MouseAdapter()
-        {
-            @Override
-            public void mouseClicked( MouseEvent e )
-            {
-                int x = e.getX();
-                int y = e.getY();
-
-                XYPlot plot = chart.getXYPlot();
-
-                // Convert screen coordinates to plot coordinates
-                double plotX = plot.getDomainAxis().java2DToValue( x, chartPanel.getScreenDataArea(),
-                    plot.getDomainAxisEdge() );
-                double plotY = plot.getRangeAxis().java2DToValue( y, chartPanel.getScreenDataArea(),
-                    plot.getRangeAxisEdge() );
-
-                int inputSignalIndex = (int)plotX;
-                LOGGER.info( String.format( "Clicked at %s index", inputSignalIndex ) );
-            }
-        } );
-        getMainPanel().add( chartPanel );
-
-        this.pack();
     }
 
     protected abstract void analyzeSignal( int selectedDataIndex );
@@ -170,6 +147,34 @@ abstract class AbstractSignalAnalyzerApp extends ApplicationFrame
         add( getScrollPane(), BorderLayout.CENTER );
 
         getMainPanel().add( getOpenSoundFileButton() );
+
+        inputSignalDataset = new XYSeriesCollection();
+        inputSignalSeries = new XYSeries( "SignalData" );
+        inputSignalDataset.addSeries( inputSignalSeries );
+
+        inputSignalChart = createChart( inputSignalDataset, "Input signal", "Samples" );
+        inputSignalChartPanel = new ChartPanel( inputSignalChart );
+        inputSignalChartPanel.addMouseListener( new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked( MouseEvent e )
+            {
+                int x = e.getX();
+                int y = e.getY();
+
+                XYPlot plot = inputSignalChart.getXYPlot();
+
+                // Convert screen coordinates to plot coordinates
+                double plotX = plot.getDomainAxis().java2DToValue( x,
+                    inputSignalChartPanel.getScreenDataArea(), plot.getDomainAxisEdge() );
+                double plotY = plot.getRangeAxis().java2DToValue( y,
+                    inputSignalChartPanel.getScreenDataArea(), plot.getRangeAxisEdge() );
+
+                int inputSignalIndex = (int)plotX;
+                LOGGER.info( String.format( "Clicked at %s index", inputSignalIndex ) );
+            }
+        } );
+        getMainPanel().add( inputSignalChartPanel );
     }
 
     private JScrollPane getScrollPane()
