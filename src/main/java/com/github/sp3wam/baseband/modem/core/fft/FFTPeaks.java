@@ -31,26 +31,24 @@ public class FFTPeaks implements SignalIf
         // find the average noise level but don't take peak condidates into account
         double summ = 0;
         double summCount = 0;
+        double powerSumm = 0;
         for( int q = 0; q < upperSideSpectrumMag.length; q++ )
         {
             if( q == 0 )
             {
-                // summ += upperSideSpectrumMag[ q ];
-                // summCount++;
                 // don't check the first element (0 Hz)
                 // as it seems to be a DC offset only
                 continue;
             }
+
+            powerSumm += upperSideSpectrumMag[ q ];
 
             if( q == 1 )
             {
                 // first element of the result
                 if( upperSideSpectrumMag[ q ] > upperSideSpectrumMag[ q + 1 ] )
                 {
-                    if( upperSideSpectrumMag[ q ] > minPeakValue )
-                    {
-                        peakIndexes.add( q );
-                    }
+                    peakIndexes.add( q );
                 }
                 else
                 {
@@ -66,10 +64,7 @@ public class FFTPeaks implements SignalIf
                 // last element of the result
                 if( upperSideSpectrumMag[ q ] > upperSideSpectrumMag[ q - 1 ] )
                 {
-                    if( upperSideSpectrumMag[ q ] > minPeakValue )
-                    {
-                        peakIndexes.add( q );
-                    }
+                    peakIndexes.add( q );
                 }
                 else
                 {
@@ -83,10 +78,7 @@ public class FFTPeaks implements SignalIf
             if( upperSideSpectrumMag[ q ] > upperSideSpectrumMag[ q - 1 ]
                 && upperSideSpectrumMag[ q ] > upperSideSpectrumMag[ q + 1 ] )
             {
-                if( upperSideSpectrumMag[ q ] > minPeakValue )
-                {
-                    peakIndexes.add( q );
-                }
+                peakIndexes.add( q );
             }
             else
             {
@@ -119,7 +111,8 @@ public class FFTPeaks implements SignalIf
             if( upperSideSpectrumMag[ peakIndex ] > 2.0 * avgNoiseLevel )
             {
                 double frequency = peakIndex * fftSpectrum.getFrequencyResolution();
-                FFTPeak peak = new FFTPeak( frequency, upperSideSpectrumMag[ peakIndex ] );
+                double powerPercentage = 100.0 * upperSideSpectrumMag[ peakIndex ] / powerSumm;
+                FFTPeak peak = new FFTPeak( frequency, upperSideSpectrumMag[ peakIndex ], powerPercentage );
                 list.add( peak );
             }
         }
@@ -136,8 +129,7 @@ public class FFTPeaks implements SignalIf
         List< FFTPeak > peaks = getPeaks();
         for( FFTPeak peak : peaks )
         {
-            sb.append(
-                String.format( "        %s Hz avg noise level %s \n", peak.getFrequency(), avgNoiseLevel ) );
+            sb.append( String.format( "        %s avg noise level %s \n", peak.toString(), avgNoiseLevel ) );
         }
 
         return sb.toString();

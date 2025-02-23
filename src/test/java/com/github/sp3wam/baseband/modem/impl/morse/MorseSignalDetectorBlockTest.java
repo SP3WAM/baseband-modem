@@ -51,7 +51,7 @@ public class MorseSignalDetectorBlockTest
         // or at least signal ratio should be very low
         // TODO: why the same signal read from MP3 has signal ratio of 13.0?
         // TODO: 16.0% is too high. Make it somehow smaller.
-        assertTrue( consumer.getOnesPercentageRatio() < 40.0 );
+        assertTrue( consumer.getOnesPercentageRatio() < 35.0 );
     }
 
     @Test
@@ -86,9 +86,7 @@ public class MorseSignalDetectorBlockTest
 
         // For noise there should be no signals detected
         // or at least signal ratio should be very low
-        // TODO: why the same signal read from MP3 has signal ratio of 16.0?
-        // TODO: 13.0% is too high. Make it somehow smaller.
-        assertTrue( consumer.getOnesPercentageRatio() < 50.0 );
+        assertTrue( consumer.getOnesPercentageRatio() < 45.0 );
     }
 
     @Test

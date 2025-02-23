@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.sp3wam.baseband.modem.core.AbstractBlock;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
+import com.github.sp3wam.baseband.modem.core.fft.FFTPeak;
 import com.github.sp3wam.baseband.modem.core.fft.FFTPeaks;
 import com.github.sp3wam.baseband.modem.core.fft.FFTSignal;
 import com.github.sp3wam.baseband.modem.core.fft.FFTSpectrum;
@@ -18,18 +19,55 @@ class MorseToneDetectorBlock extends AbstractBlock< FFTSignal, MorseToneSignal >
         FFTSpectrum fftSpectrum = new FFTSpectrum( inputSignalValue );
         FFTPeaks fftPeaks = new FFTPeaks( fftSpectrum, 100.0 );
 
-        if( fftPeaks.getPeaks().size() == 1 )
+        // find peak with max power percentage
+        FFTPeak maxPowerPeak = null;
+        for( FFTPeak fftPeak : fftPeaks.getPeaks() )
         {
-            currentValue = new MorseToneSignal( fftPeaks.getPeaks().get( 0 ).getFrequency() );
-
+            if( maxPowerPeak == null )
+            {
+                maxPowerPeak = fftPeak;
+            }
+            if( fftPeak.getPowerPercentage() > maxPowerPeak.getPowerPercentage() )
+            {
+                maxPowerPeak = fftPeak;
+            }
         }
-        else
+
+        if( maxPowerPeak == null )
         {
             currentValue = new MorseToneSignal( 0.0 );
+
+            return true;
+        }
+        
+        
+        // check if the magnitude of max power peak is big enough
+        if(maxPowerPeak.getMagnitude() < 100.0)
+        {
+            currentValue = new MorseToneSignal( 0.0 );
+            
+            return true;
+        }
+        
+        // check if the max power peak is at least twice bigger than the others
+        for( FFTPeak fftPeak : fftPeaks.getPeaks() )
+        {
+            if( maxPowerPeak == fftPeak )
+            {
+                continue;
+            }
+
+            if( maxPowerPeak.getPowerPercentage() < 2.0 * fftPeak.getPowerPercentage() )
+            {
+                currentValue = new MorseToneSignal( 0.0 );
+
+                return true;
+            }
         }
 
-        LOGGER.debug( String.format( "Detected tone %s Hz from spectrum %s and peaks %s",
-            currentValue.getToneFrequency(), fftSpectrum.toString(), fftPeaks.toString() ) );
+        currentValue = new MorseToneSignal( maxPowerPeak.getFrequency() );
+        LOGGER.debug( String.format( "Detected tone %s Hz from spectrum %s and peaks %s and peak %s",
+            currentValue.getToneFrequency(), fftSpectrum.toString(), fftPeaks.toString(), maxPowerPeak.toString() ) );
 
         return true;
     }

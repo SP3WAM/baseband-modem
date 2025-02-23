@@ -4,11 +4,13 @@ public class FFTPeak
 {
     private double frequency;
     private double magnitude;
+    private double powerPercentage;
 
-    public FFTPeak( double frequency, double magnitude )
+    public FFTPeak( double frequency, double magnitude, double powerPercentage )
     {
         this.frequency = frequency;
         this.magnitude = magnitude;
+        this.powerPercentage = powerPercentage;
     }
 
     public double getFrequency()
@@ -20,4 +22,17 @@ public class FFTPeak
     {
         return magnitude;
     }
+
+    public double getPowerPercentage()
+    {
+        return powerPercentage;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "FFTPeak [frequency=" + frequency + ", magnitude=" + magnitude + ", powerPercentage="
+            + powerPercentage + "]";
+    }
+
 }
