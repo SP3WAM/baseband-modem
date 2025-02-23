@@ -6,6 +6,12 @@ import org.jfree.ui.RefineryUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.sp3wam.baseband.modem.core.SystemClock;
+import com.github.sp3wam.baseband.modem.core.basic.signals.FloatingPointSignal;
+import com.github.sp3wam.baseband.modem.core.fft.FFTBlock;
+import com.github.sp3wam.baseband.modem.core.fft.FFTSignal;
+import com.github.sp3wam.baseband.modem.core.fft.FFTSpectrum;
+
 public class SignalAnalyzerApp extends AbstractSignalAnalyzerApp
 {
     private Logger LOGGER = LoggerFactory.getLogger( SignalAnalyzerApp.class );
@@ -20,8 +26,36 @@ public class SignalAnalyzerApp extends AbstractSignalAnalyzerApp
     @Override
     protected void analyzeSignal( int selectedDataIndex )
     {
+        int fftWindowSize = 8;
+
         // here do the analyze of the input signal
         // calculate FFTs and update the graphs
+        FFTBlock fftBlock = new FFTBlock( (int)getFftSampleRate(), fftWindowSize );
+        SystemClock systemClock = new SystemClock( getFftSampleRate() );
+
+        for( int q = 0; q < fftWindowSize; q++ )
+        {
+            int dataIndex = selectedDataIndex - fftWindowSize + q;
+            if( dataIndex < 0 )
+            {
+                continue;
+            }
+            FloatingPointSignal dataSignal = new FloatingPointSignal( signalData[ dataIndex ] );
+            fftBlock.execute( systemClock, dataSignal );
+        }
+
+        FFTSignal fftSignal = fftBlock.getCurrentValue();
+        FFTSpectrum fftSpectrum = new FFTSpectrum( fftSignal );
+
+        fft8SpectrumSeries.clear();
+        for( int index = 0; index < fftSpectrum.getFreqencies().length; index++ )
+        {
+            double x = fftSpectrum.getFreqencies()[ index ];
+            double y = fftSpectrum.getMagnitudeValues()[ index ];
+
+            fft8SpectrumSeries.add( x, y );
+        }
+
     }
 
     public static void main( final String[] args )
