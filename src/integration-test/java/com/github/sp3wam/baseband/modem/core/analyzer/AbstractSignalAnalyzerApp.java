@@ -82,7 +82,7 @@ abstract class AbstractSignalAnalyzerApp extends ApplicationFrame
     {
         return fftSampleRate;
     }
-    
+
     private void readSignalFromFile( File file ) throws IOException
     {
         PcmFromFileSignalGeneratorBlock signalGenerator = null;
@@ -186,15 +186,15 @@ abstract class AbstractSignalAnalyzerApp extends ApplicationFrame
 
                 int inputSignalIndex = (int)plotX;
                 LOGGER.info( String.format( "Clicked at %s index", inputSignalIndex ) );
-                
-                analyzeSignal(inputSignalIndex);
+
+                analyzeSignal( inputSignalIndex );
             }
         } );
         getMainPanel().add( inputSignalChartPanel );
 
         fft8SpectrumDataset = new XYSeriesCollection();
         fft8SpectrumSeries = new XYSeries( "FFT 8 spectrum" );
-        fft8SpectrumPowerSeries = new XYSeries( "Power %" );
+        fft8SpectrumPowerSeries = new XYSeries( "PSD vs total power [%]" );
         fft8SpectrumDataset.addSeries( fft8SpectrumSeries );
         fft8SpectrumDataset.addSeries( fft8SpectrumPowerSeries );
         fft8SpectrumChart = createChart( fft8SpectrumDataset, "FFT 8 spectrum", "Frequency [Hz]" );
@@ -235,6 +235,7 @@ abstract class AbstractSignalAnalyzerApp extends ApplicationFrame
                 public void actionPerformed( ActionEvent e )
                 {
                     JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.setCurrentDirectory( new File( "." ) );
                     fileChooser.setFileFilter( new FileFilter()
                     {
 
