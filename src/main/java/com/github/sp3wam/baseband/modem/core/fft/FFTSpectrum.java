@@ -74,7 +74,7 @@ public class FFTSpectrum implements SignalIf
         return result;
     }
 
-    public double[] getUpperSideMagnitudesValues()
+    public double[] getUpperSidePowerSpectralDensityValues()
     {
         double[] magnitudes = getPowerSpectralDensityValues();
         int startIndex = magnitudes.length / 2;
@@ -94,7 +94,7 @@ public class FFTSpectrum implements SignalIf
         StringBuilder sb = new StringBuilder();
         sb.append( "\n    Spectrum upper side magnitudes:\n" );
 
-        double[] upperSideMagnitudes = getUpperSideMagnitudesValues();
+        double[] upperSideMagnitudes = getUpperSidePowerSpectralDensityValues();
 
         for( int q = 0; q < upperSideMagnitudes.length; q++ )
         {

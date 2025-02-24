@@ -23,7 +23,7 @@ public class FFTPeaks implements SignalIf
 
     private List< FFTPeak > calculatePeakFrequencies( FFTSpectrum fftSpectrum, double minPeakValue )
     {
-        double[] upperSideSpectrumMag = fftSpectrum.getUpperSideMagnitudesValues();
+        double[] upperSideSpectrumMag = fftSpectrum.getUpperSidePowerSpectralDensityValues();
 
         // find the peak candidates
         List< Integer > peakIndexes = new ArrayList<>();
