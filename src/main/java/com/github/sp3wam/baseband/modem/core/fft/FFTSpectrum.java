@@ -63,12 +63,12 @@ public class FFTSpectrum implements SignalIf
         return result;
     }
 
-    public double[] getPowerPercentageValues()
+    public double[] getPowerSpectralDensityPercentageValues()
     {
         double[] result = new double[ fftValue.length ];
         for( int i = 0; i < fftValue.length; i++ )
         {
-            result[ i ] = 100.0 * 2.0 * fftValue[ i ].abs() / totalPower;
+            result[ i ] = 100.0 * fftValue[ i ].abs() / totalPower;
         }
 
         return result;
