@@ -48,12 +48,16 @@ public class SignalAnalyzerApp extends AbstractSignalAnalyzerApp
         FFTSpectrum fftSpectrum = new FFTSpectrum( fftSignal );
 
         fft8SpectrumSeries.clear();
+        fft8SpectrumPowerSeries.clear();
         for( int index = 0; index < fftSpectrum.getFreqencies().length; index++ )
         {
-            double x = fftSpectrum.getFreqencies()[ index ];
-            double y = fftSpectrum.getMagnitudeValues()[ index ];
+            double frequency = fftSpectrum.getFreqencies()[ index ];
+            double magnitude = fftSpectrum.getMagnitudeValues()[ index ];
+            double powerPercentage = fftSpectrum.getPowerPercentageValues()[index];
 
-            fft8SpectrumSeries.add( x, y );
+            fft8SpectrumSeries.add( frequency, magnitude );
+            
+            fft8SpectrumPowerSeries.add( frequency, powerPercentage );
         }
 
     }

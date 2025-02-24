@@ -60,6 +60,7 @@ abstract class AbstractSignalAnalyzerApp extends ApplicationFrame
     private long fftSampleRate;
     private XYSeriesCollection fft8SpectrumDataset;
     protected XYSeries fft8SpectrumSeries;
+    protected XYSeries fft8SpectrumPowerSeries;
     private JFreeChart fft8SpectrumChart;
     private ChartPanel fft8SpectrumChartPanel;
 
@@ -193,7 +194,9 @@ abstract class AbstractSignalAnalyzerApp extends ApplicationFrame
 
         fft8SpectrumDataset = new XYSeriesCollection();
         fft8SpectrumSeries = new XYSeries( "FFT 8 spectrum" );
+        fft8SpectrumPowerSeries = new XYSeries( "Power %" );
         fft8SpectrumDataset.addSeries( fft8SpectrumSeries );
+        fft8SpectrumDataset.addSeries( fft8SpectrumPowerSeries );
         fft8SpectrumChart = createChart( fft8SpectrumDataset, "FFT 8 spectrum", "Frequency [Hz]" );
         fft8SpectrumChartPanel = new ChartPanel( fft8SpectrumChart );
         getMainPanel().add( fft8SpectrumChartPanel );

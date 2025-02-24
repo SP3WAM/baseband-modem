@@ -9,6 +9,7 @@ public class FFTSpectrum implements SignalIf
     private Complex[] fftValue;
     private double[] frequencies;
     private double frequencyResolution;
+    private double totalPower;
 
     public FFTSpectrum( FFTSignal fftSignal )
     {
@@ -18,6 +19,7 @@ public class FFTSpectrum implements SignalIf
         fftValue = new Complex[ n + 1 ];
         frequencies = new double[ n + 1 ];
         double freqResolution = ((double)fftSignal.getSamplingFreq()) / ((double)n);
+        totalPower = 0.0;
 
         for( int newIndex = 0; newIndex < n + 1; newIndex++ )
         {
@@ -31,6 +33,7 @@ public class FFTSpectrum implements SignalIf
             }
 
             frequencies[ newIndex ] = (newIndex - n / 2) * freqResolution;
+            totalPower += fftValue[ newIndex ].abs();
         }
     }
 
@@ -55,6 +58,17 @@ public class FFTSpectrum implements SignalIf
         for( int i = 0; i < fftValue.length; i++ )
         {
             result[ i ] = fftValue[ i ].abs();
+        }
+
+        return result;
+    }
+
+    public double[] getPowerPercentageValues()
+    {
+        double[] result = new double[ fftValue.length ];
+        for( int i = 0; i < fftValue.length; i++ )
+        {
+            result[ i ] = 100.0 * 2.0 * fftValue[ i ].abs() / totalPower;
         }
 
         return result;
