@@ -52,7 +52,7 @@ public class FFTSpectrum implements SignalIf
         return frequencyResolution;
     }
 
-    public double[] getMagnitudeValues()
+    public double[] getPowerSpectralDensityValues()
     {
         double[] result = new double[ fftValue.length ];
         for( int i = 0; i < fftValue.length; i++ )
@@ -76,7 +76,7 @@ public class FFTSpectrum implements SignalIf
 
     public double[] getUpperSideMagnitudesValues()
     {
-        double[] magnitudes = getMagnitudeValues();
+        double[] magnitudes = getPowerSpectralDensityValues();
         int startIndex = magnitudes.length / 2;
 
         double[] result = new double[ magnitudes.length / 2 + 1 ];

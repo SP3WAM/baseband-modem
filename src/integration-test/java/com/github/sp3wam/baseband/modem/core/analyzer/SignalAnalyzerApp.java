@@ -52,11 +52,11 @@ public class SignalAnalyzerApp extends AbstractSignalAnalyzerApp
         for( int index = 0; index < fftSpectrum.getFreqencies().length; index++ )
         {
             double frequency = fftSpectrum.getFreqencies()[ index ];
-            double magnitude = fftSpectrum.getMagnitudeValues()[ index ];
-            double powerPercentage = fftSpectrum.getPowerPercentageValues()[index];
+            double magnitude = fftSpectrum.getPowerSpectralDensityValues()[ index ];
+            double powerPercentage = fftSpectrum.getPowerPercentageValues()[ index ];
 
             fft8SpectrumSeries.add( frequency, magnitude );
-            
+
             fft8SpectrumPowerSeries.add( frequency, powerPercentage );
         }
 

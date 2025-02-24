@@ -79,7 +79,7 @@ public class UnderstandingFFTSignalForDCOffset extends AbstractGraphExample
         // FFT 32 spectrum data
         FFTSpectrum fft32Spectrum = new FFTSpectrum( fft32Block.getCurrentValue() );
         GraphData fft32FreqGraphData = new GraphData( "... and its FFT 32 spectrum", "FFT 32",
-            fft32Spectrum.getMagnitudeValues(), fft32Spectrum.getFreqencies() );
+            fft32Spectrum.getPowerSpectralDensityValues(), fft32Spectrum.getFreqencies() );
         fft32FreqGraphData.setxAxisLabel( "Frequency [Hz]" );
 
         // Sinus with offset data
@@ -100,7 +100,8 @@ public class UnderstandingFFTSignalForDCOffset extends AbstractGraphExample
         // FFT 32 spectrum data
         FFTSpectrum fft32FreqDCOffsetSpectrum = new FFTSpectrum( fftDCOffset32Block.getCurrentValue() );
         GraphData fft32FreqDCOffsetGraphData = new GraphData( "... and its FFT 32 spectrum", "FFT 32",
-            fft32FreqDCOffsetSpectrum.getMagnitudeValues(), fft32FreqDCOffsetSpectrum.getFreqencies() );
+            fft32FreqDCOffsetSpectrum.getPowerSpectralDensityValues(),
+            fft32FreqDCOffsetSpectrum.getFreqencies() );
         fft32FreqDCOffsetGraphData.setxAxisLabel( "Frequency [Hz]" );
 
         return new GraphData[]
