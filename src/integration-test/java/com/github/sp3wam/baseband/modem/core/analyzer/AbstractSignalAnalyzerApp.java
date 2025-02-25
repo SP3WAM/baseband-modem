@@ -56,13 +56,7 @@ abstract class AbstractSignalAnalyzerApp extends ApplicationFrame
     private JFreeChart inputSignalChart;
     private ChartPanel inputSignalChartPanel;
 
-    /** FFT 8 objects */
-    private long fftSampleRate;
-    private XYSeriesCollection fft8SpectrumDataset;
-    protected XYSeries fft8SpectrumSeries;
-    protected XYSeries fft8SpectrumPowerSeries;
-    private JFreeChart fft8SpectrumChart;
-    private ChartPanel fft8SpectrumChartPanel;
+    private long fftSampleRate = 6000;
 
     public AbstractSignalAnalyzerApp( String appTitle )
     {
@@ -83,7 +77,7 @@ abstract class AbstractSignalAnalyzerApp extends ApplicationFrame
         return fftSampleRate;
     }
 
-    private void readSignalFromFile( File file ) throws IOException
+    private void readSignalFromFile( File file, long desiredFftSampleRate ) throws IOException
     {
         PcmFromFileSignalGeneratorBlock signalGenerator = null;
 
@@ -104,7 +98,7 @@ abstract class AbstractSignalAnalyzerApp extends ApplicationFrame
         }
 
         long inputSignalSampleRate = signalGenerator.getSampleRate();
-        int fftSamplerDivider = (int)(inputSignalSampleRate / 6000.0);
+        int fftSamplerDivider = (int)(inputSignalSampleRate / desiredFftSampleRate);
         fftSampleRate = inputSignalSampleRate / fftSamplerDivider;
 
         SamplerBlock< FloatingPointSignal, FloatingPointSignal > fftSampler =
@@ -141,6 +135,10 @@ abstract class AbstractSignalAnalyzerApp extends ApplicationFrame
     }
 
     protected abstract void analyzeSignal( int selectedDataIndex );
+
+    protected abstract void createAdditionalContent();
+    
+    protected abstract long getDesiredFftSampleRate();
 
     protected JFreeChart createChart( final XYDataset dataset, String title, String xAxisLabel )
     {
@@ -192,14 +190,7 @@ abstract class AbstractSignalAnalyzerApp extends ApplicationFrame
         } );
         getMainPanel().add( inputSignalChartPanel );
 
-        fft8SpectrumDataset = new XYSeriesCollection();
-        fft8SpectrumSeries = new XYSeries( "FFT 8 spectrum" );
-        fft8SpectrumPowerSeries = new XYSeries( "PSD vs total power [%]" );
-        fft8SpectrumDataset.addSeries( fft8SpectrumSeries );
-        fft8SpectrumDataset.addSeries( fft8SpectrumPowerSeries );
-        fft8SpectrumChart = createChart( fft8SpectrumDataset, "FFT 8 spectrum", "Frequency [Hz]" );
-        fft8SpectrumChartPanel = new ChartPanel( fft8SpectrumChart );
-        getMainPanel().add( fft8SpectrumChartPanel );
+        createAdditionalContent();
     }
 
     private JScrollPane getScrollPane()
@@ -212,7 +203,7 @@ abstract class AbstractSignalAnalyzerApp extends ApplicationFrame
         return scrollPane;
     }
 
-    private JPanel getMainPanel()
+    protected JPanel getMainPanel()
     {
         if( mainPanel == null )
         {
@@ -272,7 +263,7 @@ abstract class AbstractSignalAnalyzerApp extends ApplicationFrame
 
                         try
                         {
-                            readSignalFromFile( file );
+                            readSignalFromFile( file, getDesiredFftSampleRate() );
                         }
                         catch( IOException ex )
                         {
