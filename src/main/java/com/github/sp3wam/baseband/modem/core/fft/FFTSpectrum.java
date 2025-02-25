@@ -9,7 +9,6 @@ public class FFTSpectrum implements SignalIf
     private Complex[] fftValue;
     private double[] frequencies;
     private double frequencyResolution;
-    private double totalPower;
 
     public FFTSpectrum( FFTSignal fftSignal )
     {
@@ -19,7 +18,6 @@ public class FFTSpectrum implements SignalIf
         fftValue = new Complex[ n + 1 ];
         frequencies = new double[ n + 1 ];
         double freqResolution = ((double)fftSignal.getSamplingFreq()) / ((double)n);
-        totalPower = 0.0;
 
         for( int newIndex = 0; newIndex < n + 1; newIndex++ )
         {
@@ -33,7 +31,6 @@ public class FFTSpectrum implements SignalIf
             }
 
             frequencies[ newIndex ] = (newIndex - n / 2) * freqResolution;
-            totalPower += fftValue[ newIndex ].abs();
         }
     }
 
@@ -52,23 +49,62 @@ public class FFTSpectrum implements SignalIf
         return frequencyResolution;
     }
 
+    /***
+     * Gets the Power Spectral Density values.
+     * <p>
+     * DC offset information is not taken into account (set always to zero).
+     * 
+     * @return
+     */
     public double[] getPowerSpectralDensityValues()
     {
         double[] result = new double[ fftValue.length ];
         for( int i = 0; i < fftValue.length; i++ )
         {
-            result[ i ] = fftValue[ i ].abs();
+            if( i == getIndexOfDCOffset() )
+            {
+                result[ i ] = 0.0;
+            }
+            else
+            {
+                result[ i ] = fftValue[ i ].abs();
+            }
         }
 
         return result;
     }
 
+    /***
+     * Gets the Power Spectral Density value as a percentage of total power of the signal.
+     * <p>
+     * DC offset information is not taken into account (set always to zero).
+     * 
+     * @return
+     */
     public double[] getPowerSpectralDensityPercentageValues()
     {
+        double totalPower = 0.0;
+        for( int i = 0; i < fftValue.length; i++ )
+        {
+            if( i == getIndexOfDCOffset() )
+            {
+                continue;
+            }
+
+            totalPower += fftValue[ i ].abs();
+        }
+
         double[] result = new double[ fftValue.length ];
         for( int i = 0; i < fftValue.length; i++ )
         {
-            result[ i ] = 100.0 * fftValue[ i ].abs() / totalPower;
+            if( i == getIndexOfDCOffset() )
+            {
+                result[ i ] = 0.0;
+            }
+            else
+            {
+                result[ i ] = 100.0 * fftValue[ i ].abs() / totalPower;
+            }
         }
 
         return result;
@@ -77,8 +113,9 @@ public class FFTSpectrum implements SignalIf
     public double[] getUpperSidePowerSpectralDensityValues()
     {
         double[] magnitudes = getPowerSpectralDensityValues();
-        int startIndex = magnitudes.length / 2;
+        int startIndex = getIndexOfDCOffset();
 
+        // TODO: consider not including DC offset here
         double[] result = new double[ magnitudes.length / 2 + 1 ];
         for( int i = startIndex; i < magnitudes.length; i++ )
         {
@@ -86,6 +123,11 @@ public class FFTSpectrum implements SignalIf
         }
 
         return result;
+    }
+
+    private int getIndexOfDCOffset()
+    {
+        return fftValue.length / 2;
     }
 
     @Override
