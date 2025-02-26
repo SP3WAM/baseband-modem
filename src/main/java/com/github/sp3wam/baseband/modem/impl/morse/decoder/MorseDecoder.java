@@ -1,20 +1,13 @@
-package com.github.sp3wam.baseband.modem.impl.morse;
+package com.github.sp3wam.baseband.modem.impl.morse.decoder;
 
 import java.io.IOException;
 
 import com.github.sp3wam.baseband.modem.core.SystemClock;
-import com.github.sp3wam.baseband.modem.core.basic.blocks.BitAveragerBlock;
-import com.github.sp3wam.baseband.modem.core.basic.blocks.BitSignal;
-import com.github.sp3wam.baseband.modem.core.basic.blocks.FloatingPointAvgMagnitudeCalculatorBlock;
-import com.github.sp3wam.baseband.modem.core.basic.blocks.SamplerBlock;
-import com.github.sp3wam.baseband.modem.core.basic.blocks.ToneToBitConverterBlock;
-import com.github.sp3wam.baseband.modem.core.basic.signals.FloatingPointSignal;
-import com.github.sp3wam.baseband.modem.core.fft.FFTBlock;
-import com.github.sp3wam.baseband.modem.core.fft.FFTSignal;
 import com.github.sp3wam.baseband.modem.core.pcm.PcmFromJavaxAudioSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.pcm.PcmFromMp3FileSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.pcm.PcmFromWavFileSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.pcm.PcmSignalGeneratorBlock;
+import com.github.sp3wam.baseband.modem.impl.morse.detector.MorseSignalDetectorBlock;
 
 public class MorseDecoder
 {

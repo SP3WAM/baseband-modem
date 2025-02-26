@@ -1,12 +1,12 @@
-package com.github.sp3wam.baseband.modem.impl.morse;
+package com.github.sp3wam.baseband.modem.impl.morse.decoder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.sp3wam.baseband.modem.core.AbstractBlock;
-import com.github.sp3wam.baseband.modem.core.BlockIf;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.basic.signals.StringSignal;
+import com.github.sp3wam.baseband.modem.impl.morse.MorseTable;
 
 class MorseSymbolDecoderBlock extends AbstractBlock< MorseSymbolSignal, StringSignal >
 {

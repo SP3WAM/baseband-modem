@@ -34,7 +34,7 @@
 
 		<Logger
 			name="com.github.sp3wam.baseband.modem.core.basic.blocks.FloatingPointAvgMagnitudeCalculatorBlock"
-			level="info" />
+			level="off" />
 
 		<Logger
 			name="com.github.sp3wam.baseband.modem.core.basic.blocks.SamplerBlock"
@@ -43,20 +43,20 @@
 			name="com.github.sp3wam.baseband.modem.core.fft.FFTBlock"
 			level="off" />
 		<Logger
-			name="com.github.sp3wam.baseband.modem.impl.morse.MorseToneDetectorBlock"
+			name="com.github.sp3wam.baseband.modem.impl.morse.detector.MorseToneDetectorBlock"
 			level="off" />
 		<Logger
-			name="com.github.sp3wam.baseband.modem.core.basic.blocks.ToneToBitConverterBlock"
+			name="com.github.sp3wam.baseband.modem.impl.morse.detector.ToneToBitConverterBlock"
 			level="off" />
 		<Logger
 			name="com.github.sp3wam.baseband.modem.core.basic.blocks.BitAveragerBlock"
 			level="off" />
 
 		<Logger
-			name="com.github.sp3wam.baseband.modem.impl.morse.BitStreamMorseDecoderBlock"
+			name="com.github.sp3wam.baseband.modem.impl.morse.decoder.BitStreamMorseDecoderBlock"
 			level="off" />
 		<Logger
-			name="com.github.sp3wam.baseband.modem.impl.morse.DitDurationCalculator"
+			name="com.github.sp3wam.baseband.modem.impl.morse.decoder.DitDurationCalculator"
 			level="off" />
 
 		<Root level="debug">

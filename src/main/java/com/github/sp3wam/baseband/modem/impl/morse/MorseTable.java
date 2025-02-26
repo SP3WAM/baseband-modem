@@ -10,7 +10,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class MorseTable
+public class MorseTable
 {
     private Logger LOGGER = LoggerFactory.getLogger( MorseTable.class );
 

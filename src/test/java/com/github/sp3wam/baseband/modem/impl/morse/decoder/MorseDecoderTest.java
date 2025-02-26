@@ -1,4 +1,4 @@
-package com.github.sp3wam.baseband.modem.impl.morse;
+package com.github.sp3wam.baseband.modem.impl.morse.decoder;
 
 import static org.junit.Assert.assertEquals;
 
@@ -11,6 +11,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.github.sp3wam.baseband.modem.impl.morse.decoder.MorseDecoder;
+import com.github.sp3wam.baseband.modem.impl.morse.decoder.MorseDecoderConsumer;
 
 import xt.audio.Enums.XtEnumFlags;
 import xt.audio.Enums.XtSystem;

@@ -1,4 +1,4 @@
-package com.github.sp3wam.baseband.modem.impl.morse;
+package com.github.sp3wam.baseband.modem.impl.morse.decoder;
 
 import com.github.sp3wam.baseband.modem.core.SignalIf;
 

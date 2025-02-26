@@ -1,4 +1,4 @@
-package com.github.sp3wam.baseband.modem.impl.morse;
+package com.github.sp3wam.baseband.modem.impl.morse.detector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +10,10 @@ import com.github.sp3wam.baseband.modem.core.fft.FFTPeaks;
 import com.github.sp3wam.baseband.modem.core.fft.FFTSignal;
 import com.github.sp3wam.baseband.modem.core.fft.FFTSpectrum;
 
+/***
+ * From the provided FFT result finds out if we have a real beep (dit or dah) signal or noise. Result provided
+ * as {@linkplain MorseToneSignal}.
+ */
 class MorseToneDetectorBlock extends AbstractBlock< FFTSignal, MorseToneSignal >
 {
     private Logger LOGGER = LoggerFactory.getLogger( MorseToneDetectorBlock.class );
@@ -39,16 +43,15 @@ class MorseToneDetectorBlock extends AbstractBlock< FFTSignal, MorseToneSignal >
 
             return true;
         }
-        
-        
+
         // check if the magnitude of max power peak is big enough
-        if(maxPowerPeak.getMagnitude() < 100.0)
+        if( maxPowerPeak.getMagnitude() < 100.0 )
         {
             currentValue = new MorseToneSignal( 0.0 );
-            
+
             return true;
         }
-        
+
         // check if the max power peak is at least twice bigger than the others
         for( FFTPeak fftPeak : fftPeaks.getPeaks() )
         {
@@ -67,7 +70,8 @@ class MorseToneDetectorBlock extends AbstractBlock< FFTSignal, MorseToneSignal >
 
         currentValue = new MorseToneSignal( maxPowerPeak.getFrequency() );
         LOGGER.debug( String.format( "Detected tone %s Hz from spectrum %s and peaks %s and peak %s",
-            currentValue.getToneFrequency(), fftSpectrum.toString(), fftPeaks.toString(), maxPowerPeak.toString() ) );
+            currentValue.getToneFrequency(), fftSpectrum.toString(), fftPeaks.toString(),
+            maxPowerPeak.toString() ) );
 
         return true;
     }

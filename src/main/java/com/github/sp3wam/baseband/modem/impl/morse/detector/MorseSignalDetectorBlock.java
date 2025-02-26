@@ -1,4 +1,4 @@
-package com.github.sp3wam.baseband.modem.impl.morse;
+package com.github.sp3wam.baseband.modem.impl.morse.detector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,11 +10,17 @@ import com.github.sp3wam.baseband.modem.core.basic.blocks.BitSignal;
 import com.github.sp3wam.baseband.modem.core.basic.blocks.FloatingPointAveragerBlock;
 import com.github.sp3wam.baseband.modem.core.basic.blocks.FloatingPointAvgMagnitudeCalculatorBlock;
 import com.github.sp3wam.baseband.modem.core.basic.blocks.SamplerBlock;
-import com.github.sp3wam.baseband.modem.core.basic.blocks.ToneToBitConverterBlock;
 import com.github.sp3wam.baseband.modem.core.basic.signals.FloatingPointSignal;
 import com.github.sp3wam.baseband.modem.core.fft.FFTBlock;
 import com.github.sp3wam.baseband.modem.core.fft.FFTSignal;
 
+/***
+ * From the input audio signal samples detects the Morse signal into a strem of {@linkplain BitSignal}:
+ * <ul>
+ * <li>bit signal of true - means there is a audible beep (dit or dah)</li>
+ * <li>bit signal of false - means there is no audible beep (just noise)</li>
+ * </ul>
+ */
 public class MorseSignalDetectorBlock extends AbstractBlock< FloatingPointSignal, BitSignal >
 {
     private Logger LOGGER = LoggerFactory.getLogger( MorseSignalDetectorBlock.class );

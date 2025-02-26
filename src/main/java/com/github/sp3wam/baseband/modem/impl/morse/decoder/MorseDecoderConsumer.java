@@ -1,4 +1,4 @@
-package com.github.sp3wam.baseband.modem.impl.morse;
+package com.github.sp3wam.baseband.modem.impl.morse.decoder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

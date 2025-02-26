@@ -1,4 +1,4 @@
-package com.github.sp3wam.baseband.modem.core.basic.blocks;
+package com.github.sp3wam.baseband.modem.impl.morse.detector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,9 +6,9 @@ import org.slf4j.LoggerFactory;
 import com.github.sp3wam.baseband.modem.core.AbstractBlock;
 import com.github.sp3wam.baseband.modem.core.BlockIf;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
-import com.github.sp3wam.baseband.modem.impl.morse.MorseToneSignal;
+import com.github.sp3wam.baseband.modem.core.basic.blocks.BitSignal;
 
-public class ToneToBitConverterBlock extends AbstractBlock< MorseToneSignal, BitSignal >
+class ToneToBitConverterBlock extends AbstractBlock< MorseToneSignal, BitSignal >
 {
     private Logger LOGGER = LoggerFactory.getLogger( ToneToBitConverterBlock.class );
 

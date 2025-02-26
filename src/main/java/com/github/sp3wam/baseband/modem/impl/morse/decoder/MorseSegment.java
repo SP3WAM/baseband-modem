@@ -1,4 +1,4 @@
-package com.github.sp3wam.baseband.modem.impl.morse;
+package com.github.sp3wam.baseband.modem.impl.morse.decoder;
 
 /***
  * Represents a Morse channel state which can be either a Signal (an audible tone signal) or a Silence (no

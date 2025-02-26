@@ -1,4 +1,4 @@
-package com.github.sp3wam.baseband.modem.impl.morse;
+package com.github.sp3wam.baseband.modem.impl.morse.detector;
 
 import static org.junit.Assert.assertTrue;
 
@@ -13,6 +13,7 @@ import com.github.sp3wam.baseband.modem.core.basic.blocks.AbstractConsumerBlock;
 import com.github.sp3wam.baseband.modem.core.basic.blocks.BitSignal;
 import com.github.sp3wam.baseband.modem.core.pcm.PcmFromMp3FileSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.pcm.PcmFromWavFileSignalGeneratorBlock;
+import com.github.sp3wam.baseband.modem.impl.morse.detector.MorseSignalDetectorBlock;
 
 public class MorseSignalDetectorBlockTest
 {
