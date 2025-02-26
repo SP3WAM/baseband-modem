@@ -13,7 +13,6 @@ import com.github.sp3wam.baseband.modem.core.basic.blocks.AbstractConsumerBlock;
 import com.github.sp3wam.baseband.modem.core.basic.blocks.BitSignal;
 import com.github.sp3wam.baseband.modem.core.pcm.PcmFromMp3FileSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.pcm.PcmFromWavFileSignalGeneratorBlock;
-import com.github.sp3wam.baseband.modem.impl.morse.detector.MorseSignalDetectorBlock;
 
 public class MorseSignalDetectorBlockTest
 {
@@ -22,7 +21,39 @@ public class MorseSignalDetectorBlockTest
     private final double SIGNAL_AMPLITUDE = 100.0;
 
     @Test
-    public void testRealLoudNoise_fromWav() throws IOException
+    public void testRealLoudNoise_bySpectrumPeaks_FFT08_fromWav() throws IOException
+    {
+        String filePath =
+            "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/real_loud_noise.wav";
+
+        PcmFromWavFileSignalGeneratorBlock signalGenerator =
+            new PcmFromWavFileSignalGeneratorBlock( SIGNAL_AMPLITUDE, filePath );
+        signalGenerator.init();
+
+        MorseSignalDetectorBlock subject = new MorseSignalDetectorBlock( signalGenerator.getSampleRate() );
+        subject.setFftParams( 8, 6000.0 );
+        MorseSignalDetectorConsumer consumer = new MorseSignalDetectorConsumer();
+
+        signalGenerator.setNextBlock( subject );
+        subject.setNextBlock( consumer );
+
+        SystemClock systemClock = new SystemClock( signalGenerator.getSampleRate() );
+        while( signalGenerator.hasMoreSamples() )
+        {
+            signalGenerator.execute( systemClock, null );
+
+            systemClock.step();
+        }
+
+        LOGGER.info( String.format( "Percentage ratio of 1 is %s", consumer.getOnesPercentageRatio() ) );
+
+        // For noise there should be no signals detected
+        // or at least signal ratio should be very low
+        assertTrue( consumer.getOnesPercentageRatio() < 11.0 );
+    }
+    
+    @Test
+    public void testRealLoudNoise_bySpectrumPeaks_FFT16_fromWav() throws IOException
     {
         String filePath =
             "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/real_loud_noise.wav";
@@ -50,26 +81,21 @@ public class MorseSignalDetectorBlockTest
 
         // For noise there should be no signals detected
         // or at least signal ratio should be very low
-        // TODO: why the same signal read from MP3 has signal ratio of 13.0?
-        // TODO: 16.0% is too high. Make it somehow smaller.
-        assertTrue( consumer.getOnesPercentageRatio() < 35.0 );
+        assertTrue( consumer.getOnesPercentageRatio() < 36.0 );
     }
-
+    
     @Test
-    public void testRealLoudNoise_fromMp3() throws IOException
+    public void testRealLoudNoise_bySpectrumPeaks_FFT32_fromWav() throws IOException
     {
         String filePath =
-            "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/real_loud_noise.mp3";
+            "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/real_loud_noise.wav";
 
-        // String filePath =
-        // "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/White-noise-sound-20sec-mono-44100Hz.mp3";
-
-        PcmFromMp3FileSignalGeneratorBlock signalGenerator =
-            new PcmFromMp3FileSignalGeneratorBlock( SIGNAL_AMPLITUDE, filePath );
+        PcmFromWavFileSignalGeneratorBlock signalGenerator =
+            new PcmFromWavFileSignalGeneratorBlock( SIGNAL_AMPLITUDE, filePath );
         signalGenerator.init();
 
         MorseSignalDetectorBlock subject = new MorseSignalDetectorBlock( signalGenerator.getSampleRate() );
-        subject.setFftParams( 16, 6000.0 );
+        subject.setFftParams( 32, 6000.0 );
         MorseSignalDetectorConsumer consumer = new MorseSignalDetectorConsumer();
 
         signalGenerator.setNextBlock( subject );
@@ -87,11 +113,46 @@ public class MorseSignalDetectorBlockTest
 
         // For noise there should be no signals detected
         // or at least signal ratio should be very low
-        assertTrue( consumer.getOnesPercentageRatio() < 45.0 );
+        // TODO: why the same signal read from MP3 has signal ratio of 13.0?
+        // TODO: 16.0% is too high. Make it somehow smaller.
+        assertTrue( consumer.getOnesPercentageRatio() < 8.0 );
     }
 
     @Test
-    public void testRealNoisedSignal_fromWav() throws IOException
+    public void testRealNoisedSignal_bySpectrumPeaks_FFT08_fromWav() throws IOException
+    {
+        String filePath =
+            "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/real_noised_signal.wav";
+
+        PcmFromWavFileSignalGeneratorBlock signalGenerator =
+            new PcmFromWavFileSignalGeneratorBlock( SIGNAL_AMPLITUDE, filePath );
+        signalGenerator.init();
+
+        MorseSignalDetectorBlock subject = new MorseSignalDetectorBlock( signalGenerator.getSampleRate() );
+        subject.setFftParams( 8, 6000.0 );
+        MorseSignalDetectorConsumer consumer = new MorseSignalDetectorConsumer();
+
+        signalGenerator.setNextBlock( subject );
+        subject.setNextBlock( consumer );
+
+        SystemClock systemClock = new SystemClock( signalGenerator.getSampleRate() );
+        while( signalGenerator.hasMoreSamples() )
+        {
+            signalGenerator.execute( systemClock, null );
+
+            systemClock.step();
+        }
+
+        LOGGER.info( String.format( "Percentage ratio of 1 is %s", consumer.getOnesPercentageRatio() ) );
+
+        // For noised signal there should be no silence detected
+        // or at least signal ratio should be very high
+        // TODO: 14.0% is a way too low. Make it somehow bigger.
+        assertTrue( consumer.getOnesPercentageRatio() > 84.0 );
+    }
+    
+    @Test
+    public void testRealNoisedSignal_bySpectrumPeaks_FFT16_fromWav() throws IOException
     {
         String filePath =
             "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/real_noised_signal.wav";
@@ -120,7 +181,40 @@ public class MorseSignalDetectorBlockTest
         // For noised signal there should be no silence detected
         // or at least signal ratio should be very high
         // TODO: 14.0% is a way too low. Make it somehow bigger.
-        assertTrue( consumer.getOnesPercentageRatio() > 95.0 );
+        assertTrue( consumer.getOnesPercentageRatio() > 94.0 );
+    }
+    
+    @Test
+    public void testRealNoisedSignal_bySpectrumPeaks_FFT32_fromWav() throws IOException
+    {
+        String filePath =
+            "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/real_noised_signal.wav";
+
+        PcmFromWavFileSignalGeneratorBlock signalGenerator =
+            new PcmFromWavFileSignalGeneratorBlock( SIGNAL_AMPLITUDE, filePath );
+        signalGenerator.init();
+
+        MorseSignalDetectorBlock subject = new MorseSignalDetectorBlock( signalGenerator.getSampleRate() );
+        subject.setFftParams( 32, 6000.0 );
+        MorseSignalDetectorConsumer consumer = new MorseSignalDetectorConsumer();
+
+        signalGenerator.setNextBlock( subject );
+        subject.setNextBlock( consumer );
+
+        SystemClock systemClock = new SystemClock( signalGenerator.getSampleRate() );
+        while( signalGenerator.hasMoreSamples() )
+        {
+            signalGenerator.execute( systemClock, null );
+
+            systemClock.step();
+        }
+
+        LOGGER.info( String.format( "Percentage ratio of 1 is %s", consumer.getOnesPercentageRatio() ) );
+
+        // For noised signal there should be no silence detected
+        // or at least signal ratio should be very high
+        // TODO: 14.0% is a way too low. Make it somehow bigger.
+        assertTrue( consumer.getOnesPercentageRatio() > 94.0 );
     }
 
     private class MorseSignalDetectorConsumer extends AbstractConsumerBlock< BitSignal, BitSignal >

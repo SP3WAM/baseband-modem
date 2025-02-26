@@ -43,7 +43,7 @@
 			name="com.github.sp3wam.baseband.modem.core.fft.FFTBlock"
 			level="off" />
 		<Logger
-			name="com.github.sp3wam.baseband.modem.impl.morse.detector.MorseToneDetectorBlock"
+			name="com.github.sp3wam.baseband.modem.impl.morse.detector.MorseToneDetectorBySpectrumPeaksBlock"
 			level="off" />
 		<Logger
 			name="com.github.sp3wam.baseband.modem.impl.morse.detector.ToneToBitConverterBlock"

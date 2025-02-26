@@ -3,7 +3,6 @@ package com.github.sp3wam.baseband.modem.impl.morse.detector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.sp3wam.baseband.modem.core.AbstractBlock;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.fft.FFTPeak;
 import com.github.sp3wam.baseband.modem.core.fft.FFTPeaks;
@@ -14,9 +13,9 @@ import com.github.sp3wam.baseband.modem.core.fft.FFTSpectrum;
  * From the provided FFT result finds out if we have a real beep (dit or dah) signal or noise. Result provided
  * as {@linkplain MorseToneSignal}.
  */
-class MorseToneDetectorBlock extends AbstractBlock< FFTSignal, MorseToneSignal >
+class MorseToneDetectorBySpectrumPeaksBlock extends AbstractMorseToneDetectorBlock
 {
-    private Logger LOGGER = LoggerFactory.getLogger( MorseToneDetectorBlock.class );
+    private Logger LOGGER = LoggerFactory.getLogger( MorseToneDetectorBySpectrumPeaksBlock.class );
 
     protected boolean execute0( SystemClock systemClock, FFTSignal inputSignalValue )
     {

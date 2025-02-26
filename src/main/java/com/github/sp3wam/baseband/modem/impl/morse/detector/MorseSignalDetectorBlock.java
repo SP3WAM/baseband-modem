@@ -32,7 +32,7 @@ public class MorseSignalDetectorBlock extends AbstractBlock< FloatingPointSignal
     private FloatingPointAvgMagnitudeCalculatorBlock avgMagnitude;
     private FFTBlock fftBlock;
     private SamplerBlock< FFTSignal, FFTSignal > fftSlowerSampler;
-    private MorseToneDetectorBlock morseToneDetectorBlock;
+    private MorseToneDetectorBySpectrumPeaksBlock morseToneDetectorBlock;
     private ToneToBitConverterBlock toneToBitConverterBlock;
     private BitAveragerBlock bitAveragerBlock;
 
@@ -75,7 +75,7 @@ public class MorseSignalDetectorBlock extends AbstractBlock< FloatingPointSignal
         fftFasterSampler = new SamplerBlock< FloatingPointSignal, FloatingPointSignal >( fftSamplerDivider );
         fftBlock = new FFTBlock( fftSampleFreq, fftWindowSize );
         fftSlowerSampler = new SamplerBlock< FFTSignal, FFTSignal >( bitSamplerDivider );
-        morseToneDetectorBlock = new MorseToneDetectorBlock();
+        morseToneDetectorBlock = new MorseToneDetectorBySpectrumPeaksBlock();
         toneToBitConverterBlock = new ToneToBitConverterBlock();
         bitAveragerBlock = new BitAveragerBlock( 3 );
 
