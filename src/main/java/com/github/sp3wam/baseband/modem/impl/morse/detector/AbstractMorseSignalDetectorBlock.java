@@ -14,16 +14,16 @@ import com.github.sp3wam.baseband.modem.core.basic.signals.FloatingPointSignal;
 import com.github.sp3wam.baseband.modem.core.fft.FFTBlock;
 import com.github.sp3wam.baseband.modem.core.fft.FFTSignal;
 
-/***
- * From the input audio signal samples detects the Morse signal into a strem of {@linkplain BitSignal}:
+/**
+ * From the input audio signal samples detects the Morse signal into a stream of {@linkplain BitSignal}:
  * <ul>
  * <li>bit signal of true - means there is a audible beep (dit or dah)</li>
  * <li>bit signal of false - means there is no audible beep (just noise)</li>
  * </ul>
  */
-public class MorseSignalDetectorBlock extends AbstractBlock< FloatingPointSignal, BitSignal >
+abstract class AbstractMorseSignalDetectorBlock extends AbstractBlock< FloatingPointSignal, BitSignal >
 {
-    private Logger LOGGER = LoggerFactory.getLogger( MorseSignalDetectorBlock.class );
+    private Logger LOGGER = LoggerFactory.getLogger( AbstractMorseSignalDetectorBlock.class );
 
     private final static double BIT_DESIRED_SAMPLE_FREQ = 100.0;
 
@@ -32,15 +32,14 @@ public class MorseSignalDetectorBlock extends AbstractBlock< FloatingPointSignal
     private FloatingPointAvgMagnitudeCalculatorBlock avgMagnitude;
     private FFTBlock fftBlock;
     private SamplerBlock< FFTSignal, FFTSignal > fftSlowerSampler;
-    private MorseToneDetectorBySpectrumPeaksBlock morseToneDetectorBlock;
-    private ToneToBitConverterBlock toneToBitConverterBlock;
+    private InternalBlock internalBlock;
     private BitAveragerBlock bitAveragerBlock;
 
     private double inputSignalSampleRate;
     private int fftWindowSize = 16;
     private double fftDesiredSampleFreq = 6000.0;
 
-    public MorseSignalDetectorBlock( double inputSignalSampleRate )
+    public AbstractMorseSignalDetectorBlock( double inputSignalSampleRate )
     {
         this.inputSignalSampleRate = inputSignalSampleRate;
 
@@ -64,6 +63,8 @@ public class MorseSignalDetectorBlock extends AbstractBlock< FloatingPointSignal
         return true;
     }
 
+    protected abstract BitSignal detectSignal( FFTSignal fftSignal );
+
     private void init()
     {
         int fftSamplerDivider = (int)(inputSignalSampleRate / fftDesiredSampleFreq);
@@ -75,8 +76,7 @@ public class MorseSignalDetectorBlock extends AbstractBlock< FloatingPointSignal
         fftFasterSampler = new SamplerBlock< FloatingPointSignal, FloatingPointSignal >( fftSamplerDivider );
         fftBlock = new FFTBlock( fftSampleFreq, fftWindowSize );
         fftSlowerSampler = new SamplerBlock< FFTSignal, FFTSignal >( bitSamplerDivider );
-        morseToneDetectorBlock = new MorseToneDetectorBySpectrumPeaksBlock();
-        toneToBitConverterBlock = new ToneToBitConverterBlock();
+        internalBlock = new InternalBlock();
         bitAveragerBlock = new BitAveragerBlock( 3 );
 
         // connect the blocks
@@ -84,8 +84,18 @@ public class MorseSignalDetectorBlock extends AbstractBlock< FloatingPointSignal
         avgMagnitude.setNextBlock( fftFasterSampler );
         fftFasterSampler.setNextBlock( fftBlock );
         fftBlock.setNextBlock( fftSlowerSampler );
-        fftSlowerSampler.setNextBlock( morseToneDetectorBlock );
-        morseToneDetectorBlock.setNextBlock( toneToBitConverterBlock );
-        toneToBitConverterBlock.setNextBlock( bitAveragerBlock );
+        fftSlowerSampler.setNextBlock( internalBlock );
+        internalBlock.setNextBlock( bitAveragerBlock );
+    }
+
+    private class InternalBlock extends AbstractBlock< FFTSignal, BitSignal >
+    {
+        @Override
+        protected boolean execute0( SystemClock systemClock, FFTSignal inputSignalValue )
+        {
+            currentValue = detectSignal( inputSignalValue );
+
+            return true;
+        }
     }
 }

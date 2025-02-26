@@ -3,23 +3,34 @@ package com.github.sp3wam.baseband.modem.impl.morse.detector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.sp3wam.baseband.modem.core.SystemClock;
+import com.github.sp3wam.baseband.modem.core.basic.blocks.BitSignal;
 import com.github.sp3wam.baseband.modem.core.fft.FFTPeak;
 import com.github.sp3wam.baseband.modem.core.fft.FFTPeaks;
 import com.github.sp3wam.baseband.modem.core.fft.FFTSignal;
 import com.github.sp3wam.baseband.modem.core.fft.FFTSpectrum;
 
-/***
- * From the provided FFT result finds out if we have a real beep (dit or dah) signal or noise. Result provided
- * as {@linkplain MorseToneSignal}.
+/**
+ * From the input audio signal samples detects the Morse signal into a stream of {@linkplain BitSignal}:
+ * <ul>
+ * <li>bit signal of true - means there is a audible beep (dit or dah)</li>
+ * <li>bit signal of false - means there is no audible beep (just noise)</li>
+ * </ul>
+ * <p>
+ * It uses a spectrum peaks analysis to find out if the signal is present.
  */
-class MorseToneDetectorBySpectrumPeaksBlock extends AbstractMorseToneDetectorBlock
+public class MorseSignalDetectorBySpectrumPeaksBlock extends AbstractMorseSignalDetectorBlock
 {
-    private Logger LOGGER = LoggerFactory.getLogger( MorseToneDetectorBySpectrumPeaksBlock.class );
+    private Logger LOGGER = LoggerFactory.getLogger( MorseSignalDetectorBySpectrumPeaksBlock.class );
 
-    protected boolean execute0( SystemClock systemClock, FFTSignal inputSignalValue )
+    public MorseSignalDetectorBySpectrumPeaksBlock( double inputSignalSampleRate )
     {
-        FFTSpectrum fftSpectrum = new FFTSpectrum( inputSignalValue );
+        super( inputSignalSampleRate );
+    }
+
+    @Override
+    protected BitSignal detectSignal( FFTSignal fftSignal )
+    {
+        FFTSpectrum fftSpectrum = new FFTSpectrum( fftSignal );
         FFTPeaks fftPeaks = new FFTPeaks( fftSpectrum, 100.0 );
 
         // find peak with max power percentage
@@ -38,17 +49,13 @@ class MorseToneDetectorBySpectrumPeaksBlock extends AbstractMorseToneDetectorBlo
 
         if( maxPowerPeak == null )
         {
-            currentValue = new MorseToneSignal( 0.0 );
-
-            return true;
+            return new BitSignal( false );
         }
 
         // check if the magnitude of max power peak is big enough
         if( maxPowerPeak.getMagnitude() < 100.0 )
         {
-            currentValue = new MorseToneSignal( 0.0 );
-
-            return true;
+            return new BitSignal( false );
         }
 
         // check if the max power peak is at least twice bigger than the others
@@ -61,17 +68,13 @@ class MorseToneDetectorBySpectrumPeaksBlock extends AbstractMorseToneDetectorBlo
 
             if( maxPowerPeak.getPowerPercentage() < 2.0 * fftPeak.getPowerPercentage() )
             {
-                currentValue = new MorseToneSignal( 0.0 );
-
-                return true;
+                return new BitSignal( false );
             }
         }
 
-        currentValue = new MorseToneSignal( maxPowerPeak.getFrequency() );
-        LOGGER.debug( String.format( "Detected tone %s Hz from spectrum %s and peaks %s and peak %s",
-            currentValue.getToneFrequency(), fftSpectrum.toString(), fftPeaks.toString(),
-            maxPowerPeak.toString() ) );
+        LOGGER.debug( String.format( "Detected signal from spectrum %s and peaks %s and peak %s",
+            fftSpectrum.toString(), fftPeaks.toString(), maxPowerPeak.toString() ) );
 
-        return true;
+        return new BitSignal( true );
     }
 }
