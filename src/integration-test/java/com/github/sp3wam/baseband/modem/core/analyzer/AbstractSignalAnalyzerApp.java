@@ -156,7 +156,7 @@ abstract class AbstractSignalAnalyzerApp extends ApplicationFrame
     private void createContents()
     {
         setLayout( new BorderLayout( 0, 0 ) );
-        add( getScrollPane(), BorderLayout.CENTER );
+        add( getMainPanel(), BorderLayout.CENTER );
 
         getMainPanel().add( getOpenSoundFileButton() );
 
@@ -191,16 +191,6 @@ abstract class AbstractSignalAnalyzerApp extends ApplicationFrame
         getMainPanel().add( inputSignalChartPanel );
 
         createAdditionalContent();
-    }
-
-    private JScrollPane getScrollPane()
-    {
-        if( scrollPane == null )
-        {
-            scrollPane = new JScrollPane();
-            scrollPane.setViewportView( getMainPanel() );
-        }
-        return scrollPane;
     }
 
     protected JPanel getMainPanel()
