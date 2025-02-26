@@ -1,9 +1,13 @@
 package com.github.sp3wam.baseband.modem.core.analyzer;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RefineryUtilities;
@@ -24,10 +28,13 @@ public class SignalAnalyzerApp extends AbstractSignalAnalyzerApp
     private final static long DESIRED_FFT_SAMPLE_RATE = 6000;
 
     /** FFT 8 objects */
-    private long fftSampleRate;
+    // a dataset for Power Spectral Density
     private XYSeriesCollection fft8SpectrumDataset;
     private XYSeries fft8SpectrumSeries;
-    private XYSeries fft8SpectrumPowerSeries;
+    // a dataset for percentage Power Spectral Density
+    private XYSeriesCollection fft8PSDPercentageDataset;
+    private XYSeries fft8PSDPercentageSeries;
+    // and the chart itself
     private JFreeChart fft8SpectrumChart;
     private ChartPanel fft8SpectrumChartPanel;
 
@@ -67,7 +74,7 @@ public class SignalAnalyzerApp extends AbstractSignalAnalyzerApp
         FFTSpectrum fftSpectrum = new FFTSpectrum( fftSignal );
 
         fft8SpectrumSeries.clear();
-        fft8SpectrumPowerSeries.clear();
+        fft8PSDPercentageSeries.clear();
         for( int index = 0; index < fftSpectrum.getFreqencies().length; index++ )
         {
             double frequency = fftSpectrum.getFreqencies()[ index ];
@@ -75,8 +82,7 @@ public class SignalAnalyzerApp extends AbstractSignalAnalyzerApp
             double powerPercentage = fftSpectrum.getPowerSpectralDensityPercentageValues()[ index ];
 
             fft8SpectrumSeries.add( frequency, magnitude );
-
-            fft8SpectrumPowerSeries.add( frequency, powerPercentage );
+            fft8PSDPercentageSeries.add( frequency, powerPercentage );
         }
 
     }
@@ -84,13 +90,36 @@ public class SignalAnalyzerApp extends AbstractSignalAnalyzerApp
     @Override
     protected void createAdditionalContent()
     {
+        // create a default chart with main axis for power spectral data
         fft8SpectrumDataset = new XYSeriesCollection();
         fft8SpectrumSeries = new XYSeries( "FFT 8 spectrum" );
-        fft8SpectrumPowerSeries = new XYSeries( "PSD vs total power [%]" );
         fft8SpectrumDataset.addSeries( fft8SpectrumSeries );
-        fft8SpectrumDataset.addSeries( fft8SpectrumPowerSeries );
         fft8SpectrumChart = createChart( fft8SpectrumDataset, "FFT 8 spectrum", "Frequency [Hz]" );
         fft8SpectrumChartPanel = new ChartPanel( fft8SpectrumChart );
+
+        // create a secondary axis for percentage power spectral data
+        XYPlot plot = (XYPlot)fft8SpectrumChart.getPlot();
+        NumberAxis secondaryAxis = new NumberAxis( "PSD [%]" );
+        secondaryAxis.setRange( 0.0, 100.0 );
+        plot.setRangeAxis( 1, secondaryAxis ); // Add the secondary axis at position 1
+
+        // create a dataset for percentage Power Spectral Density
+        fft8PSDPercentageDataset = new XYSeriesCollection();
+        fft8PSDPercentageSeries = new XYSeries( "PSD vs total power [%]" );
+        fft8PSDPercentageDataset.addSeries( fft8PSDPercentageSeries );
+
+        // add the second dataset and map it to the secondary axis
+        plot.setDataset( 1, fft8PSDPercentageDataset );
+        plot.mapDatasetToRangeAxis( 1, 1 );
+
+        // set custom renderer to change the color to blue
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+        renderer.setSeriesPaint( 0, Color.BLUE );
+        // renderer.setSeriesShapesVisible( 0, false );
+        renderer.setBaseToolTipGenerator( ( xyDataset, series, item ) -> "X: "
+            + xyDataset.getX( series, item ) + " , Y: " + xyDataset.getY( series, item ) );
+        plot.setRenderer( 1, renderer );
+
         getMainPanel().add( fft8SpectrumChartPanel );
     }
 
