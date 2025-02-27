@@ -1,11 +1,15 @@
 package com.github.sp3wam.baseband.modem.impl.morse.detector;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.sp3wam.baseband.modem.core.basic.blocks.BitSignal;
 import com.github.sp3wam.baseband.modem.core.fft.FFTSignal;
 import com.github.sp3wam.baseband.modem.core.fft.FFTSpectrum;
 
 public class MorseSignalDetectorByPercentageSpectrumBlock extends AbstractMorseSignalDetectorBlock
 {
+    private Logger LOGGER = LoggerFactory.getLogger( MorseSignalDetectorByPercentageSpectrumBlock.class );
 
     private double signalThreshold = 10.0;
 
@@ -30,10 +34,12 @@ public class MorseSignalDetectorByPercentageSpectrumBlock extends AbstractMorseS
         {
             if( percentagePSD[ q ] >= signalThreshold )
             {
+                LOGGER.debug( "Detected signal: 1" );
                 return new BitSignal( true );
             }
         }
 
+        LOGGER.debug( "Detected signal: 0" );
         return new BitSignal( false );
     }
 
