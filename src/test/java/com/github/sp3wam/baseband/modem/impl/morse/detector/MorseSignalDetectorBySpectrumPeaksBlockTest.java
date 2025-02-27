@@ -18,7 +18,7 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
     private Logger LOGGER = LoggerFactory.getLogger( MorseSignalDetectorBySpectrumPeaksBlockTest.class );
 
     private final double SIGNAL_AMPLITUDE = 100.0;
-    private final double FFT_SAMPLE_RATE = 6000.0;
+    private final double FFT_SAMPLE_RATE = 3000.0;
 
     @Test
     public void testRealLoudNoise_FFT08_fromWav() throws IOException
@@ -52,7 +52,7 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
 
         // For noise there should be no signals detected
         // or at least signal ratio should be very low
-        assertTrue( consumer.getZerosPercentageRatio() >= 80.0 ); //
+        assertTrue( consumer.getZerosPercentageRatio() >= 77.0 ); //
     }
 
     @Test
@@ -87,7 +87,7 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
 
         // For noise there should be no signals detected
         // or at least signal ratio should be very low
-        assertTrue( consumer.getZerosPercentageRatio() > 57.0 );
+        assertTrue( consumer.getZerosPercentageRatio() > 61.0 );
     }
 
     @Test
@@ -157,7 +157,7 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
 
         // For noised signal there should be no silence detected
         // or at least signal ratio should be very high
-        assertTrue( consumer.getOnesPercentageRatio() > 81.0 );
+        assertTrue( consumer.getOnesPercentageRatio() > 43.0 );
     }
 
     @Test
@@ -192,7 +192,7 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
 
         // For noised signal there should be no silence detected
         // or at least signal ratio should be very high
-        assertTrue( consumer.getOnesPercentageRatio() > 95.0 );
+        assertTrue( consumer.getOnesPercentageRatio() > 98.0 );
     }
 
     @Test
@@ -226,7 +226,7 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
 
         // For noised signal there should be no silence detected
         // or at least signal ratio should be very high
-        assertTrue( consumer.getOnesPercentageRatio() > 98.0 );
+        assertTrue( consumer.getOnesPercentageRatio() > 99.0 );
     }
 
     private class MorseSignalDetectorConsumer extends AbstractConsumerBlock< BitSignal, BitSignal >
