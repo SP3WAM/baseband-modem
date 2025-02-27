@@ -18,6 +18,7 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
     private Logger LOGGER = LoggerFactory.getLogger( MorseSignalDetectorBySpectrumPeaksBlockTest.class );
 
     private final double SIGNAL_AMPLITUDE = 100.0;
+    private final double FFT_SAMPLE_RATE = 6000.0;
 
     @Test
     public void testRealLoudNoise_FFT08_fromWav() throws IOException
@@ -31,8 +32,8 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
 
         MorseSignalDetectorBySpectrumPeaksBlock subject =
             new MorseSignalDetectorBySpectrumPeaksBlock( signalGenerator.getSampleRate() );
-        subject.setFftParams( 8, 6000.0 );
-        subject.setDesiredOutputSignalSampleFreq( 6000.0 );
+        subject.setFftParams( 8, FFT_SAMPLE_RATE );
+        subject.setDesiredOutputSignalSampleFreq( FFT_SAMPLE_RATE );
         MorseSignalDetectorConsumer consumer = new MorseSignalDetectorConsumer();
 
         signalGenerator.setNextBlock( subject );
@@ -46,11 +47,12 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
             systemClock.step();
         }
 
-        LOGGER.info( String.format( "Percentage ratio of detected 0s is >=%s", consumer.getZerosPercentageRatio() ) );
+        LOGGER.info(
+            String.format( "Percentage ratio of detected 0s is >=%s", consumer.getZerosPercentageRatio() ) );
 
         // For noise there should be no signals detected
         // or at least signal ratio should be very low
-        assertTrue( consumer.getZerosPercentageRatio() >= 80.0 ); // 
+        assertTrue( consumer.getZerosPercentageRatio() >= 80.0 ); //
     }
 
     @Test
@@ -65,8 +67,8 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
 
         MorseSignalDetectorBySpectrumPeaksBlock subject =
             new MorseSignalDetectorBySpectrumPeaksBlock( signalGenerator.getSampleRate() );
-        subject.setFftParams( 16, 6000.0 );
-        subject.setDesiredOutputSignalSampleFreq( 6000.0 );
+        subject.setFftParams( 16, FFT_SAMPLE_RATE );
+        subject.setDesiredOutputSignalSampleFreq( FFT_SAMPLE_RATE );
         MorseSignalDetectorConsumer consumer = new MorseSignalDetectorConsumer();
 
         signalGenerator.setNextBlock( subject );
@@ -80,7 +82,8 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
             systemClock.step();
         }
 
-        LOGGER.info( String.format( "Percentage ratio of detected 0s is >=%s", consumer.getZerosPercentageRatio() ) );
+        LOGGER.info(
+            String.format( "Percentage ratio of detected 0s is >=%s", consumer.getZerosPercentageRatio() ) );
 
         // For noise there should be no signals detected
         // or at least signal ratio should be very low
@@ -89,7 +92,7 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
 
     @Test
     public void testRealLoudNoise_FFT32_fromWav() throws IOException
-    {        
+    {
         String filePath =
             "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/real_loud_noise.wav";
 
@@ -99,8 +102,8 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
 
         MorseSignalDetectorBySpectrumPeaksBlock subject =
             new MorseSignalDetectorBySpectrumPeaksBlock( signalGenerator.getSampleRate() );
-        subject.setFftParams( 32, 6000.0 );
-        subject.setDesiredOutputSignalSampleFreq( 6000.0 );
+        subject.setFftParams( 32, FFT_SAMPLE_RATE );
+        subject.setDesiredOutputSignalSampleFreq( FFT_SAMPLE_RATE );
         MorseSignalDetectorConsumer consumer = new MorseSignalDetectorConsumer();
 
         signalGenerator.setNextBlock( subject );
@@ -114,7 +117,8 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
             systemClock.step();
         }
 
-        LOGGER.info( String.format( "Percentage ratio of detected 0s is >=%s", consumer.getZerosPercentageRatio() ) );
+        LOGGER.info(
+            String.format( "Percentage ratio of detected 0s is >=%s", consumer.getZerosPercentageRatio() ) );
 
         // For noise there should be no signals detected
         // or at least signal ratio should be very low
@@ -133,8 +137,8 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
 
         MorseSignalDetectorBySpectrumPeaksBlock subject =
             new MorseSignalDetectorBySpectrumPeaksBlock( signalGenerator.getSampleRate() );
-        subject.setFftParams( 8, 6000.0 );
-        subject.setDesiredOutputSignalSampleFreq( 6000.0 );
+        subject.setFftParams( 8, FFT_SAMPLE_RATE );
+        subject.setDesiredOutputSignalSampleFreq( FFT_SAMPLE_RATE );
         MorseSignalDetectorConsumer consumer = new MorseSignalDetectorConsumer();
 
         signalGenerator.setNextBlock( subject );
@@ -148,7 +152,8 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
             systemClock.step();
         }
 
-        LOGGER.info( String.format( "Percentage ratio of detected 1s is >=%s", consumer.getOnesPercentageRatio() ) );
+        LOGGER.info(
+            String.format( "Percentage ratio of detected 1s is >=%s", consumer.getOnesPercentageRatio() ) );
 
         // For noised signal there should be no silence detected
         // or at least signal ratio should be very high
@@ -167,8 +172,8 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
 
         MorseSignalDetectorBySpectrumPeaksBlock subject =
             new MorseSignalDetectorBySpectrumPeaksBlock( signalGenerator.getSampleRate() );
-        subject.setFftParams( 16, 6000.0 );
-        subject.setDesiredOutputSignalSampleFreq( 6000.0 );
+        subject.setFftParams( 16, FFT_SAMPLE_RATE );
+        subject.setDesiredOutputSignalSampleFreq( FFT_SAMPLE_RATE );
         MorseSignalDetectorConsumer consumer = new MorseSignalDetectorConsumer();
 
         signalGenerator.setNextBlock( subject );
@@ -182,7 +187,8 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
             systemClock.step();
         }
 
-        LOGGER.info( String.format( "Percentage ratio of detected 1s is >=%s", consumer.getOnesPercentageRatio() ) );
+        LOGGER.info(
+            String.format( "Percentage ratio of detected 1s is >=%s", consumer.getOnesPercentageRatio() ) );
 
         // For noised signal there should be no silence detected
         // or at least signal ratio should be very high
@@ -201,8 +207,8 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
 
         MorseSignalDetectorBySpectrumPeaksBlock subject =
             new MorseSignalDetectorBySpectrumPeaksBlock( signalGenerator.getSampleRate() );
-        subject.setFftParams( 32, 6000.0 );
-        subject.setDesiredOutputSignalSampleFreq( 6000.0 );
+        subject.setFftParams( 32, FFT_SAMPLE_RATE );
+        subject.setDesiredOutputSignalSampleFreq( FFT_SAMPLE_RATE );
         MorseSignalDetectorConsumer consumer = new MorseSignalDetectorConsumer();
 
         signalGenerator.setNextBlock( subject );
@@ -257,7 +263,7 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
         {
             return 100.0 * (double)countOfOnes / ((double)(countOfZeros + countOfOnes));
         }
-        
+
         public double getZerosPercentageRatio()
         {
             return 100.0 * (double)countOfZeros / ((double)(countOfZeros + countOfOnes));
