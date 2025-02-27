@@ -86,7 +86,7 @@ abstract class AbstractMorseSignalDetectorBlock extends AbstractBlock< FloatingP
         fftBlock = new FFTBlock( fftSampleFreq, fftWindowSize );
         fftSlowerSampler = new SamplerBlock< FFTSignal, FFTSignal >( bitSamplerDivider );
         internalBlock = new InternalBlock();
-        bitAveragerBlock = new BitAveragerBlock( 64 );
+        bitAveragerBlock = new BitAveragerBlock( 1 );
 
         // connect the blocks
         floatingPointAveragerBlock.setNextBlock( avgMagnitude );
