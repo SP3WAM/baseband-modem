@@ -25,6 +25,7 @@ abstract class AbstractMorseSignalDetectorBlock extends AbstractBlock< FloatingP
 {
     private Logger LOGGER = LoggerFactory.getLogger( AbstractMorseSignalDetectorBlock.class );
 
+    private final static double FFT_DESIRED_SAMPLE_FREQ = 6000.0;
     private final static double BIT_DESIRED_SAMPLE_FREQ = 100.0;
 
     private FloatingPointAveragerBlock floatingPointAveragerBlock;
@@ -37,7 +38,8 @@ abstract class AbstractMorseSignalDetectorBlock extends AbstractBlock< FloatingP
 
     private double inputSignalSampleRate;
     private int fftWindowSize = 16;
-    private double fftDesiredSampleFreq = 6000.0;
+    private double fftDesiredSampleFreq = FFT_DESIRED_SAMPLE_FREQ;
+    private double outputDesiredSampleFreq = BIT_DESIRED_SAMPLE_FREQ;
 
     public AbstractMorseSignalDetectorBlock( double inputSignalSampleRate )
     {
@@ -51,6 +53,13 @@ abstract class AbstractMorseSignalDetectorBlock extends AbstractBlock< FloatingP
         this.fftWindowSize = fftWindowSize;
         this.fftDesiredSampleFreq = fftDesiredSampleFreq;
 
+        init();
+    }
+
+    public void setDesiredOutputSignalSampleFreq( double outputDesiredSampleFreq )
+    {
+        this.outputDesiredSampleFreq = outputDesiredSampleFreq;
+        
         init();
     }
 
@@ -69,7 +78,7 @@ abstract class AbstractMorseSignalDetectorBlock extends AbstractBlock< FloatingP
     {
         int fftSamplerDivider = (int)(inputSignalSampleRate / fftDesiredSampleFreq);
         int fftSampleFreq = (int)(inputSignalSampleRate / fftSamplerDivider);
-        int bitSamplerDivider = (int)(fftSampleFreq / BIT_DESIRED_SAMPLE_FREQ);
+        int bitSamplerDivider = (int)(fftSampleFreq / outputDesiredSampleFreq);
 
         floatingPointAveragerBlock = new FloatingPointAveragerBlock( 1 );
         avgMagnitude = new FloatingPointAvgMagnitudeCalculatorBlock( (int)inputSignalSampleRate );
