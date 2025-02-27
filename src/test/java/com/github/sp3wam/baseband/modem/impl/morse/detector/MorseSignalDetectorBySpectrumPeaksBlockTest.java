@@ -87,7 +87,7 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
 
     @Test
     public void testRealLoudNoise_FFT32_fromWav() throws IOException
-    {
+    {        
         String filePath =
             "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/real_loud_noise.wav";
 
@@ -97,7 +97,8 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
 
         MorseSignalDetectorBySpectrumPeaksBlock subject =
             new MorseSignalDetectorBySpectrumPeaksBlock( signalGenerator.getSampleRate() );
-        subject.setFftParams( 32, 6000.0 );
+        subject.setFftParams( 32, 44100.0 );
+        subject.setDesiredOutputSignalSampleFreq( 44100.0 );
         MorseSignalDetectorConsumer consumer = new MorseSignalDetectorConsumer();
 
         signalGenerator.setNextBlock( subject );
@@ -196,7 +197,8 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
 
         MorseSignalDetectorBySpectrumPeaksBlock subject =
             new MorseSignalDetectorBySpectrumPeaksBlock( signalGenerator.getSampleRate() );
-        subject.setFftParams( 32, 6000.0 );
+        subject.setFftParams( 32, 44100.0 );
+        subject.setDesiredOutputSignalSampleFreq( 44100.0 );
         MorseSignalDetectorConsumer consumer = new MorseSignalDetectorConsumer();
 
         signalGenerator.setNextBlock( subject );
@@ -210,11 +212,11 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
             systemClock.step();
         }
 
-        LOGGER.info( String.format( "Percentage ratio of 1 is %s", consumer.getOnesPercentageRatio() ) );
+        LOGGER.info( String.format( "Percentage ratio of 0 is %s", consumer.getZerosPercentageRatio() ) );
 
         // For noised signal there should be no silence detected
         // or at least signal ratio should be very high
-        assertTrue( consumer.getOnesPercentageRatio() > 94.0 );
+        assertTrue( consumer.getZerosPercentageRatio() < 5.0 );
     }
 
     private class MorseSignalDetectorConsumer extends AbstractConsumerBlock< BitSignal, BitSignal >
@@ -250,6 +252,11 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
         public double getOnesPercentageRatio()
         {
             return 100.0 * (double)countOfOnes / ((double)(countOfZeros + countOfOnes));
+        }
+        
+        public double getZerosPercentageRatio()
+        {
+            return 100.0 * (double)countOfZeros / ((double)(countOfZeros + countOfOnes));
         }
     }
 
