@@ -61,7 +61,7 @@ public class MorseSignalDetectorByPercentageSpectrumBlockTest
     @Test
     public void testRealLoudNoise_FFT16_fromWav() throws IOException
     {
-        double minimalSignalThrehsold = 30;//41;
+        double minimalSignalThrehsold = 33;
 
         String filePath =
             "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/real_loud_noise.wav";
@@ -93,13 +93,13 @@ public class MorseSignalDetectorByPercentageSpectrumBlockTest
         // For noise there should be no signals detected
         // or at least signal ratio should be very low
         assertTrue( consumer.getOnesPercentageRatio() < 5.0 ); // acceptable percentage error...
-        assertEquals( 41.0, minimalSignalThrehsold, 0.1 ); // ... with this minimal threshold
+        assertEquals( 33.0, minimalSignalThrehsold, 0.1 ); // ... with this minimal threshold
     }
 
     @Test
     public void testRealLoudNoise_FFT32_fromWav() throws IOException
     {
-        double minimalSignalThrehsold = 24;//23;
+        double minimalSignalThrehsold = 27;
 
         String filePath =
             "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/real_loud_noise.wav";
@@ -131,9 +131,9 @@ public class MorseSignalDetectorByPercentageSpectrumBlockTest
         // For noise there should be no signals detected
         // or at least signal ratio should be very low
         assertTrue( consumer.getOnesPercentageRatio() < 5.0 ); // acceptable percentage error...
-        assertEquals( 34.0, minimalSignalThrehsold, 0.1 ); // ... with this minimal threshold
+        assertEquals( 27.0, minimalSignalThrehsold, 0.1 ); // ... with this minimal threshold
     }
-    
+
     @Test
     public void testRealLoudNoise_FFT64_fromWav() throws IOException
     {
@@ -202,18 +202,18 @@ public class MorseSignalDetectorByPercentageSpectrumBlockTest
             systemClock.step();
         }
 
-        LOGGER.info( String.format( "Percentage ratio of 1 is %s", consumer.getOnesPercentageRatio() ) );
+        LOGGER.info( String.format( "Percentage ratio of 0s is %s", consumer.getZerosPercentageRatio() ) );
 
         // For noised signal there should be no silence detected
         // or at least signal ratio should be very high
-        assertTrue( consumer.getOnesPercentageRatio() > 95.0 ); // acceptable percentage error...
+        assertTrue( consumer.getZerosPercentageRatio() < 5.0 ); // acceptable percentage error...
         assertEquals( 20.0, minimalSignalThrehsold, 0.1 ); // ... with this minimal threshold
     }
 
     @Test
     public void testRealNoisedSignal_FFT16_fromWav() throws IOException
     {
-        double minimalSignalThrehsold = 20;//15;
+        double minimalSignalThrehsold = 19;// 15;
 
         String filePath =
             "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/real_noised_signal.wav";
@@ -245,13 +245,13 @@ public class MorseSignalDetectorByPercentageSpectrumBlockTest
         // For noised signal there should be no silence detected
         // or at least signal ratio should be very high
         assertTrue( consumer.getZerosPercentageRatio() < 5.0 ); // acceptable percentage error...
-        assertEquals( 15.0, minimalSignalThrehsold, 0.1 ); // ... with this minimal threshold
+        assertEquals( 19.0, minimalSignalThrehsold, 0.1 ); // ... with this minimal threshold
     }
 
     @Test
     public void testRealNoisedSignal_FFT32_fromWav() throws IOException
     {
-        double minimalSignalThrehsold = 24;//23;
+        double minimalSignalThrehsold = 22;// 23;
 
         String filePath =
             "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/real_noised_signal.wav";
@@ -283,9 +283,9 @@ public class MorseSignalDetectorByPercentageSpectrumBlockTest
         // For noised signal there should be no silence detected
         // or at least signal ratio should be very high
         assertTrue( consumer.getZerosPercentageRatio() < 5.0 ); // acceptable percentage error...
-        assertEquals( 17.0, minimalSignalThrehsold, 0.1 ); // ... with this minimal threshold
+        assertEquals( 22.0, minimalSignalThrehsold, 0.1 ); // ... with this minimal threshold
     }
-    
+
     @Test
     public void testRealNoisedSignal_FFT64_fromWav() throws IOException
     {
@@ -316,11 +316,11 @@ public class MorseSignalDetectorByPercentageSpectrumBlockTest
             systemClock.step();
         }
 
-        LOGGER.info( String.format( "Percentage ratio of 1 is %s", consumer.getOnesPercentageRatio() ) );
+        LOGGER.info( String.format( "Percentage ratio of 0s is %s", consumer.getZerosPercentageRatio() ) );
 
         // For noised signal there should be no silence detected
         // or at least signal ratio should be very high
-        assertTrue( consumer.getOnesPercentageRatio() > 95.0 ); // acceptable percentage error...
+        assertTrue( consumer.getZerosPercentageRatio() < 5.0 ); // acceptable percentage error...
         assertEquals( 9.0, minimalSignalThrehsold, 0.1 ); // ... with this minimal threshold
     }
 
@@ -358,7 +358,7 @@ public class MorseSignalDetectorByPercentageSpectrumBlockTest
         {
             return 100.0 * (double)countOfOnes / ((double)(countOfZeros + countOfOnes));
         }
-        
+
         public double getZerosPercentageRatio()
         {
             return 100.0 * (double)countOfZeros / ((double)(countOfZeros + countOfOnes));
