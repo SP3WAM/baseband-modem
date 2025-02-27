@@ -14,6 +14,9 @@
 	<Loggers>
 
 		<Logger
+			name="com.github.sp3wam.baseband.modem.core.AbstractBlock"
+			level="off" />
+		<Logger
 			name="com.github.sp3wam.baseband.modem.core.pcm.PcmSignalGeneratorBlock"
 			level="info" />
 		<Logger
