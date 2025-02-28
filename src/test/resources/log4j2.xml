@@ -52,6 +52,9 @@
 			name="com.github.sp3wam.baseband.modem.impl.morse.detector.MorseSignalDetectorBySpectrumPeaksBlock"
 			level="off" />
 		<Logger
+			name="com.github.sp3wam.baseband.modem.impl.morse.detector.MorseSignalDetectorByPercentageSpectrumBlock"
+			level="off" />
+		<Logger
 			name="com.github.sp3wam.baseband.modem.impl.morse.detector.ToneToBitConverterBlock"
 			level="off" />
 		<Logger

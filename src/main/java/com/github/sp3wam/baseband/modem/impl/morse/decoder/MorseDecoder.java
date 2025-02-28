@@ -7,6 +7,7 @@ import com.github.sp3wam.baseband.modem.core.pcm.PcmFromJavaxAudioSignalGenerato
 import com.github.sp3wam.baseband.modem.core.pcm.PcmFromMp3FileSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.pcm.PcmFromWavFileSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.pcm.PcmSignalGeneratorBlock;
+import com.github.sp3wam.baseband.modem.impl.morse.detector.MorseSignalDetectorByPercentageSpectrumBlock;
 import com.github.sp3wam.baseband.modem.impl.morse.detector.MorseSignalDetectorBySpectrumPeaksBlock;
 
 public class MorseDecoder
@@ -53,9 +54,15 @@ public class MorseDecoder
 
     private void decode( PcmSignalGeneratorBlock signalGenerator, MorseDecoderConsumer consumer )
     {
-        MorseSignalDetectorBySpectrumPeaksBlock morseSignalDetectorBlock =
-            new MorseSignalDetectorBySpectrumPeaksBlock( signalGenerator.getSampleRate() );
-        BitStreamMorseDecoderBlock morseDecoderBlock = new BitStreamMorseDecoderBlock();
+        // MorseSignalDetectorBySpectrumPeaksBlock morseSignalDetectorBlock =
+        // new MorseSignalDetectorBySpectrumPeaksBlock( signalGenerator.getSampleRate() );
+        MorseSignalDetectorByPercentageSpectrumBlock morseSignalDetectorBlock =
+            new MorseSignalDetectorByPercentageSpectrumBlock( signalGenerator.getSampleRate() );
+        morseSignalDetectorBlock.setFftParams( 32, 3000.0 );
+        morseSignalDetectorBlock.setDesiredOutputSignalSampleFreq( 100.0 );
+        morseSignalDetectorBlock.setSignalThreshold( 16 ); // 12->20
+
+            BitStreamMorseDecoderBlock morseDecoderBlock = new BitStreamMorseDecoderBlock();
         MorseSymbolDecoderBlock morseSymbolDecoderBlock = new MorseSymbolDecoderBlock();
 
         SystemClock systemClock = new SystemClock( signalGenerator.getSampleRate() );
