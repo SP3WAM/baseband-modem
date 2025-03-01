@@ -72,7 +72,7 @@ public class MorseDecoderTest
             "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/real_transmission.mp3";
         subject.decodeFromMp3( filePath, consumer );
 
-        assertEquals( "c ", consumer.getDecodedString() );
+        assertEquals( "cq cq cq de g3zrj g3zrj g3zrj cq cq cq de g3zrj ", consumer.getDecodedString() );
     }
     
     @Test
