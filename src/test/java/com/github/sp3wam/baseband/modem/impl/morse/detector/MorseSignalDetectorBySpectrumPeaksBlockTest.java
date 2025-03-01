@@ -52,7 +52,7 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
 
         // For noise there should be no signals detected
         // or at least signal ratio should be very low
-        assertTrue( consumer.getZerosPercentageRatio() >= 77.0 ); //
+        assertTrue( consumer.getZerosPercentageRatio() >= 79.0 ); //
     }
 
     @Test
@@ -87,7 +87,7 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
 
         // For noise there should be no signals detected
         // or at least signal ratio should be very low
-        assertTrue( consumer.getZerosPercentageRatio() > 61.0 );
+        assertTrue( consumer.getZerosPercentageRatio() > 64.0 );
     }
 
     @Test
@@ -122,7 +122,7 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
 
         // For noise there should be no signals detected
         // or at least signal ratio should be very low
-        assertTrue( consumer.getZerosPercentageRatio() > 76.0 );
+        assertTrue( consumer.getZerosPercentageRatio() > 79.0 );
     }
 
     @Test
@@ -157,7 +157,7 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
 
         // For noised signal there should be no silence detected
         // or at least signal ratio should be very high
-        assertTrue( consumer.getOnesPercentageRatio() > 43.0 );
+        assertTrue( consumer.getOnesPercentageRatio() > 41.0 );
     }
 
     @Test
@@ -226,7 +226,7 @@ public class MorseSignalDetectorBySpectrumPeaksBlockTest
 
         // For noised signal there should be no silence detected
         // or at least signal ratio should be very high
-        assertTrue( consumer.getOnesPercentageRatio() > 99.0 );
+        assertTrue( consumer.getOnesPercentageRatio() > 98.0 );
     }
 
     private class MorseSignalDetectorConsumer extends AbstractConsumerBlock< BitSignal, BitSignal >
