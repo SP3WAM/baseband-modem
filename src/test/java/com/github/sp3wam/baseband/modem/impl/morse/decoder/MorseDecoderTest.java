@@ -24,7 +24,7 @@ import xt.audio.XtService;
 
 public class MorseDecoderTest
 {
-    private Logger LOGGER = LoggerFactory.getLogger( MorseDecoderTest.class );
+    private Logger LOGGER = LoggerFactory.getLogger( MorseDecoderLifeSimpleExample.class );
 
     private MorseDecoder subject;
     private MorseDecoderConsumer consumer;
@@ -86,42 +86,4 @@ public class MorseDecoderTest
             consumer.getDecodedString() );
     }
 
-    // This is more like an integration test
-    @Test
-    public void openJavaxSound() throws IOException, LineUnavailableException
-    {
-        subject.decodeFromJavaxAudio( consumer );
-    }
-
-    // This is more like an integration test
-    @Test
-    public void testXtAudioPrintDevices() throws IOException, LineUnavailableException
-    {
-        try (XtPlatform platform = XtAudio.init( null, null ))
-        {
-            for( XtSystem system : platform.getSystems() )
-            {
-                XtService service = platform.getService( system );
-                try (XtDeviceList list = service.openDeviceList( EnumSet.of( XtEnumFlags.ALL ) ))
-                {
-                    for( int d = 0; d < list.getCount(); d++ )
-                    {
-                        String id = list.getId( d );
-                        System.out.println( system + ": " + list.getName( id ) );
-                    }
-                }
-            }
-        }
-    }
-
-    @Test
-    public void openXtAudioLoopback() throws IOException, InterruptedException
-    {
-        subject.decodeFromXtAudio( consumer );
-
-        Thread.sleep( 100000 );
-        // stream.stop();
-
-        System.currentTimeMillis();
-    }
 }
