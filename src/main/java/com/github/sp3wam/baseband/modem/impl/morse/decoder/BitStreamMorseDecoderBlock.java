@@ -19,7 +19,8 @@ class BitStreamMorseDecoderBlock extends AbstractBlock< BitSignal, MorseSymbolSi
 
     protected boolean execute0( SystemClock systemClock, BitSignal inputSignalValue )
     {
-        LOGGER.debug( String.format( "Processing input value %s", inputSignalValue.toString() ) );
+        LOGGER.debug( String.format( "Processing input value %s",
+            inputSignalValue.getBitValue() == true ? "1" : "0" ) );
 
         if( segments.size() == 0 )
         {

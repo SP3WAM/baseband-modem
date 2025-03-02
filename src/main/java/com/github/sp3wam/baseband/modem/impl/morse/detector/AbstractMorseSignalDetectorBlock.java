@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.sp3wam.baseband.modem.core.AbstractBlock;
+import com.github.sp3wam.baseband.modem.core.BlockIf;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.basic.blocks.BitAveragerBlock;
 import com.github.sp3wam.baseband.modem.core.basic.blocks.BitSignal;
@@ -25,16 +26,17 @@ abstract class AbstractMorseSignalDetectorBlock extends AbstractBlock< FloatingP
 {
     private Logger LOGGER = LoggerFactory.getLogger( AbstractMorseSignalDetectorBlock.class );
 
-    private final static double FFT_DESIRED_SAMPLE_FREQ = 6000.0;
+    private final static double FFT_DESIRED_SAMPLE_FREQ = 3000.0;
     private final static double BIT_DESIRED_SAMPLE_FREQ = 100.0;
 
     private FloatingPointAveragerBlock floatingPointAveragerBlock;
     private SamplerBlock< FloatingPointSignal, FloatingPointSignal > fftFasterSampler;
     private FloatingPointAvgMagnitudeCalculatorBlock avgMagnitude;
     private FFTBlock fftBlock;
-    private SamplerBlock< FFTSignal, FFTSignal > fftSlowerSampler;
+    private BitAveragerBlock bitFasterAveragerBlock;
+    private SamplerBlock< BitSignal, BitSignal > fftSlowerSampler;
     private InternalBlock internalBlock;
-    private BitAveragerBlock bitAveragerBlock;
+    private BitAveragerBlock bitSlowerAveragerBlock;
 
     private double inputSignalSampleRate;
     private int fftWindowSize = 16;
@@ -59,17 +61,24 @@ abstract class AbstractMorseSignalDetectorBlock extends AbstractBlock< FloatingP
     public void setDesiredOutputSignalSampleFreq( double outputDesiredSampleFreq )
     {
         this.outputDesiredSampleFreq = outputDesiredSampleFreq;
-        
+
         init();
     }
 
+    @Override
+    public void setNextBlock( BlockIf< BitSignal, ? > nextBlock )
+    {
+        super.setNextBlock( null );
+        bitSlowerAveragerBlock.setNextBlock( nextBlock );
+    }
+    
     protected boolean execute0( SystemClock systemClock, FloatingPointSignal inputSignalValue )
     {
         floatingPointAveragerBlock.execute( systemClock, inputSignalValue );
 
-        currentValue = bitAveragerBlock.getCurrentValue();
+        currentValue = fftSlowerSampler.getCurrentValue();
 
-        return true;
+        return false;
     }
 
     protected abstract BitSignal detectSignal( FFTSignal fftSignal );
@@ -84,17 +93,19 @@ abstract class AbstractMorseSignalDetectorBlock extends AbstractBlock< FloatingP
         avgMagnitude = new FloatingPointAvgMagnitudeCalculatorBlock( (int)inputSignalSampleRate );
         fftFasterSampler = new SamplerBlock< FloatingPointSignal, FloatingPointSignal >( fftSamplerDivider );
         fftBlock = new FFTBlock( fftSampleFreq, fftWindowSize );
-        fftSlowerSampler = new SamplerBlock< FFTSignal, FFTSignal >( bitSamplerDivider );
         internalBlock = new InternalBlock();
-        bitAveragerBlock = new BitAveragerBlock( 5);
+        bitFasterAveragerBlock = new BitAveragerBlock(1);
+        fftSlowerSampler = new SamplerBlock< BitSignal, BitSignal >( bitSamplerDivider );
+        bitSlowerAveragerBlock = new BitAveragerBlock( 5 );
 
         // connect the blocks
         floatingPointAveragerBlock.setNextBlock( avgMagnitude );
         avgMagnitude.setNextBlock( fftFasterSampler );
         fftFasterSampler.setNextBlock( fftBlock );
-        fftBlock.setNextBlock( fftSlowerSampler );
-        fftSlowerSampler.setNextBlock( internalBlock );
-        internalBlock.setNextBlock( bitAveragerBlock );
+        fftBlock.setNextBlock( internalBlock );
+        internalBlock.setNextBlock( bitFasterAveragerBlock );
+        bitFasterAveragerBlock.setNextBlock( fftSlowerSampler );
+        fftSlowerSampler.setNextBlock( bitSlowerAveragerBlock );
     }
 
     private class InternalBlock extends AbstractBlock< FFTSignal, BitSignal >

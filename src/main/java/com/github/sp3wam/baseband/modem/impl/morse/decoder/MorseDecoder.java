@@ -13,6 +13,12 @@ import com.github.sp3wam.baseband.modem.impl.morse.detector.MorseSignalDetectorB
 public class MorseDecoder
 {
     private final double SIGNAL_AMPLITUDE = 100.0;
+    private double signalThreshold = 16.0;
+
+    public void setSignalThreshold( double threshold )
+    {
+        this.signalThreshold = threshold;
+    }
 
     public void decodeFromWav( String filePath, MorseDecoderConsumer consumer ) throws IOException
     {
@@ -60,9 +66,9 @@ public class MorseDecoder
             new MorseSignalDetectorByPercentageSpectrumBlock( signalGenerator.getSampleRate() );
         morseSignalDetectorBlock.setFftParams( 32, 3000.0 );
         morseSignalDetectorBlock.setDesiredOutputSignalSampleFreq( 100.0 );
-        morseSignalDetectorBlock.setSignalThreshold( 16 ); // 12->20
+        morseSignalDetectorBlock.setSignalThreshold( signalThreshold );
 
-            BitStreamMorseDecoderBlock morseDecoderBlock = new BitStreamMorseDecoderBlock();
+        BitStreamMorseDecoderBlock morseDecoderBlock = new BitStreamMorseDecoderBlock();
         MorseSymbolDecoderBlock morseSymbolDecoderBlock = new MorseSymbolDecoderBlock();
 
         SystemClock systemClock = new SystemClock( signalGenerator.getSampleRate() );
