@@ -19,7 +19,7 @@ public class BitSignal implements SignalIf
     @Override
     public String toString()
     {
-        return "BitSignal [bitValue=" + bitValue + "]";
+        return "BitSignal [bitValue=" + (bitValue == true ? "1" : "0") + "]";
     }
 
 }

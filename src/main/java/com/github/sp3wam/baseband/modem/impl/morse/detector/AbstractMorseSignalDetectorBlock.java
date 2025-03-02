@@ -71,7 +71,7 @@ abstract class AbstractMorseSignalDetectorBlock extends AbstractBlock< FloatingP
         super.setNextBlock( null );
         bitSlowerAveragerBlock.setNextBlock( nextBlock );
     }
-    
+
     protected boolean execute0( SystemClock systemClock, FloatingPointSignal inputSignalValue )
     {
         floatingPointAveragerBlock.execute( systemClock, inputSignalValue );
@@ -94,9 +94,11 @@ abstract class AbstractMorseSignalDetectorBlock extends AbstractBlock< FloatingP
         fftFasterSampler = new SamplerBlock< FloatingPointSignal, FloatingPointSignal >( fftSamplerDivider );
         fftBlock = new FFTBlock( fftSampleFreq, fftWindowSize );
         internalBlock = new InternalBlock();
-        bitFasterAveragerBlock = new BitAveragerBlock(1);
+        // remove two bit length spikes in fast bit stream
+        bitFasterAveragerBlock = new BitAveragerBlock( 5 );
         fftSlowerSampler = new SamplerBlock< BitSignal, BitSignal >( bitSamplerDivider );
-        bitSlowerAveragerBlock = new BitAveragerBlock( 5 );
+        // removes 1 bit spikes that sneak during slow sampling
+        bitSlowerAveragerBlock = new BitAveragerBlock( 3 );
 
         // connect the blocks
         floatingPointAveragerBlock.setNextBlock( avgMagnitude );
