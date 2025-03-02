@@ -1,7 +1,10 @@
 package com.github.sp3wam.baseband.modem.core;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.NOPLogger;
 
 public abstract class AbstractBlock< I extends SignalIf, O extends SignalIf > implements BlockIf< I, O >
 {
@@ -10,6 +13,7 @@ public abstract class AbstractBlock< I extends SignalIf, O extends SignalIf > im
     private BlockIf< O, ? > nextBlock = null;
     protected O currentValue = null;
     private long processedSamples = 0;
+    private boolean loggingEnabled = true;
 
     @Override
     public void execute( SystemClock systemClock, I inputSignalValue )
@@ -45,5 +49,37 @@ public abstract class AbstractBlock< I extends SignalIf, O extends SignalIf > im
         return currentValue;
     }
 
+    public void setLoggingEnabled( boolean loggingEnabled )
+    {
+        this.loggingEnabled = loggingEnabled;
+
+        Logger logger = getLogger();
+        if( logger == null )
+        {
+            return;
+        }
+        
+        if(loggingEnabled)
+        {
+            return;
+        }
+
+        Configurator.setLevel( getLogger().getName(), Level.OFF );
+    }
+
     protected abstract boolean execute0( SystemClock systemClock, I inputSignalValue );
+
+    protected Logger getLogger()
+    {
+        if( loggingEnabled )
+        {
+            return getLogger0();
+        }
+        return NOPLogger.NOP_LOGGER;
+    }
+
+    protected Logger getLogger0()
+    {
+        return null;
+    }
 }
