@@ -29,7 +29,7 @@ public class SignalAnalyzerApp extends AbstractSignalAnalyzerApp
     private Logger LOGGER = LoggerFactory.getLogger( SignalAnalyzerApp.class );
 
     private static final long serialVersionUID = -379340225450115350L;
-    private final static long DESIRED_FFT_SAMPLE_RATE = 6000;
+    private final static long DESIRED_FFT_SAMPLE_RATE = 3000;
 
     /** FFT 8 objects */
     // a dataset for Power Spectral Density

@@ -56,7 +56,7 @@ abstract class AbstractSignalAnalyzerApp extends ApplicationFrame
     private JFreeChart inputSignalChart;
     private ChartPanel inputSignalChartPanel;
 
-    private long fftSampleRate = 6000;
+    private long fftSampleRate = 3000;
 
     public AbstractSignalAnalyzerApp( String appTitle )
     {
