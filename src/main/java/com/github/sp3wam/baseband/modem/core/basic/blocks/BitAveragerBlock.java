@@ -48,9 +48,15 @@ public class BitAveragerBlock extends AbstractBlock< BitSignal, BitSignal >
             currentValue = new BitSignal( false );
         }
 
-        LOGGER.debug( String.format( "Average bit value of %s samples is %s", numberOfSamples,
+        getLogger().debug( String.format( "Average bit value of %s samples is %s", numberOfSamples,
             currentValue.toString() ) );
 
         return true;
+    }
+
+    @Override
+    protected Logger getLogger0()
+    {
+        return LOGGER;
     }
 }
