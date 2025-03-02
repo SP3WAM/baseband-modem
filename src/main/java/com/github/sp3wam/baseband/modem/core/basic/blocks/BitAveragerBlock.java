@@ -14,7 +14,7 @@ public class BitAveragerBlock extends AbstractBlock< BitSignal, BitSignal >
     private Logger LOGGER = LoggerFactory.getLogger( BitAveragerBlock.class );
 
     private List< BitSignal > list = new ArrayList< BitSignal >();
-    private int numberOfSamples;
+    private int numberOfSamples = 0;
 
     public BitAveragerBlock( int numberOfSamples )
     {
@@ -24,6 +24,8 @@ public class BitAveragerBlock extends AbstractBlock< BitSignal, BitSignal >
     @Override
     protected boolean execute0( SystemClock systemClock, BitSignal inputSignalValue )
     {
+        getLogger().debug( String.format( " Processing sample number %s", processedSamples ) );
+
         list.add( inputSignalValue );
         if( list.size() > numberOfSamples )
         {

@@ -12,7 +12,7 @@ public abstract class AbstractBlock< I extends SignalIf, O extends SignalIf > im
 
     private BlockIf< O, ? > nextBlock = null;
     protected O currentValue = null;
-    private long processedSamples = 0;
+    protected long processedSamples = 0;
     private boolean loggingEnabled = true;
 
     @Override
