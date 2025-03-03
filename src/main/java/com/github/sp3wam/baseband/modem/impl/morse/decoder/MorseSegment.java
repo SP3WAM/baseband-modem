@@ -30,6 +30,13 @@ class MorseSegment
         this.type = type;
     }
 
+    MorseSegment( MorseSegmentType type, int duration )
+    {
+        this( type );
+
+        this.duration = duration;
+    }
+
     public MorseSegmentType getType()
     {
         return type;
