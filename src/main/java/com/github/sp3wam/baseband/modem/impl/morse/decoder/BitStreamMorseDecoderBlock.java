@@ -157,13 +157,9 @@ class BitStreamMorseDecoderBlock extends AbstractBlock< BitSignal, MorseSymbolSi
             return;
         }
 
-        if( inputSegmentType == MorseSegmentType.Silence )
-        {
-            // we have a new segment which is a type of Silence...
-            // ... and the last known segment is a type of Signal
-            // Let's update the dit duration calculator with last Signal segment
-            ditDurationCalculator.addSegment( lastSegment );
-        }
+        // we have a new different segment...
+        // ... update the dit duration calculator with last known segment
+        ditDurationCalculator.addSegment( lastSegment );
 
         // input signal doesn't match the last segment; need to create a new segment
         MorseSegment newSegment = new MorseSegment( inputSegmentType );
