@@ -96,6 +96,6 @@ public class DitDurationCalculatorTest
         subject.addSegment( new MorseSegment( MorseSegmentType.Silence, 4 ) );
         subject.addSegment( new MorseSegment( MorseSegmentType.Signal, 24 ) );
 
-        assertEquals( 5, subject.getDitDuration().intValue() );
+        assertEquals( 6, subject.getDitDuration().intValue() );
     }
 }

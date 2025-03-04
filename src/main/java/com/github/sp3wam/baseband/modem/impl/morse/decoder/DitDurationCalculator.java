@@ -114,7 +114,7 @@ class DitDurationCalculator
 
         // 4. third pass: calculate fine dit duration based on Signal segments and short duration Silence
         // segments
-        ditDuration = calculateDitFineDuration().intValue();
+        ditDuration = (int)(calculateDitFineDuration() + 0.5);
 
         LOGGER.debug( String.format( "Calculated DIT duration is %s ticks", ditDuration ) );
     }
