@@ -10,7 +10,7 @@ import com.github.sp3wam.baseband.modem.core.AbstractBlock;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.basic.blocks.BitSignal;
 
-class BitStreamMorseDecoderBlock extends AbstractBlock< BitSignal, MorseSymbolSignal >
+class BitStreamMorseDecoderBlock extends AbstractBlock< BitSignal, MorseSymbolsSignal >
 {
     private Logger LOGGER = LoggerFactory.getLogger( BitStreamMorseDecoderBlock.class );
 
@@ -24,120 +24,152 @@ class BitStreamMorseDecoderBlock extends AbstractBlock< BitSignal, MorseSymbolSi
         if( segments.size() == 0 )
         {
             currentValue = null;
+
+            if( !inputSignalValue.getBitValue() )
+            {
+                // leading silence is useless
+                return false;
+            }
         }
 
-        // 1. append input signal to segments
-        appendBitSignalToSegments( inputSignalValue );
-
-        // 2. check if DIT duration is available
-        if( ditDurationCalculator.getDitDuration() == null )
+        // 1. check if DIT duration is available
+        Integer ditDuration = ditDurationCalculator.getDitDuration();
+        if( ditDuration == null )
         {
+            appendBitSignalToSegments( inputSignalValue );
+
             return false;
         }
 
-        int ditDuration = ditDurationCalculator.getDitDuration();
+        // 2. check for MEDIUM_GAP at the end
+        double minMediumgGapDuration = 5.0 * ditDuration;
+        MorseSegment lastSegment = segments.get( segments.size() - 1 );
 
-        // 3. check for longer gap after sentence is over
-        if( currentValue != null && segments.size() == 1
-            && segments.get( 0 ).getType() == MorseSegmentType.Silence )
+        if( lastSegment.getType().equals( MorseSegmentType.Silence )
+            && lastSegment.getDuration() >= minMediumgGapDuration )
         {
-            MorseSegment silenceSegment = segments.get( 0 );
-            double maxMediumgGapDuration = 9.0 * ditDuration;
-            if( silenceSegment.getDuration() >= maxMediumgGapDuration )
-            {
-                // end of sentence detected
-                currentValue = new MorseSymbolSignal( MorseSymbol.MEDIUM_GAP );
-                segments.clear();
+            // there is a MEDIUM_GAP, decode the DITs and DAHs
+            currentValue = detectSymbols( segments );
+            currentValue.addSymbol( MorseSymbol.MEDIUM_GAP );
+            segments.clear();
 
-                return true;
-            }
-        }
-
-        // 4. to correctly decode the DIT, DAH or gaps we need at least two segments
-        if( segments.size() < 2 )
-        {
-            return false;
-        }
-
-        // 5. first detect gaps
-        MorseSegment first = segments.get( 0 );
-        MorseSegment second = segments.get( 1 );
-
-        if( first.getType() == MorseSegmentType.Silence && second.getType() == MorseSegmentType.Signal )
-        {
-            double minShortGapDuration = 2.0 * ditDuration;
-            double maxShortGapDuration = 4.0 * ditDuration;
-            double minMediumgGapDuration = 5.0 * ditDuration;
-            double maxMediumgGapDuration = 9.0 * ditDuration;
-
-            if( first.getDuration() < minShortGapDuration )
-            {
-                // inter-element gap (between the dits and dahs within a character ) detected
-                segments.remove( 0 );
-            }
-            else if( first.getDuration() >= minShortGapDuration
-                && first.getDuration() <= maxShortGapDuration )
-            {
-                // short gap detected (between letters)
-                currentValue = new MorseSymbolSignal( MorseSymbol.SHORT_GAP );
-                segments.remove( 0 );
-
-                return true;
-            }
-            else if( first.getDuration() >= minMediumgGapDuration
-                && first.getDuration() <= maxMediumgGapDuration )
-            {
-                // medium gap detected (between words)
-                currentValue = new MorseSymbolSignal( MorseSymbol.MEDIUM_GAP );
-                segments.remove( 0 );
-
-                return true;
-            }
-            else if( first.getDuration() >= maxMediumgGapDuration )
-            {
-                // very long medium gap detected
-                currentValue = new MorseSymbolSignal( MorseSymbol.MEDIUM_GAP );
-                segments.remove( 0 );
-
-                return true;
-            }
-        }
-
-        // 6. to correctly decode the DIT or DAHwe need at least two segments
-        if( segments.size() < 2 )
-        {
-            return false;
-        }
-
-        // 7. detect DIT or DAH
-        first = segments.get( 0 );
-        second = segments.get( 1 );
-        if( first.getType() == MorseSegmentType.Signal && second.getType() == MorseSegmentType.Silence )
-        {
-            MorseSegment segment = segments.get( 0 );
-            if( segment.getDuration() < 2.0 * ditDuration )
-            {
-                // we have a DIT
-                currentValue = new MorseSymbolSignal( MorseSymbol.DIT );
-            }
-            else
-            {
-                // we have a DAT
-                currentValue = new MorseSymbolSignal( MorseSymbol.DAH );
-            }
-
-            segments.remove( 0 );
+            appendBitSignalToSegments( inputSignalValue );
 
             return true;
         }
 
+        // 3. check for SHORT_GAP at the end but only when a new input data is a signal
+        double minShortGapDuration = 2.0 * ditDuration;
+        if( lastSegment.getType().equals( MorseSegmentType.Silence )
+            && lastSegment.getDuration() >= minShortGapDuration && inputSignalValue.getBitValue() )
+        {
+            // there is a SHORT_GAP, decode DITs and DAHs
+            currentValue = detectSymbols( segments );
+            currentValue.addSymbol( MorseSymbol.SHORT_GAP );
+            segments.clear();
+
+            appendBitSignalToSegments( inputSignalValue );
+
+            return true;
+        }
+
+        // 4. still in phase of receiving input signal data
+        appendBitSignalToSegments( inputSignalValue );
+
         return false;
+    }
+
+    private MorseSymbolsSignal detectSymbols( List< MorseSegment > segments )
+    {
+        int minSignalDuration = Integer.MAX_VALUE;
+        int maxSignalDuration = 0;
+        int signalSumm = 0;
+        int signalCount = 0;
+        int silenceSumm = 0;
+        int silenceCount = 0;
+        for( MorseSegment segment : segments )
+        {
+            if( segment.getType().equals( MorseSegmentType.Silence ) )
+            {
+                silenceCount++;
+                silenceSumm += segment.getDuration();
+
+                continue;
+            }
+            if( segment.getDuration() > maxSignalDuration )
+            {
+                maxSignalDuration = segment.getDuration();
+            }
+            if( segment.getDuration() < minSignalDuration )
+            {
+                minSignalDuration = segment.getDuration();
+            }
+            signalCount++;
+            signalSumm += segment.getDuration();
+        }
+
+        double avgSignalDuration = ((double)signalSumm) / ((double)signalCount);
+        double avgSilenceDuration = ((double)silenceSumm) / ((double)silenceCount);
+
+        if( maxSignalDuration / minSignalDuration >= 1.5 )
+        {
+            // there are DITs and DAHs
+            MorseSymbolsSignal morseSymbolsSignal = new MorseSymbolsSignal();
+            for( MorseSegment segment : segments )
+            {
+                if( segment.getType().equals( MorseSegmentType.Silence ) )
+                {
+                    continue;
+                }
+
+                if( segment.getDuration() < avgSignalDuration )
+                {
+                    // we have DIT
+                    morseSymbolsSignal.addSymbol( MorseSymbol.DIT );
+                }
+                else
+                {
+                    // we have DAH
+                    morseSymbolsSignal.addSymbol( MorseSymbol.DAH );
+                }
+            }
+
+            LOGGER.debug( String.format( "Detected symbols %s", morseSymbolsSignal.toString() ) );
+
+            return morseSymbolsSignal;
+        }
+
+        // there are either DITs or DAHs
+        MorseSymbolsSignal morseSymbolsSignal = new MorseSymbolsSignal();
+        for( int q = 0; q < signalCount; q++ )
+        {
+            if( avgSignalDuration / avgSilenceDuration >= 1.5 )
+            {
+                // we have DAHs
+                morseSymbolsSignal.addSymbol( MorseSymbol.DAH );
+            }
+            else
+            {
+                // we have DITs
+                morseSymbolsSignal.addSymbol( MorseSymbol.DIT );
+            }
+        }
+
+        LOGGER.debug( String.format( "Detected symbols %s", morseSymbolsSignal.toString() ) );
+
+        return morseSymbolsSignal;
     }
 
     private void appendBitSignalToSegments( BitSignal inputSignalValue )
     {
         MorseSegmentType inputSegmentType =
             inputSignalValue.getBitValue() == true ? MorseSegmentType.Signal : MorseSegmentType.Silence;
+
+        if( segments.size() == 0 && inputSegmentType.equals( MorseSegmentType.Silence ) )
+        {
+            // leading silence is useless
+            return;
+        }
 
         if( segments.size() == 0 )
         {

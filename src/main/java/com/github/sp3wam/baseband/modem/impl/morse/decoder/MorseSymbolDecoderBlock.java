@@ -8,7 +8,7 @@ import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.basic.signals.StringSignal;
 import com.github.sp3wam.baseband.modem.impl.morse.MorseTable;
 
-class MorseSymbolDecoderBlock extends AbstractBlock< MorseSymbolSignal, StringSignal >
+class MorseSymbolDecoderBlock extends AbstractBlock< MorseSymbolsSignal, StringSignal >
 {
     private Logger LOGGER = LoggerFactory.getLogger( MorseSymbolDecoderBlock.class );
 
@@ -24,53 +24,54 @@ class MorseSymbolDecoderBlock extends AbstractBlock< MorseSymbolSignal, StringSi
         morseTable = MorseTable.readFromResources();
     }
 
-    protected boolean execute0( SystemClock systemClock, MorseSymbolSignal inputSignalValue )
+    protected boolean execute0( SystemClock systemClock, MorseSymbolsSignal inputSignalValue )
     {
-        MorseSymbol inputSignal = inputSignalValue.getValue();
-
-        if( inputSignal == MorseSymbol.SHORT_GAP || inputSignal == MorseSymbol.MEDIUM_GAP )
+        for( MorseSymbol inputSignal : inputSignalValue.getSymbols() )
         {
-            // end of letter (or word) detected
-            String morseString = stringBuilder.toString();
-            if( morseString.isEmpty() )
+            if( inputSignal == MorseSymbol.SHORT_GAP || inputSignal == MorseSymbol.MEDIUM_GAP )
             {
-                return false;
+                // end of letter (or word) detected
+                String morseString = stringBuilder.toString();
+                if( morseString.isEmpty() )
+                {
+                    return false;
+                }
+
+                String decodedLetter = morseTable.decode( morseString );
+                stringBuilder.setLength( 0 );
+
+                if( decodedLetter == null )
+                {
+                    LOGGER.warn( String.format( "Not able to decode Morse sequence: %s", morseString ) );
+
+                    return false;
+                }
+
+                if( inputSignal == MorseSymbol.SHORT_GAP )
+                {
+                    // end of letter
+                    currentValue = new StringSignal( decodedLetter );
+
+                    return true;
+                }
+
+                if( inputSignal == MorseSymbol.MEDIUM_GAP )
+                {
+                    // end of word detected.
+                    currentValue = new StringSignal( decodedLetter + SPACE_CHAR );
+
+                    return true;
+                }
             }
 
-            String decodedLetter = morseTable.decode( morseString );
-            stringBuilder.setLength( 0 );
-
-            if( decodedLetter == null )
+            if( inputSignal == MorseSymbol.DIT )
             {
-                LOGGER.warn( String.format( "Not able to decode Morse sequence: %s", morseString ) );
-
-                return false;
+                stringBuilder.append( MorseSymbolDecoderBlock.DIT_CHAR );
             }
-
-            if( inputSignal == MorseSymbol.SHORT_GAP )
+            else
             {
-                // end of letter
-                currentValue = new StringSignal( decodedLetter );
-
-                return true;
+                stringBuilder.append( MorseSymbolDecoderBlock.DAH_CHAR );
             }
-
-            if( inputSignal == MorseSymbol.MEDIUM_GAP )
-            {
-                // end of word detected.
-                currentValue = new StringSignal( decodedLetter + SPACE_CHAR );
-
-                return true;
-            }
-        }
-
-        if( inputSignal == MorseSymbol.DIT )
-        {
-            stringBuilder.append( MorseSymbolDecoderBlock.DIT_CHAR );
-        }
-        else
-        {
-            stringBuilder.append( MorseSymbolDecoderBlock.DAH_CHAR );
         }
 
         return false;
