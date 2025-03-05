@@ -90,7 +90,7 @@ public class MorseDecoderTest
     {
         String filePath =
             "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/real_transmission.mp3";
-        subject.setSignalThreshold( 9 );
+        subject.setSignalThreshold( 10.5 );
         subject.decodeFromMp3( filePath, consumer );
 
         assertEquals( "cq cq cq de g3zrj g3zrj g3zrj cq cq cq de g3zrj ", consumer.getDecodedString() );
