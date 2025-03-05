@@ -130,13 +130,13 @@ class DitDurationCalculator
         }
 
         // there are either DITs or DAHs
-        if(silenceCount == 0)
+        if( silenceCount == 0 )
         {
+            // special case: we have only a DIT or DAH available (E or T character)
             // not possible to find out between DITs or DAHs
-            
             return;
         }
-        
+
         double avgSilenceDuration = ((double)silenceSumm) / ((double)silenceCount);
         if( avgSignalDuration / avgSilenceDuration >= 1.5 )
         {

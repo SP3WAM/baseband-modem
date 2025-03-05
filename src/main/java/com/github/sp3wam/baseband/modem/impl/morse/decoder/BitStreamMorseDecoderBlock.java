@@ -147,7 +147,7 @@ class BitStreamMorseDecoderBlock extends AbstractBlock< BitSignal, MorseSymbolsS
 
         // there are either DITs or DAHs
         double avgSilenceDuration;
-        if( segments.size() == 1 )
+        if( silenceCount == 0 )
         {
             // special case: we have only a DIT or DAH available (E or T character)
             if( lastKnownDitDuration == null )
@@ -165,6 +165,7 @@ class BitStreamMorseDecoderBlock extends AbstractBlock< BitSignal, MorseSymbolsS
         {
             avgSilenceDuration = ((double)silenceSumm) / ((double)silenceCount);
         }
+
         MorseSymbolsSignal morseSymbolsSignal = new MorseSymbolsSignal();
         for( int q = 0; q < signalCount; q++ )
         {
