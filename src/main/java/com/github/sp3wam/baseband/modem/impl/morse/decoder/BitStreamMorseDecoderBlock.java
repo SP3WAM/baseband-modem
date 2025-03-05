@@ -30,6 +30,10 @@ class BitStreamMorseDecoderBlock extends AbstractBlock< BitSignal, MorseSymbolsS
                 // leading silence is useless
                 return false;
             }
+
+            appendBitSignalToSegments( inputSignalValue );
+
+            return false;
         }
 
         // 1. check if DIT duration is available
@@ -49,11 +53,14 @@ class BitStreamMorseDecoderBlock extends AbstractBlock< BitSignal, MorseSymbolsS
             && lastSegment.getDuration() >= minMediumgGapDuration )
         {
             // there is a MEDIUM_GAP, decode the DITs and DAHs
-            currentValue = detectSymbols( segments );
+            segments.remove( segments.size() - 1 );
+            currentValue = detectSymbols( segments, ditDuration );
             currentValue.addSymbol( MorseSymbol.MEDIUM_GAP );
             segments.clear();
 
             appendBitSignalToSegments( inputSignalValue );
+
+            LOGGER.debug( String.format( "Detected symbols %s", currentValue.toString() ) );
 
             return true;
         }
@@ -64,11 +71,14 @@ class BitStreamMorseDecoderBlock extends AbstractBlock< BitSignal, MorseSymbolsS
             && lastSegment.getDuration() >= minShortGapDuration && inputSignalValue.getBitValue() )
         {
             // there is a SHORT_GAP, decode DITs and DAHs
-            currentValue = detectSymbols( segments );
+            segments.remove( segments.size() - 1 );
+            currentValue = detectSymbols( segments, ditDuration );
             currentValue.addSymbol( MorseSymbol.SHORT_GAP );
             segments.clear();
 
             appendBitSignalToSegments( inputSignalValue );
+
+            LOGGER.debug( String.format( "Detected symbols %s", currentValue.toString() ) );
 
             return true;
         }
@@ -79,7 +89,7 @@ class BitStreamMorseDecoderBlock extends AbstractBlock< BitSignal, MorseSymbolsS
         return false;
     }
 
-    private MorseSymbolsSignal detectSymbols( List< MorseSegment > segments )
+    private MorseSymbolsSignal detectSymbols( List< MorseSegment > segments, Integer lastKnownDitDuration )
     {
         int minSignalDuration = Integer.MAX_VALUE;
         int maxSignalDuration = 0;
@@ -109,7 +119,25 @@ class BitStreamMorseDecoderBlock extends AbstractBlock< BitSignal, MorseSymbolsS
         }
 
         double avgSignalDuration = ((double)signalSumm) / ((double)signalCount);
-        double avgSilenceDuration = ((double)silenceSumm) / ((double)silenceCount);
+        double avgSilenceDuration;
+        if( segments.size() == 1 )
+        {
+            // special case: we have only a DIT or DAH available (E or T character)
+            if( lastKnownDitDuration == null )
+            {
+                // unfortunatelly dit duration now known yet
+                // TODO: what to do?
+                avgSilenceDuration = avgSignalDuration;
+            }
+            else
+            {
+                avgSilenceDuration = lastKnownDitDuration;
+            }
+        }
+        else
+        {
+            avgSilenceDuration = ((double)silenceSumm) / ((double)silenceCount);
+        }
 
         if( maxSignalDuration / minSignalDuration >= 1.5 )
         {
@@ -134,8 +162,6 @@ class BitStreamMorseDecoderBlock extends AbstractBlock< BitSignal, MorseSymbolsS
                 }
             }
 
-            LOGGER.debug( String.format( "Detected symbols %s", morseSymbolsSignal.toString() ) );
-
             return morseSymbolsSignal;
         }
 
@@ -154,8 +180,6 @@ class BitStreamMorseDecoderBlock extends AbstractBlock< BitSignal, MorseSymbolsS
                 morseSymbolsSignal.addSymbol( MorseSymbol.DIT );
             }
         }
-
-        LOGGER.debug( String.format( "Detected symbols %s", morseSymbolsSignal.toString() ) );
 
         return morseSymbolsSignal;
     }

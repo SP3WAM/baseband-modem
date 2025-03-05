@@ -96,9 +96,11 @@ abstract class AbstractMorseSignalDetectorBlock extends AbstractBlock< FloatingP
         internalBlock = new InternalBlock();
         // remove two bit length spikes in fast bit stream
         bitFasterAveragerBlock = new BitAveragerBlock( 5 );
+        bitFasterAveragerBlock.setLoggingEnabled( false );
         fftSlowerSampler = new SamplerBlock< BitSignal, BitSignal >( bitSamplerDivider );
         // removes 1 bit spikes that sneak during slow sampling
         bitSlowerAveragerBlock = new BitAveragerBlock( 3 );
+        bitSlowerAveragerBlock.setLoggingEnabled( true );
 
         // connect the blocks
         floatingPointAveragerBlock.setNextBlock( avgMagnitude );
