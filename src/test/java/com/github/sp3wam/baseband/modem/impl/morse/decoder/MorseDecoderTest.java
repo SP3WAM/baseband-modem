@@ -73,6 +73,17 @@ public class MorseDecoderTest
 
         assertEquals( "3 ", consumer.getDecodedString() );
     }
+    
+    @Test
+    public void testNoisyLetterR_fromWav() throws IOException
+    {
+        String filePath =
+            "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/R_noised_morse_code.wav";
+        subject.setSignalThreshold( 10.5 );
+        subject.decodeFromWav( filePath, consumer );
+
+        assertEquals( "r ", consumer.getDecodedString() );
+    }
 
     @Test
     public void testRealTransmission_fromMp3() throws IOException
