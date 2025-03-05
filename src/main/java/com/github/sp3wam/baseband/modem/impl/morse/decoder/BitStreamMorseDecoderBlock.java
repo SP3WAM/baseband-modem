@@ -119,26 +119,6 @@ class BitStreamMorseDecoderBlock extends AbstractBlock< BitSignal, MorseSymbolsS
         }
 
         double avgSignalDuration = ((double)signalSumm) / ((double)signalCount);
-        double avgSilenceDuration;
-        if( segments.size() == 1 )
-        {
-            // special case: we have only a DIT or DAH available (E or T character)
-            if( lastKnownDitDuration == null )
-            {
-                // unfortunatelly dit duration now known yet
-                // TODO: what to do?
-                avgSilenceDuration = avgSignalDuration;
-            }
-            else
-            {
-                avgSilenceDuration = lastKnownDitDuration;
-            }
-        }
-        else
-        {
-            avgSilenceDuration = ((double)silenceSumm) / ((double)silenceCount);
-        }
-
         if( maxSignalDuration / minSignalDuration >= 1.5 )
         {
             // there are DITs and DAHs
@@ -166,6 +146,25 @@ class BitStreamMorseDecoderBlock extends AbstractBlock< BitSignal, MorseSymbolsS
         }
 
         // there are either DITs or DAHs
+        double avgSilenceDuration;
+        if( segments.size() == 1 )
+        {
+            // special case: we have only a DIT or DAH available (E or T character)
+            if( lastKnownDitDuration == null )
+            {
+                // unfortunately dit duration now known yet
+                // TODO: what to do?
+                avgSilenceDuration = avgSignalDuration;
+            }
+            else
+            {
+                avgSilenceDuration = lastKnownDitDuration;
+            }
+        }
+        else
+        {
+            avgSilenceDuration = ((double)silenceSumm) / ((double)silenceCount);
+        }
         MorseSymbolsSignal morseSymbolsSignal = new MorseSymbolsSignal();
         for( int q = 0; q < signalCount; q++ )
         {
