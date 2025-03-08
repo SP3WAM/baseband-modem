@@ -36,12 +36,18 @@ public class SamplerBlock< I extends SignalIf, O extends SignalIf >extends Abstr
             return false;
         }
 
-        LOGGER.debug( String.format( "Sampler with sampling divider %s. Processing sample nr %s",
+        getLogger().debug( String.format( "Sampler with sampling divider %s. Processing sample nr %s",
             samplingDivider, currentSampleNumber ) );
 
         currentValue = inputSignalValue;
         currentSampleNumber++;
 
         return true;
+    }
+
+    @Override
+    protected Logger getLogger0()
+    {
+        return LOGGER;
     }
 }
