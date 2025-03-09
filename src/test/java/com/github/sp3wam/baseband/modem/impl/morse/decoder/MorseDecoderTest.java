@@ -57,7 +57,7 @@ public class MorseDecoderTest
     {
         String filePath =
             "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/Q_noised_morse_code.wav";
-        subject.setSignalThreshold( 9 );
+        subject.setSignalThreshold( 8.5 );
         subject.decodeFromWav( filePath, consumer );
 
         assertEquals( "q ", consumer.getDecodedString() );
@@ -83,6 +83,17 @@ public class MorseDecoderTest
         subject.decodeFromWav( filePath, consumer );
 
         assertEquals( "r ", consumer.getDecodedString() );
+    }
+    
+    @Test
+    public void testNoisyLettersRJ_fromWav() throws IOException
+    {
+        String filePath =
+            "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/RJ_noised_morse_code.wav";
+        subject.setSignalThreshold( 10.5 );
+        subject.decodeFromWav( filePath, consumer );
+
+        assertEquals( "rj ", consumer.getDecodedString() );
     }
 
     @Test
