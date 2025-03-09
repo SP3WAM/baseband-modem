@@ -65,7 +65,7 @@ public class MorseDecoder
         MorseSignalDetectorByPercentageSpectrumBlock morseSignalDetectorBlock =
             new MorseSignalDetectorByPercentageSpectrumBlock( signalGenerator.getSampleRate() );
         morseSignalDetectorBlock.setFftParams( 32, 3000.0 );
-        morseSignalDetectorBlock.setDesiredOutputSignalSampleFreq( 100.0 );
+        morseSignalDetectorBlock.setDesiredOutputSignalSampleFreq( 200.0 );
         morseSignalDetectorBlock.setSignalThreshold( signalThreshold );
 
         BitStreamMorseDecoderBlock morseDecoderBlock = new BitStreamMorseDecoderBlock();
