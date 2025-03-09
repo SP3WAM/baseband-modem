@@ -103,11 +103,6 @@ class DitDurationCalculator
             int ditCount = 0;
             for( MorseSegment segment : segments )
             {
-                if( segment.getType().equals( MorseSegmentType.Silence ) )
-                {
-                    continue;
-                }
-
                 if( segment.getDuration() < avgSignalDuration )
                 {
                     // we have DIT
