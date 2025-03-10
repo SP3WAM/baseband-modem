@@ -38,7 +38,7 @@ public class FloatingPointAveragerBlock extends AbstractBlock< FloatingPointSign
         }
 
         double value = summ / ((double)samples.size());
-        currentValue = new FloatingPointSignal( value );
+        setCurrentValue( new FloatingPointSignal( value ) );
 
         // LOGGER.debug( String.format( "Average bit value is %s", currentValue.getValue() ) );
 

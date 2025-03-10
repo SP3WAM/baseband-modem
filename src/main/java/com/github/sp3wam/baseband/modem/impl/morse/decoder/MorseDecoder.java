@@ -2,22 +2,30 @@ package com.github.sp3wam.baseband.modem.impl.morse.decoder;
 
 import java.io.IOException;
 
+import com.github.sp3wam.baseband.modem.core.BlockListenerIf;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
+import com.github.sp3wam.baseband.modem.core.basic.signals.FloatingPointSignal;
 import com.github.sp3wam.baseband.modem.core.pcm.PcmFromJavaxAudioSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.pcm.PcmFromMp3FileSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.pcm.PcmFromWavFileSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.pcm.PcmSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.impl.morse.detector.MorseSignalDetectorByPercentageSpectrumBlock;
-import com.github.sp3wam.baseband.modem.impl.morse.detector.MorseSignalDetectorBySpectrumPeaksBlock;
 
 public class MorseDecoder
 {
     private final double SIGNAL_AMPLITUDE = 100.0;
     private double signalThreshold = 16.0;
+    private MorseSignalDetectorByPercentageSpectrumBlock morseSignalDetectorBlock = null;
+    private BlockListenerIf< FloatingPointSignal > fftSamplerListener = null;
 
     public void setSignalThreshold( double threshold )
     {
         this.signalThreshold = threshold;
+
+        if( morseSignalDetectorBlock != null )
+        {
+            morseSignalDetectorBlock.setSignalThreshold( signalThreshold );
+        }
     }
 
     public void decodeFromWav( String filePath, MorseDecoderConsumer consumer ) throws IOException
@@ -60,9 +68,7 @@ public class MorseDecoder
 
     private void decode( PcmSignalGeneratorBlock signalGenerator, MorseDecoderConsumer consumer )
     {
-        // MorseSignalDetectorBySpectrumPeaksBlock morseSignalDetectorBlock =
-        // new MorseSignalDetectorBySpectrumPeaksBlock( signalGenerator.getSampleRate() );
-        MorseSignalDetectorByPercentageSpectrumBlock morseSignalDetectorBlock =
+        morseSignalDetectorBlock =
             new MorseSignalDetectorByPercentageSpectrumBlock( signalGenerator.getSampleRate() );
         morseSignalDetectorBlock.setFftParams( 32, 3000.0 );
         morseSignalDetectorBlock.setDesiredOutputSignalSampleFreq( 200.0 );

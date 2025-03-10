@@ -57,10 +57,10 @@ public class FFTBlock extends AbstractBlock< FloatingPointSignal, FFTSignal >
 
         Complex[] outputArray = fastFourierTransformer.transform( inputArray, TransformType.FORWARD );
 
-        currentValue = new FFTSignal( outputArray, samplingFreq );
+        setCurrentValue( new FFTSignal( outputArray, samplingFreq ) );
 
         LOGGER.debug( String.format( "Calculating FFT from \n %s \n into %s", sourcesSamplesToString(),
-            currentValue.toString() ) );
+            getCurrentValue().toString() ) );
 
         return true;
     }

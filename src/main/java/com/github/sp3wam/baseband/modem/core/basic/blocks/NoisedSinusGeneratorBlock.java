@@ -28,7 +28,7 @@ public class NoisedSinusGeneratorBlock extends FloatingPointSinusGeneratorBlock
             noiseGenerator.execute( systemClock, null );
 
             double value = this.getCurrentValue().getValue() + noiseGenerator.getCurrentValue().getValue();
-            currentValue = new FloatingPointSignal( value );
+            setCurrentValue( new FloatingPointSignal( value ) );
         }
 
         return true;

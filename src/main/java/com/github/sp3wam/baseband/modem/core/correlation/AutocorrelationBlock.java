@@ -49,7 +49,7 @@ public class AutocorrelationBlock extends AbstractBlock< FloatingPointSignal, Co
             values[ r ] = sum / (N - r);
         }
 
-        currentValue = new CorrelationSignal( values );
+        setCurrentValue( new CorrelationSignal( values ) );
 
         return true;
     }

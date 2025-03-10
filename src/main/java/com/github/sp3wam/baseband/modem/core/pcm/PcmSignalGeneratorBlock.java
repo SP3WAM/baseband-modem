@@ -110,10 +110,10 @@ public abstract class PcmSignalGeneratorBlock extends AbstractBlock< DummySignal
 
                 LOGGER.trace( String.format( "%s", value ) );
 
-                currentValue = new FloatingPointSignal( value );
+                setCurrentValue( new FloatingPointSignal( value ) );
 
                 LOGGER.debug( String.format( "Processing sample nr %s with value %s", samplesCount,
-                    currentValue.getValue() ) );
+                    getCurrentValue().getValue() ) );
             }
             catch( IOException e )
             {
@@ -150,7 +150,7 @@ public abstract class PcmSignalGeneratorBlock extends AbstractBlock< DummySignal
             {
                 hasMoreSamples = false;
             }
-            currentValue = new FloatingPointSignal( 0.0 );
+            setCurrentValue( new FloatingPointSignal( 0.0 ) );
         }
 
         return true;

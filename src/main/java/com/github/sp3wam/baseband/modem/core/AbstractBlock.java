@@ -1,5 +1,8 @@
 package com.github.sp3wam.baseband.modem.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.slf4j.Logger;
@@ -11,9 +14,10 @@ public abstract class AbstractBlock< I extends SignalIf, O extends SignalIf > im
     private Logger LOGGER = LoggerFactory.getLogger( AbstractBlock.class );
 
     private BlockIf< O, ? > nextBlock = null;
-    protected O currentValue = null;
+    private O currentValue = null;
     protected long processedSamples = 0;
     private boolean loggingEnabled = true;
+    private List< BlockListenerIf< O > > listeners = new ArrayList<>();
 
     @Override
     public void execute( SystemClock systemClock, I inputSignalValue )
@@ -49,6 +53,12 @@ public abstract class AbstractBlock< I extends SignalIf, O extends SignalIf > im
         return currentValue;
     }
 
+    @Override
+    public void addListener( BlockListenerIf< O > listener )
+    {
+        listeners.add( listener );
+    }
+
     public void setLoggingEnabled( boolean loggingEnabled )
     {
         this.loggingEnabled = loggingEnabled;
@@ -58,8 +68,8 @@ public abstract class AbstractBlock< I extends SignalIf, O extends SignalIf > im
         {
             return;
         }
-        
-        if(loggingEnabled)
+
+        if( loggingEnabled )
         {
             return;
         }
@@ -69,6 +79,16 @@ public abstract class AbstractBlock< I extends SignalIf, O extends SignalIf > im
 
     protected abstract boolean execute0( SystemClock systemClock, I inputSignalValue );
 
+    protected void setCurrentValue(O value)
+    {
+        this.currentValue = value;
+        
+        for(BlockListenerIf< O > listener : listeners)
+        {
+            listener.onCurrentValueSet( currentValue );
+        }
+    }
+    
     protected Logger getLogger()
     {
         if( loggingEnabled )

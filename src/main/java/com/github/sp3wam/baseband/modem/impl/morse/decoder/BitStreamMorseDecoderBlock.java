@@ -23,7 +23,7 @@ class BitStreamMorseDecoderBlock extends AbstractBlock< BitSignal, MorseSymbolsS
 
         if( segments.size() == 0 )
         {
-            currentValue = null;
+            setCurrentValue( null );
 
             if( !inputSignalValue.getBitValue() )
             {
@@ -54,13 +54,14 @@ class BitStreamMorseDecoderBlock extends AbstractBlock< BitSignal, MorseSymbolsS
         {
             // there is a MEDIUM_GAP, decode the DITs and DAHs
             segments.remove( segments.size() - 1 );
-            currentValue = detectSymbols( segments, ditDuration );
-            currentValue.addSymbol( MorseSymbol.MEDIUM_GAP );
+            MorseSymbolsSignal morseSymbolsSignal = detectSymbols( segments, ditDuration );
+            morseSymbolsSignal.addSymbol( MorseSymbol.MEDIUM_GAP );
+            setCurrentValue( morseSymbolsSignal );
             segments.clear();
 
             appendBitSignalToSegments( inputSignalValue );
 
-            LOGGER.debug( String.format( "Detected symbols %s", currentValue.toString() ) );
+            LOGGER.debug( String.format( "Detected symbols %s", getCurrentValue().toString() ) );
 
             return true;
         }
@@ -72,13 +73,14 @@ class BitStreamMorseDecoderBlock extends AbstractBlock< BitSignal, MorseSymbolsS
         {
             // there is a SHORT_GAP, decode DITs and DAHs
             segments.remove( segments.size() - 1 );
-            currentValue = detectSymbols( segments, ditDuration );
-            currentValue.addSymbol( MorseSymbol.SHORT_GAP );
+            MorseSymbolsSignal morseSymbolsSignal = detectSymbols( segments, ditDuration );
+            morseSymbolsSignal.addSymbol( MorseSymbol.SHORT_GAP );
+            setCurrentValue( morseSymbolsSignal );
             segments.clear();
 
             appendBitSignalToSegments( inputSignalValue );
 
-            LOGGER.debug( String.format( "Detected symbols %s", currentValue.toString() ) );
+            LOGGER.debug( String.format( "Detected symbols %s", getCurrentValue().toString() ) );
 
             return true;
         }

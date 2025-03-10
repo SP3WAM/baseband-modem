@@ -50,7 +50,7 @@ class MorseSymbolDecoderBlock extends AbstractBlock< MorseSymbolsSignal, StringS
                 if( inputSignal == MorseSymbol.SHORT_GAP )
                 {
                     // end of letter
-                    currentValue = new StringSignal( decodedLetter );
+                    setCurrentValue( new StringSignal( decodedLetter ) );
 
                     return true;
                 }
@@ -58,7 +58,7 @@ class MorseSymbolDecoderBlock extends AbstractBlock< MorseSymbolsSignal, StringS
                 if( inputSignal == MorseSymbol.MEDIUM_GAP )
                 {
                     // end of word detected.
-                    currentValue = new StringSignal( decodedLetter + SPACE_CHAR );
+                    setCurrentValue( new StringSignal( decodedLetter + SPACE_CHAR ) );
 
                     return true;
                 }

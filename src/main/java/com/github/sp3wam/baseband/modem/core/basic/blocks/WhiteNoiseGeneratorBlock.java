@@ -23,7 +23,7 @@ public class WhiteNoiseGeneratorBlock extends AbstractBlock< DummySignal, Floati
     {
         double value = amplitude * (2.0 * random.nextDouble() - 1.0);
 
-        currentValue = new FloatingPointSignal( value );
+        setCurrentValue( new FloatingPointSignal( value ) );
 
         return true;
     }

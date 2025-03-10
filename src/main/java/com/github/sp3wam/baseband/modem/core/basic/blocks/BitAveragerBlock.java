@@ -43,15 +43,15 @@ public class BitAveragerBlock extends AbstractBlock< BitSignal, BitSignal >
 
         if( onesCount >= ((double)(list.size() / 2.0)) )
         {
-            currentValue = new BitSignal( true );
+            setCurrentValue( new BitSignal( true ) );
         }
         else
         {
-            currentValue = new BitSignal( false );
+            setCurrentValue( new BitSignal( false ) );
         }
 
         getLogger().debug( String.format( "Average bit value of %s samples is %s", numberOfSamples,
-            currentValue.toString() ) );
+            getCurrentValue().toString() ) );
 
         return true;
     }

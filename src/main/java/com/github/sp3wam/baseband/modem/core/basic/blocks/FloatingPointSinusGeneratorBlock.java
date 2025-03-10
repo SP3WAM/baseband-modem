@@ -30,7 +30,7 @@ public class FloatingPointSinusGeneratorBlock extends AbstractBlock< DummySignal
             amplitude * Math.sin( 2 * Math.PI * frequencyHz * systemClock.getClockValueInSeconds() )
                 + dcOffset;
 
-        currentValue = new FloatingPointSignal( value );
+        setCurrentValue( new FloatingPointSignal( value ) );
 
         return true;
     }

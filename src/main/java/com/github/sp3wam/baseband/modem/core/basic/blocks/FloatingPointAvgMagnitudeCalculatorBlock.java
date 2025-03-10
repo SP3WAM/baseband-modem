@@ -32,7 +32,7 @@ public class FloatingPointAvgMagnitudeCalculatorBlock
     @Override
     protected boolean execute0( SystemClock systemClock, FloatingPointSignal inputSignalValue )
     {
-        currentValue = inputSignalValue;
+        setCurrentValue( inputSignalValue );
 
         samples.add( inputSignalValue );
         if( samples.size() > sampleWindow )
@@ -59,7 +59,7 @@ public class FloatingPointAvgMagnitudeCalculatorBlock
             LOGGER.info(
                 String.format( "Average magnitude of last %s samples is %s", samples.size(), avgMagnitude ) );
         }
-        
+
         return true;
     }
 }

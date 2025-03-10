@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.sp3wam.baseband.modem.core.AbstractBlock;
 import com.github.sp3wam.baseband.modem.core.BlockIf;
+import com.github.sp3wam.baseband.modem.core.BlockListenerIf;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.basic.blocks.BitAveragerBlock;
 import com.github.sp3wam.baseband.modem.core.basic.blocks.BitSignal;
@@ -76,7 +77,7 @@ abstract class AbstractMorseSignalDetectorBlock extends AbstractBlock< FloatingP
     {
         floatingPointAveragerBlock.execute( systemClock, inputSignalValue );
 
-        currentValue = fftSlowerSampler.getCurrentValue();
+        setCurrentValue( fftSlowerSampler.getCurrentValue() );
 
         return false;
     }
@@ -119,7 +120,7 @@ abstract class AbstractMorseSignalDetectorBlock extends AbstractBlock< FloatingP
         @Override
         protected boolean execute0( SystemClock systemClock, FFTSignal inputSignalValue )
         {
-            currentValue = detectSignal( inputSignalValue );
+            setCurrentValue( detectSignal( inputSignalValue ) );
 
             return true;
         }
