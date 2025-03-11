@@ -27,7 +27,7 @@ public class MorseDecoderTest
     public void testLetterC_fromMp3() throws IOException
     {
         String filePath = "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/C_morse_code.mp3";
-        subject.decodeFromMp3( filePath, consumer );
+        subject.decodeFromMp3Sync( filePath, consumer );
 
         // there is a trailing space character at the end
         assertEquals( "c ", consumer.getDecodedString() );
@@ -37,7 +37,7 @@ public class MorseDecoderTest
     public void testLetterC_fromWav() throws IOException
     {
         String filePath = "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/C_morse_code.wav";
-        subject.decodeFromWav( filePath, consumer );
+        subject.decodeFromWavSync( filePath, consumer );
 
         assertEquals( "c ", consumer.getDecodedString() );
     }
@@ -47,7 +47,7 @@ public class MorseDecoderTest
     {
         String filePath =
             "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/C_noised_morse_code.mp3";
-        subject.decodeFromMp3( filePath, consumer );
+        subject.decodeFromMp3Sync( filePath, consumer );
 
         assertEquals( "c ", consumer.getDecodedString() );
     }
@@ -58,7 +58,7 @@ public class MorseDecoderTest
         String filePath =
             "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/Q_noised_morse_code.wav";
         subject.setSignalThreshold( 8.5 );
-        subject.decodeFromWav( filePath, consumer );
+        subject.decodeFromWavSync( filePath, consumer );
 
         assertEquals( "q ", consumer.getDecodedString() );
     }
@@ -69,29 +69,29 @@ public class MorseDecoderTest
         String filePath =
             "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/3_noised_morse_code.wav";
         subject.setSignalThreshold( 9 );
-        subject.decodeFromWav( filePath, consumer );
+        subject.decodeFromWavSync( filePath, consumer );
 
         assertEquals( "3 ", consumer.getDecodedString() );
     }
-    
+
     @Test
     public void testNoisyLetterR_fromWav() throws IOException
     {
         String filePath =
             "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/R_noised_morse_code.wav";
         subject.setSignalThreshold( 10.5 );
-        subject.decodeFromWav( filePath, consumer );
+        subject.decodeFromWavSync( filePath, consumer );
 
         assertEquals( "r ", consumer.getDecodedString() );
     }
-    
+
     @Test
     public void testNoisyLettersRJ_fromWav() throws IOException
     {
         String filePath =
             "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/RJ_noised_morse_code.wav";
         subject.setSignalThreshold( 10.5 );
-        subject.decodeFromWav( filePath, consumer );
+        subject.decodeFromWavSync( filePath, consumer );
 
         assertEquals( "rj ", consumer.getDecodedString() );
     }
@@ -102,7 +102,7 @@ public class MorseDecoderTest
         String filePath =
             "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/real_transmission.mp3";
         subject.setSignalThreshold( 10.5 );
-        subject.decodeFromMp3( filePath, consumer );
+        subject.decodeFromMp3Sync( filePath, consumer );
 
         assertEquals( "cq cq cq de g3zrj g3zrj g3zrj cq cq cq de g3zrj ", consumer.getDecodedString() );
     }
@@ -112,7 +112,7 @@ public class MorseDecoderTest
     {
         String filePath =
             "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/Wikipedia-Morse.mp3";
-        subject.decodeFromMp3( filePath, consumer );
+        subject.decodeFromMp3Sync( filePath, consumer );
 
         assertEquals( "welcome to wikipedia, the free encyclopedia that anyone can edit. ",
             consumer.getDecodedString() );

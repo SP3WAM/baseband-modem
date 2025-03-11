@@ -34,7 +34,7 @@ public class MorseDecoderLifeSimpleExample
     @Test
     public void openJavaxSound() throws IOException, LineUnavailableException
     {
-        subject.decodeFromJavaxAudio( consumer );
+        subject.decodeFromJavaxAudioSync( consumer );
     }
 
     @Test
@@ -60,7 +60,7 @@ public class MorseDecoderLifeSimpleExample
     @Test
     public void openXtAudioLoopback() throws IOException, InterruptedException
     {
-        subject.decodeFromXtAudio( consumer );
+        subject.decodeFromXtAudioSync( consumer );
 
         Thread.sleep( 100000 );
         // stream.stop();
