@@ -7,7 +7,6 @@ import java.io.IOException;
 import org.junit.Test;
 
 import com.github.sp3wam.baseband.modem.core.SystemClock;
-import com.github.sp3wam.baseband.modem.core.pcm.PcmFromWavFileSignalGeneratorBlock;
 
 public class WavFromFileSignalGeneratorBlockTest
 {
@@ -16,8 +15,10 @@ public class WavFromFileSignalGeneratorBlockTest
     @Test
     public void test() throws IOException
     {
-        PcmFromWavFileSignalGeneratorBlock wavSignal = new PcmFromWavFileSignalGeneratorBlock( SIGNAL_AMPLITUDE,
-            "src/main/resources/morse/C_morse_code.wav" );
+        PcmFromWavFileSignalGeneratorBlock wavSignal =
+            new PcmFromWavFileSignalGeneratorBlock( SIGNAL_AMPLITUDE,
+                "src/test/resources/com/github/sp3wam/baseband/modem/impl/morse/C_morse_code.wav" );
+        wavSignal.init();
 
         assertEquals( 44100, wavSignal.getSampleRate() );
 
