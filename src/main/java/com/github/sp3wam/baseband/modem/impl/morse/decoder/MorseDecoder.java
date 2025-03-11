@@ -6,6 +6,7 @@ import com.github.sp3wam.baseband.modem.core.BlockListenerIf;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.basic.signals.FloatingPointSignal;
 import com.github.sp3wam.baseband.modem.core.pcm.PcmFromJavaxAudioSignalGeneratorBlock;
+import com.github.sp3wam.baseband.modem.core.pcm.PcmFromLifeAudioSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.pcm.PcmFromMp3FileSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.pcm.PcmFromWavFileSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.pcm.PcmSignalGeneratorBlock;
@@ -78,13 +79,13 @@ public class MorseDecoder
      * @param consumer
      * @throws IOException
      */
-    public void decodeFromJavaxAudioSync( MorseDecoderConsumer consumer ) throws IOException
+    public void decodeFromJavaxAudioAsync( MorseDecoderConsumer consumer ) throws IOException
     {
         PcmFromJavaxAudioSignalGeneratorBlock signalGenerator =
             new PcmFromJavaxAudioSignalGeneratorBlock( SIGNAL_AMPLITUDE );
         signalGenerator.init();
 
-        decodeSync( signalGenerator, consumer );
+        decodeAsync( signalGenerator, consumer );
     }
 
     public void decodeFromXtAudioSync( MorseDecoderConsumer consumer ) throws IOException
@@ -97,6 +98,30 @@ public class MorseDecoder
     }
 
     private void decodeSync( PcmSignalGeneratorBlock signalGenerator, MorseDecoderConsumer consumer )
+    {
+        init( signalGenerator, consumer );
+
+        SystemClock systemClock = new SystemClock( signalGenerator.getSampleRate() );
+
+        while( signalGenerator.hasMoreSamples() )
+        {
+            signalGenerator.execute( systemClock, null );
+
+            systemClock.step();
+        }
+
+        System.currentTimeMillis();
+    }
+
+    private void decodeAsync( PcmFromLifeAudioSignalGeneratorBlock signalGenerator,
+        MorseDecoderConsumer consumer )
+    {
+        init( signalGenerator, consumer );
+
+        signalGenerator.startAsync();
+    }
+
+    private void init( PcmSignalGeneratorBlock signalGenerator, MorseDecoderConsumer consumer )
     {
         morseSignalDetectorBlock =
             new MorseSignalDetectorByPercentageSpectrumBlock( signalGenerator.getSampleRate() );
@@ -111,21 +136,10 @@ public class MorseDecoder
         BitStreamMorseDecoderBlock morseDecoderBlock = new BitStreamMorseDecoderBlock();
         MorseSymbolDecoderBlock morseSymbolDecoderBlock = new MorseSymbolDecoderBlock();
 
-        SystemClock systemClock = new SystemClock( signalGenerator.getSampleRate() );
-
         // connect the blocks
         signalGenerator.setNextBlock( morseSignalDetectorBlock );
         morseSignalDetectorBlock.setNextBlock( morseDecoderBlock );
         morseDecoderBlock.setNextBlock( morseSymbolDecoderBlock );
         morseSymbolDecoderBlock.setNextBlock( consumer );
-
-        while( signalGenerator.hasMoreSamples() )
-        {
-            signalGenerator.execute( systemClock, null );
-
-            systemClock.step();
-        }
-
-        System.currentTimeMillis();
     }
 }

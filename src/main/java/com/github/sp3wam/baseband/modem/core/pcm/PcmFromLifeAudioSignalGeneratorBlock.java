@@ -8,9 +8,48 @@ import com.github.sp3wam.baseband.modem.core.basic.signals.DummySignal;
 public abstract class PcmFromLifeAudioSignalGeneratorBlock extends PcmSignalGeneratorBlock
 {
 
+    private Thread thread = null;
+    private SystemClock systemClock;
+
     public PcmFromLifeAudioSignalGeneratorBlock( double amplitude )
     {
         super( amplitude );
+    }
+
+    public synchronized void startAsync()
+    {
+        if( thread != null )
+        {
+            // already started
+            return;
+        }
+
+        systemClock = new SystemClock( getSampleRate() );
+
+        Runnable runnable = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                PcmFromLifeAudioSignalGeneratorBlock generator = PcmFromLifeAudioSignalGeneratorBlock.this;
+
+                while( generator.hasMoreSamples() )
+                {
+                    generator.execute( systemClock, null );
+
+                    systemClock.step();
+                }
+            }
+
+        };
+        thread = new Thread( runnable, "PcmFromLifeAudioSignalGeneratorBlock-Thread" );
+        
+        thread.start();
+    }
+
+    public synchronized void stop()
+    {
+
     }
 
     @Override

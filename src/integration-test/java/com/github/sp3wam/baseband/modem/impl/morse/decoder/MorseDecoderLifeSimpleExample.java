@@ -34,7 +34,7 @@ public class MorseDecoderLifeSimpleExample
     @Test
     public void openJavaxSound() throws IOException, LineUnavailableException
     {
-        subject.decodeFromJavaxAudioSync( consumer );
+        subject.decodeFromJavaxAudioAsync( consumer );
     }
 
     @Test
