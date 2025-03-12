@@ -16,6 +16,8 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.time.DynamicTimeSeriesCollection;
 import org.jfree.data.time.Second;
 import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 import org.slf4j.Logger;
@@ -23,6 +25,8 @@ import org.slf4j.LoggerFactory;
 
 import com.github.sp3wam.baseband.modem.core.BlockListenerIf;
 import com.github.sp3wam.baseband.modem.core.basic.signals.FloatingPointSignal;
+import com.github.sp3wam.baseband.modem.core.fft.FFTSignal;
+import com.github.sp3wam.baseband.modem.core.fft.FFTSpectrum;
 
 public class MorseDecoderLifeExample extends ApplicationFrame
 {
@@ -36,7 +40,10 @@ public class MorseDecoderLifeExample extends ApplicationFrame
     private final double MORSE_SAMPLER_FREQ = 200.0;
     private long counter = 0;
 
-    private DynamicTimeSeriesCollection dataset;
+    private DynamicTimeSeriesCollection signalDataset;
+    private XYSeriesCollection spectrumPercentageDataset;
+    private XYSeries spectrumPercentageSeries;
+
     private MorseDecoder morseDecoder;
 
     public MorseDecoderLifeExample()
@@ -55,7 +62,7 @@ public class MorseDecoderLifeExample extends ApplicationFrame
             morseDecoder.addFftSamplerListener( new BlockListenerIf< FloatingPointSignal >()
             {
 
-                private int divider = (int)(FFT_SAMPLER_FREQ / (2 * MORSE_SAMPLER_FREQ));
+                private int divider = (int)(FFT_SAMPLER_FREQ / MORSE_SAMPLER_FREQ);
 
                 @Override
                 public void onCurrentValueSet( FloatingPointSignal newValue )
@@ -67,19 +74,46 @@ public class MorseDecoderLifeExample extends ApplicationFrame
                         return;
                     }
 
-                    dataset.advanceTime();
+                    signalDataset.advanceTime();
                     double value = newValue.getValue();
-                    dataset.appendData( new float[]
-                    { (float)value } );
+                    signalDataset.appendData( new float[]
+                    { (float)value } ); 
                 }
             } );
+            morseDecoder.addFftListener( new BlockListenerIf< FFTSignal >()
+            {
+                private int divider = (int)(FFT_SAMPLER_FREQ / (2 * MORSE_SAMPLER_FREQ));
+
+                @Override
+                public void onCurrentValueSet( FFTSignal newValue )
+                {
+                    if( counter % (10 * divider) != 0 )
+                    {
+                        return;
+                    }
+
+                    FFTSpectrum fftSpectrum = new FFTSpectrum( newValue );
+
+                    spectrumPercentageSeries.clear();
+                    for( int index = 0; index < fftSpectrum.getFreqencies().length; index++ )
+                    {
+                        double frequency = fftSpectrum.getFreqencies()[ index ];
+                        double powerPercentage =
+                            fftSpectrum.getPowerSpectralDensityPercentageValues()[ index ];
+
+                        spectrumPercentageSeries.add( frequency, powerPercentage );
+                    }
+                }
+            } );
+
             morseDecoder.decodeFromJavaxAudioAsync( new MorseDecoderConsumer() );
         }
         catch( IOException e )
         {
             LOGGER.error( e.getMessage(), e );
         }
-        morseDecoder.setSignalThreshold( FFT_SAMPLER_FREQ );
+
+        morseDecoder.setSignalThreshold( 20.0 );
     }
 
     private void createGui()
@@ -92,21 +126,37 @@ public class MorseDecoderLifeExample extends ApplicationFrame
         mainPanel.setLayout( layout );
 
         GridBagConstraints c = new GridBagConstraints();
+
+        // Signal chart
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
         c.gridy = 0;
         c.weightx = 1.0;
 
-        dataset = new DynamicTimeSeriesCollection( 1, 240, new Second() );
-        dataset.setTimeBase( new Second() );
-        dataset.addSeries( new float[]
+        signalDataset = new DynamicTimeSeriesCollection( 1, 512, new Second() );
+        signalDataset.setTimeBase( new Second() );
+        signalDataset.addSeries( new float[]
         {}, 0, 1 );
 
-        JFreeChart chart = createChart( dataset, "Input signal" );
-        mainPanel.add( new ChartPanel( chart ) );
+        JFreeChart signalChart = createTimeSeriesChart( signalDataset, "Input signal" );
+        mainPanel.add( new ChartPanel( signalChart ), c );
+
+        // Spectrum percentage chart
+        c.fill = GridBagConstraints.BOTH;
+        c.gridx = 0;
+        c.gridy = 1;
+        c.weightx = 1.0;
+
+        spectrumPercentageDataset = new XYSeriesCollection();
+        spectrumPercentageSeries = new XYSeries( "PSD vs total power [%]" );
+        spectrumPercentageDataset.addSeries( spectrumPercentageSeries );
+
+        JFreeChart spectrumChart =
+            createXYLineChart( spectrumPercentageDataset, "Power spectrum distribution [%]", "Frequency" );
+        mainPanel.add( new ChartPanel( spectrumChart ), c );
     }
 
-    private JFreeChart createChart( final XYDataset dataset, String title )
+    private JFreeChart createTimeSeriesChart( final DynamicTimeSeriesCollection dataset, String title )
     {
         final JFreeChart result =
             ChartFactory.createTimeSeriesChart( title, "hh:mm:ss", "[%]", dataset, true, true, false );
@@ -115,6 +165,19 @@ public class MorseDecoderLifeExample extends ApplicationFrame
         domain.setAutoRange( true );
         ValueAxis range = plot.getRangeAxis();
         range.setRange( Y_MIN, Y_MAX );
+        range.setAutoRange( false );
+        return result;
+    }
+
+    protected JFreeChart createXYLineChart( final XYDataset dataset, String title, String xAxisLabel )
+    {
+        String _xAxisLabel = (xAxisLabel == null ? "Samples" : xAxisLabel);
+        JFreeChart result = ChartFactory.createXYLineChart( title, _xAxisLabel, "Value", dataset );
+        final XYPlot plot = result.getXYPlot();
+        ValueAxis domain = plot.getDomainAxis();
+        domain.setAutoRange( true );
+        ValueAxis range = plot.getRangeAxis();
+        range.setRange( 0, 50 );
         range.setAutoRange( false );
         return result;
     }

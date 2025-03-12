@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.github.sp3wam.baseband.modem.core.BlockListenerIf;
 import com.github.sp3wam.baseband.modem.core.SystemClock;
 import com.github.sp3wam.baseband.modem.core.basic.signals.FloatingPointSignal;
+import com.github.sp3wam.baseband.modem.core.fft.FFTSignal;
 import com.github.sp3wam.baseband.modem.core.pcm.PcmFromJavaxAudioSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.pcm.PcmFromLifeAudioSignalGeneratorBlock;
 import com.github.sp3wam.baseband.modem.core.pcm.PcmFromMp3FileSignalGeneratorBlock;
@@ -18,6 +19,7 @@ public class MorseDecoder
     private double signalThreshold = 16.0;
     private MorseSignalDetectorByPercentageSpectrumBlock morseSignalDetectorBlock = null;
     private BlockListenerIf< FloatingPointSignal > fftSamplerListener = null;
+    private BlockListenerIf< FFTSignal > fftBlockListener = null;
 
     public void setSignalThreshold( double threshold )
     {
@@ -36,6 +38,16 @@ public class MorseDecoder
         if( morseSignalDetectorBlock != null )
         {
             morseSignalDetectorBlock.addFftSamplerListener( fftSamplerListener );
+        }
+    }
+
+    public void addFftListener( BlockListenerIf< FFTSignal > fftBlockListener )
+    {
+        this.fftBlockListener = fftBlockListener;
+
+        if( morseSignalDetectorBlock != null )
+        {
+            morseSignalDetectorBlock.addFftListener( fftBlockListener );
         }
     }
 
@@ -131,6 +143,10 @@ public class MorseDecoder
         if( fftSamplerListener != null )
         {
             morseSignalDetectorBlock.addFftSamplerListener( fftSamplerListener );
+        }
+        if( fftBlockListener != null )
+        {
+            morseSignalDetectorBlock.addFftListener( fftBlockListener );
         }
 
         BitStreamMorseDecoderBlock morseDecoderBlock = new BitStreamMorseDecoderBlock();

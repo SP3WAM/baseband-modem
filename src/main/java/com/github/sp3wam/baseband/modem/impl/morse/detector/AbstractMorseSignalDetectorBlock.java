@@ -70,6 +70,11 @@ abstract class AbstractMorseSignalDetectorBlock extends AbstractBlock< FloatingP
     {
         fftFasterSampler.addListener( fftSamplerListener );
     }
+    
+    public void addFftListener(BlockListenerIf< FFTSignal > fftBlockListener)
+    {
+        fftBlock.addListener( fftBlockListener );
+    }
 
     @Override
     public void setNextBlock( BlockIf< BitSignal, ? > nextBlock )
