@@ -7,6 +7,9 @@ import java.awt.GridBagLayout;
 import java.io.IOException;
 
 import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -39,10 +42,12 @@ public class MorseDecoderLifeExample extends ApplicationFrame
     private final double FFT_SAMPLER_FREQ = 3000.0;
     private final double MORSE_SAMPLER_FREQ = 200.0;
     private long counter = 0;
+    private int signalNoiseThreshold = 16;
 
     private DynamicTimeSeriesCollection signalDataset;
     private XYSeriesCollection spectrumPercentageDataset;
     private XYSeries spectrumPercentageSeries;
+    private XYSeries thresholdSeries;
 
     private MorseDecoder morseDecoder;
 
@@ -77,7 +82,7 @@ public class MorseDecoderLifeExample extends ApplicationFrame
                     signalDataset.advanceTime();
                     double value = newValue.getValue();
                     signalDataset.appendData( new float[]
-                    { (float)value } ); 
+                    { (float)value } );
                 }
             } );
             morseDecoder.addFftListener( new BlockListenerIf< FFTSignal >()
@@ -95,6 +100,7 @@ public class MorseDecoderLifeExample extends ApplicationFrame
                     FFTSpectrum fftSpectrum = new FFTSpectrum( newValue );
 
                     spectrumPercentageSeries.clear();
+                    thresholdSeries.clear();
                     for( int index = 0; index < fftSpectrum.getFreqencies().length; index++ )
                     {
                         double frequency = fftSpectrum.getFreqencies()[ index ];
@@ -102,6 +108,7 @@ public class MorseDecoderLifeExample extends ApplicationFrame
                             fftSpectrum.getPowerSpectralDensityPercentageValues()[ index ];
 
                         spectrumPercentageSeries.add( frequency, powerPercentage );
+                        thresholdSeries.add( frequency, signalNoiseThreshold );
                     }
                 }
             } );
@@ -113,7 +120,7 @@ public class MorseDecoderLifeExample extends ApplicationFrame
             LOGGER.error( e.getMessage(), e );
         }
 
-        morseDecoder.setSignalThreshold( 20.0 );
+        morseDecoder.setSignalThreshold( signalNoiseThreshold );
     }
 
     private void createGui()
@@ -151,9 +158,27 @@ public class MorseDecoderLifeExample extends ApplicationFrame
         spectrumPercentageSeries = new XYSeries( "PSD vs total power [%]" );
         spectrumPercentageDataset.addSeries( spectrumPercentageSeries );
 
+        thresholdSeries = new XYSeries( "Signal/Noise threshold" );
+        spectrumPercentageDataset.addSeries( thresholdSeries );
+
         JFreeChart spectrumChart =
             createXYLineChart( spectrumPercentageDataset, "Power spectrum distribution [%]", "Frequency" );
         mainPanel.add( new ChartPanel( spectrumChart ), c );
+
+        // Signal/Noise threshold slider
+        c.fill = GridBagConstraints.BOTH;
+        c.gridx = 1;
+        c.gridy = 1;
+        c.weightx = 1.0;
+
+        JSlider slider = new JSlider( JSlider.VERTICAL, 0, 50, signalNoiseThreshold );
+        slider.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                signalNoiseThreshold = ((JSlider)e.getSource()).getValue();
+                morseDecoder.setSignalThreshold( signalNoiseThreshold );
+            }
+         });
+        mainPanel.add( slider, c );
     }
 
     private JFreeChart createTimeSeriesChart( final DynamicTimeSeriesCollection dataset, String title )
