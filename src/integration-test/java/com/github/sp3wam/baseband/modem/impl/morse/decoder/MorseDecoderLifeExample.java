@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.sp3wam.baseband.modem.core.BlockListenerIf;
+import com.github.sp3wam.baseband.modem.core.basic.blocks.BitSignal;
 import com.github.sp3wam.baseband.modem.core.basic.signals.FloatingPointSignal;
 import com.github.sp3wam.baseband.modem.core.fft.FFTSignal;
 import com.github.sp3wam.baseband.modem.core.fft.FFTSpectrum;
@@ -43,6 +44,7 @@ public class MorseDecoderLifeExample extends ApplicationFrame
     private final double MORSE_SAMPLER_FREQ = 200.0;
     private long counter = 0;
     private int signalNoiseThreshold = 16;
+    private BitSignal lastMorseSignal = new BitSignal( false );
 
     private DynamicTimeSeriesCollection signalDataset;
     private XYSeriesCollection spectrumPercentageDataset;
@@ -81,8 +83,23 @@ public class MorseDecoderLifeExample extends ApplicationFrame
 
                     signalDataset.advanceTime();
                     double value = newValue.getValue();
+
+                    double bitValue = 0.0;
+                    if( lastMorseSignal.getBitValue() )
+                    {
+                        bitValue = 30.0;
+                    }
                     signalDataset.appendData( new float[]
-                    { (float)value } );
+                    { (float)value, (float)bitValue } );
+                }
+            } );
+            morseDecoder.addMorseSignalDetectorListener( new BlockListenerIf< BitSignal >()
+            {
+
+                @Override
+                public void onCurrentValueSet( BitSignal newValue )
+                {
+                    MorseDecoderLifeExample.this.lastMorseSignal = newValue;
                 }
             } );
             morseDecoder.addFftListener( new BlockListenerIf< FFTSignal >()
@@ -140,10 +157,12 @@ public class MorseDecoderLifeExample extends ApplicationFrame
         c.gridy = 0;
         c.weightx = 1.0;
 
-        signalDataset = new DynamicTimeSeriesCollection( 1, 512, new Second() );
+        signalDataset = new DynamicTimeSeriesCollection( 2, 512, new Second() );
         signalDataset.setTimeBase( new Second() );
         signalDataset.addSeries( new float[]
-        {}, 0, 1 );
+        {}, 0, 0 );
+        signalDataset.addSeries( new float[]
+        {}, 1, 1 );
 
         JFreeChart signalChart = createTimeSeriesChart( signalDataset, "Input signal" );
         mainPanel.add( new ChartPanel( signalChart ), c );
@@ -172,12 +191,14 @@ public class MorseDecoderLifeExample extends ApplicationFrame
         c.weightx = 1.0;
 
         JSlider slider = new JSlider( JSlider.VERTICAL, 0, 50, signalNoiseThreshold );
-        slider.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
+        slider.addChangeListener( new ChangeListener()
+        {
+            public void stateChanged( ChangeEvent e )
+            {
                 signalNoiseThreshold = ((JSlider)e.getSource()).getValue();
                 morseDecoder.setSignalThreshold( signalNoiseThreshold );
             }
-         });
+        } );
         mainPanel.add( slider, c );
     }
 

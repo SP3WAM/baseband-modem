@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.sp3wam.baseband.modem.core.basic.blocks.BitSignal;
+import com.github.sp3wam.baseband.modem.core.fft.FFTPeaks;
 import com.github.sp3wam.baseband.modem.core.fft.FFTSignal;
 import com.github.sp3wam.baseband.modem.core.fft.FFTSpectrum;
 
@@ -28,8 +29,16 @@ public class MorseSignalDetectorByPercentageSpectrumBlock extends AbstractMorseS
     {
         FFTSpectrum spectrum = new FFTSpectrum( fftSignal );
 
+        FFTPeaks fftPeaks = new FFTPeaks(spectrum, 25);
+        if(fftPeaks.getPeaks().size() == 0)
+        {
+            LOGGER.debug( "Detected signal: 0" );
+            return new BitSignal( false );
+        }
+        
         double[] percentagePSD = spectrum.getPowerSpectralDensityPercentageValues();
 
+        
         for( int q = 0; q < percentagePSD.length; q++ )
         {
             if( percentagePSD[ q ] >= signalThreshold )

@@ -19,7 +19,7 @@ class BitStreamMorseDecoderBlock extends AbstractBlock< BitSignal, MorseSymbolsS
 
     protected boolean execute0( SystemClock systemClock, BitSignal inputSignalValue )
     {
-        LOGGER.debug( String.format( "Processing input value %s", inputSignalValue.toString() ) );
+        // LOGGER.debug( String.format( "Processing input value %s", inputSignalValue.toString() ) );
 
         if( segments.size() == 0 )
         {
@@ -93,6 +93,12 @@ class BitStreamMorseDecoderBlock extends AbstractBlock< BitSignal, MorseSymbolsS
 
     private MorseSymbolsSignal detectSymbols( List< MorseSegment > segments, Integer lastKnownDitDuration )
     {
+        LOGGER.debug( "Detecting symbols from segments:" );
+        for( MorseSegment segment : segments )
+        {
+            LOGGER.debug( "    " + segment.toString() );
+        }
+
         int minSignalDuration = Integer.MAX_VALUE;
         int maxSignalDuration = 0;
         int signalSumm = 0;
