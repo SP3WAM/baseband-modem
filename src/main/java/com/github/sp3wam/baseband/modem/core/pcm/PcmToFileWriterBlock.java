@@ -3,6 +3,8 @@ package com.github.sp3wam.baseband.modem.core.pcm;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
@@ -19,6 +21,9 @@ import com.github.sp3wam.baseband.modem.core.basic.signals.FloatingPointSignal;
 public class PcmToFileWriterBlock extends AbstractBlock< FloatingPointSignal, FloatingPointSignal >
 {
     private final static Logger LOGGER = LoggerFactory.getLogger( PcmToFileWriterBlock.class );
+
+    private AudioInputStream audioInputStream = null;
+    private ByteArrayInputStream bais = null;
 
     @Override
     protected boolean execute0( SystemClock systemClock, FloatingPointSignal inputSignalValue )
@@ -56,18 +61,19 @@ public class PcmToFileWriterBlock extends AbstractBlock< FloatingPointSignal, Fl
         }
 
         // Create an AudioInputStream from the audio data
-        ByteArrayInputStream bais = new ByteArrayInputStream( audioData );
-        AudioInputStream audioInputStream = new AudioInputStream( bais, format, numSamples );
+        bais = new ByteArrayInputStream( audioData );
+        audioInputStream = new AudioInputStream( bais, format, numSamples );
 
         // Write the audio data to a WAV file
-        File outputFile = new File( "output.wav" );
+        String out = new SimpleDateFormat( "'target/'yyyy-MM-dd_hh-mm-ss'.wav'" ).format( new Date() );
+        File outputFile = new File( out );
         try
         {
             AudioSystem.write( audioInputStream, AudioFileFormat.Type.WAVE, outputFile );
             LOGGER.info( "WAV file written to " + outputFile.getAbsolutePath() );
         }
         catch( IOException e )
-        {           
+        {
             LOGGER.error( e.getMessage(), e );
         }
         finally
@@ -85,6 +91,6 @@ public class PcmToFileWriterBlock extends AbstractBlock< FloatingPointSignal, Fl
 
     public void stopSaving()
     {
-
+        // close the streams
     }
 }
