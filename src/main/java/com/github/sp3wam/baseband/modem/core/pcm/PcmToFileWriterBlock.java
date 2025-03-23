@@ -42,8 +42,13 @@ public class PcmToFileWriterBlock extends AbstractBlock< FloatingPointSignal, Fl
 
         // Convert the sample to bytes
         short s = (short)sample;
-        customInputStream.appendByte( (byte)(s & 0xFF) ); // Low byte
-        customInputStream.appendByte( (byte)((s >> 8) & 0xFF) ); // High byte
+        byte lowByte = (byte)(s & 0xFF);
+        byte hightByte = (byte)((s >> 8) & 0xFF);
+        customInputStream.appendByte( lowByte ); // Low byte
+        customInputStream.appendByte( hightByte ); // High byte
+
+        LOGGER.debug(
+            String.format( "Saving sample value double %s as short %s", inputSignalValue.getValue(), s ) );
 
         return true;
     }
@@ -121,5 +126,18 @@ public class PcmToFileWriterBlock extends AbstractBlock< FloatingPointSignal, Fl
         {
             LOGGER.error( e.getMessage(), e );
         }
+        
+        audioInputStream = null;
+        customInputStream = null;
+    }
+    
+    public boolean isRecording()
+    {
+        if(customInputStream == null)
+        {
+            return false;
+        }
+        
+        return true;
     }
 }

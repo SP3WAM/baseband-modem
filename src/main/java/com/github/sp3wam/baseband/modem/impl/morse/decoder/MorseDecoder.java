@@ -18,10 +18,12 @@ public class MorseDecoder
 {
     private final double SIGNAL_AMPLITUDE = 100.0;
     private double signalThreshold = 16.0;
+    private PcmSignalGeneratorBlock signalGenerator = null;
     private MorseSignalDetectorByPercentageSpectrumBlock morseSignalDetectorBlock = null;
     private BlockListenerIf< FloatingPointSignal > fftSamplerListener = null;
     private BlockListenerIf< FFTSignal > fftBlockListener = null;
     private BlockListenerIf< BitSignal > morseSignalDetectorBlockListener = null;
+    private BlockListenerIf< FloatingPointSignal > signalGeneratorListener = null;
 
     public void setSignalThreshold( double threshold )
     {
@@ -62,6 +64,11 @@ public class MorseDecoder
         }
     }
 
+    public void setSignalGeneratorListener( BlockListenerIf< FloatingPointSignal > signalGeneratorListener )
+    {
+        this.signalGeneratorListener = signalGeneratorListener;
+    }
+
     /***
      * Decodes from WAV file synchronously
      * 
@@ -71,8 +78,7 @@ public class MorseDecoder
      */
     public void decodeFromWavSync( String filePath, MorseDecoderConsumer consumer ) throws IOException
     {
-        PcmFromWavFileSignalGeneratorBlock signalGenerator =
-            new PcmFromWavFileSignalGeneratorBlock( SIGNAL_AMPLITUDE, filePath );
+        signalGenerator = new PcmFromWavFileSignalGeneratorBlock( SIGNAL_AMPLITUDE, filePath );
         signalGenerator.setGenerateSilenceAtEnd( 1000 );
         signalGenerator.init();
 
@@ -88,8 +94,7 @@ public class MorseDecoder
      */
     public void decodeFromMp3Sync( String filePath, MorseDecoderConsumer consumer ) throws IOException
     {
-        PcmFromMp3FileSignalGeneratorBlock signalGenerator =
-            new PcmFromMp3FileSignalGeneratorBlock( SIGNAL_AMPLITUDE, filePath );
+        signalGenerator = new PcmFromMp3FileSignalGeneratorBlock( SIGNAL_AMPLITUDE, filePath );
         signalGenerator.setGenerateSilenceAtEnd( 1000 );
         signalGenerator.init();
 
@@ -104,17 +109,15 @@ public class MorseDecoder
      */
     public void decodeFromJavaxAudioAsync( MorseDecoderConsumer consumer ) throws IOException
     {
-        PcmFromJavaxAudioSignalGeneratorBlock signalGenerator =
-            new PcmFromJavaxAudioSignalGeneratorBlock( SIGNAL_AMPLITUDE );
+        signalGenerator = new PcmFromJavaxAudioSignalGeneratorBlock( SIGNAL_AMPLITUDE );
         signalGenerator.init();
 
-        decodeAsync( signalGenerator, consumer );
+        decodeAsync( (PcmFromLifeAudioSignalGeneratorBlock)signalGenerator, consumer );
     }
 
     public void decodeFromXtAudioSync( MorseDecoderConsumer consumer ) throws IOException
     {
-        PcmFromJavaxAudioSignalGeneratorBlock signalGenerator =
-            new PcmFromJavaxAudioSignalGeneratorBlock( SIGNAL_AMPLITUDE );
+        signalGenerator = new PcmFromJavaxAudioSignalGeneratorBlock( SIGNAL_AMPLITUDE );
         signalGenerator.init();
 
         decodeSync( signalGenerator, consumer );
@@ -159,9 +162,13 @@ public class MorseDecoder
         {
             morseSignalDetectorBlock.addFftListener( fftBlockListener );
         }
-        if(morseSignalDetectorBlockListener != null)
+        if( morseSignalDetectorBlockListener != null )
         {
             morseSignalDetectorBlock.addListener( morseSignalDetectorBlockListener );
+        }
+        if(signalGeneratorListener != null)
+        {
+            signalGenerator.addListener( signalGeneratorListener );
         }
 
         BitStreamMorseDecoderBlock morseDecoderBlock = new BitStreamMorseDecoderBlock();

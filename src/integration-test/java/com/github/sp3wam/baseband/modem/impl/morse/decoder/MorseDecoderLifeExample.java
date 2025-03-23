@@ -4,8 +4,11 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
@@ -31,6 +34,7 @@ import com.github.sp3wam.baseband.modem.core.basic.blocks.BitSignal;
 import com.github.sp3wam.baseband.modem.core.basic.signals.FloatingPointSignal;
 import com.github.sp3wam.baseband.modem.core.fft.FFTSignal;
 import com.github.sp3wam.baseband.modem.core.fft.FFTSpectrum;
+import com.github.sp3wam.baseband.modem.core.pcm.PcmToFileWriterBlock;
 
 public class MorseDecoderLifeExample extends ApplicationFrame
 {
@@ -52,6 +56,7 @@ public class MorseDecoderLifeExample extends ApplicationFrame
     private XYSeries thresholdSeries;
 
     private MorseDecoder morseDecoder;
+    private PcmToFileWriterBlock pcmToFileWriterBlock;
 
     public MorseDecoderLifeExample()
     {
@@ -64,6 +69,8 @@ public class MorseDecoderLifeExample extends ApplicationFrame
     private void initMorseDecoder()
     {
         morseDecoder = new MorseDecoder();
+        pcmToFileWriterBlock = new PcmToFileWriterBlock();
+
         try
         {
             morseDecoder.addFftSamplerListener( new BlockListenerIf< FloatingPointSignal >()
@@ -129,6 +136,14 @@ public class MorseDecoderLifeExample extends ApplicationFrame
                     }
                 }
             } );
+            morseDecoder.setSignalGeneratorListener( new BlockListenerIf< FloatingPointSignal >()
+            {
+                @Override
+                public void onCurrentValueSet( FloatingPointSignal newValue )
+                {
+                    pcmToFileWriterBlock.execute( null, newValue );
+                }
+            } );
 
             morseDecoder.decodeFromJavaxAudioAsync( new MorseDecoderConsumer() );
         }
@@ -166,6 +181,31 @@ public class MorseDecoderLifeExample extends ApplicationFrame
 
         JFreeChart signalChart = createTimeSeriesChart( signalDataset, "Input signal" );
         mainPanel.add( new ChartPanel( signalChart ), c );
+
+        // Start Recording / Stop Recording
+        c.fill = GridBagConstraints.NONE;
+        c.gridx = 1;
+        c.gridy = 0;
+        c.weightx = 1.0;
+        JButton recordingButton = new JButton( "Start recording" );
+        recordingButton.addActionListener( new ActionListener()
+        {
+            @Override
+            public void actionPerformed( ActionEvent e )
+            {
+                if( pcmToFileWriterBlock.isRecording() )
+                {
+                    recordingButton.setText( "Start recording" );
+                    pcmToFileWriterBlock.stopSaving();
+                }
+                else
+                {
+                    recordingButton.setText( "Stop recording" );
+                    pcmToFileWriterBlock.startSavingAsync();
+                }
+            }
+        } );
+        mainPanel.add( recordingButton, c );
 
         // Spectrum percentage chart
         c.fill = GridBagConstraints.BOTH;
