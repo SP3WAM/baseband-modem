@@ -1,10 +1,7 @@
 package com.github.sp3wam.baseband.modem.core.pcm;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.List;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -209,50 +206,5 @@ public class PcmFromXtAudioSignalGeneratorBlock extends PcmFromLifeAudioSignalGe
 
         xtStream = null;
         safeBuffer = null;
-    }
-
-    private class CustomInputStream extends InputStream
-    {
-
-        private List< Byte > bytes = new ArrayList< Byte >();
-
-        @Override
-        public int read() throws IOException
-        {
-
-            Byte result = 0;
-
-            synchronized( bytes )
-            {
-                if( bytes.size() == 0 )
-                {
-                    return -1;
-                }
-
-                result = bytes.get( 0 );
-                bytes.remove( 0 );
-            }
-
-            return result;
-        }
-
-        public int available() throws IOException
-        {
-
-            synchronized( bytes )
-            {
-                return bytes.size();
-            }
-        }
-
-        public void appendByte( byte aByte )
-        {
-            // System.out.println(aByte);
-
-            synchronized( bytes )
-            {
-                bytes.add( aByte );
-            }
-        }
     }
 }
