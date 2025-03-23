@@ -43,7 +43,8 @@ public class BlockingCustomInputStream extends InputStream
             bytes.remove( 0 );
         }
 
-        return result;
+        // we need to return a positive value in range <0, 255>
+        return (result.byteValue() & 0xFF);
     }
 
     public int available() throws IOException
